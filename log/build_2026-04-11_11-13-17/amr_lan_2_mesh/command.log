@@ -1,0 +1,6 @@
+Invoking command in '/home/duo/dev_ws/build/amr_lan_2_mesh': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/duo/dev_ws/src/amr_lan_2_mesh -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/duo/dev_ws/install/amr_lan_2_mesh
+Invoked command in '/home/duo/dev_ws/build/amr_lan_2_mesh' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/duo/dev_ws/src/amr_lan_2_mesh -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/duo/dev_ws/install/amr_lan_2_mesh
+Invoking command in '/home/duo/dev_ws/build/amr_lan_2_mesh': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_2_mesh -- -j8 -l8
+Invoked command in '/home/duo/dev_ws/build/amr_lan_2_mesh' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_2_mesh -- -j8 -l8
+Invoking command in '/home/duo/dev_ws/build/amr_lan_2_mesh': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_2_mesh
+Invoked command in '/home/duo/dev_ws/build/amr_lan_2_mesh' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_2_mesh

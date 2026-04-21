@@ -1,0 +1,60 @@
+[0.023s] Invoking command in '/home/duo/dev_ws/build/lap_thu_amr_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/duo/dev_ws/src/lap_thu_amr_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/duo/dev_ws/install/lap_thu_amr_description
+[0.217s] -- The C compiler identification is GNU 11.4.0
+[0.378s] -- The CXX compiler identification is GNU 11.4.0
+[0.406s] -- Detecting C compiler ABI info
+[0.581s] -- Detecting C compiler ABI info - done
+[0.594s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.595s] -- Detecting C compile features
+[0.596s] -- Detecting C compile features - done
+[0.602s] -- Detecting CXX compiler ABI info
+[0.808s] -- Detecting CXX compiler ABI info - done
+[0.825s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.825s] -- Detecting CXX compile features
+[0.826s] -- Detecting CXX compile features - done
+[0.836s] -- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)
+[1.144s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[1.272s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[1.374s] -- Found ament_lint_auto: 0.12.15 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[1.546s] -- Added test 'flake8' to check Python code syntax and style conventions
+[1.547s] -- Added test 'lint_cmake' to check CMake code style
+[1.549s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[1.553s] -- Added test 'xmllint' to check XML markup files
+[1.556s] -- Configuring done
+[1.563s] -- Generating done
+[1.566s] -- Build files have been written to: /home/duo/dev_ws/build/lap_thu_amr_description
+[1.575s] Invoked command in '/home/duo/dev_ws/build/lap_thu_amr_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/duo/dev_ws/src/lap_thu_amr_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/duo/dev_ws/install/lap_thu_amr_description
+[1.580s] Invoking command in '/home/duo/dev_ws/build/lap_thu_amr_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/lap_thu_amr_description -- -j8 -l8
+[1.670s] Invoked command in '/home/duo/dev_ws/build/lap_thu_amr_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/lap_thu_amr_description -- -j8 -l8
+[1.692s] Invoking command in '/home/duo/dev_ws/build/lap_thu_amr_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/lap_thu_amr_description
+[1.707s] -- Install configuration: ""
+[1.708s] -- Execute custom install script
+[1.709s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/urdf/lap_thu_AMR_test_2.urdf
+[1.736s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/base_footprint.STL
+[1.757s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/base_link.STL
+[1.783s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/caster_wheel_left_behind.STL
+[1.805s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/caster_wheel_left_front.STL
+[1.825s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/caster_wheel_right_behind.STL
+[1.846s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/caster_wheel_right_front.STL
+[1.866s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/imu_link.STL
+[1.886s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/laser_frame.STL
+[1.905s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/left_wheel.STL
+[1.931s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/right_wheel.STL
+[1.952s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/launch/abc.launch.py
+[1.975s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/launch/gazebo.launch.py
+[2.001s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/launch/rsp.launch.py
+[2.023s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/ament_index/resource_index/package_run_dependencies/lap_thu_amr_description
+[2.044s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/ament_index/resource_index/parent_prefix_path/lap_thu_amr_description
+[2.064s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/environment/ament_prefix_path.sh
+[2.091s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/environment/ament_prefix_path.dsv
+[2.117s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/environment/path.sh
+[2.138s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/environment/path.dsv
+[2.158s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/local_setup.bash
+[2.186s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/local_setup.sh
+[2.212s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/local_setup.zsh
+[2.233s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/local_setup.dsv
+[2.260s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/package.dsv
+[2.281s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/ament_index/resource_index/packages/lap_thu_amr_description
+[2.301s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/cmake/lap_thu_amr_descriptionConfig.cmake
+[2.321s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/cmake/lap_thu_amr_descriptionConfig-version.cmake
+[2.342s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/package.xml
+[2.369s] Invoked command in '/home/duo/dev_ws/build/lap_thu_amr_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/lap_thu_amr_description

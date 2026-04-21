@@ -1,0 +1,3 @@
+[console_scripts]
+laser_filter = custom_laser_filter.laser_filter_node:main
+

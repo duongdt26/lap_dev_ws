@@ -1,0 +1,37 @@
+[0.854s] Invoking command in '/home/duo/dev_ws/src/custom_laser_filter': PYTHONPATH=/home/duo/dev_ws/build/custom_laser_filter/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/duo/dev_ws/install/custom_laser_filter/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/custom_laser_filter build --build-base /home/duo/dev_ws/build/custom_laser_filter/build install --record /home/duo/dev_ws/build/custom_laser_filter/install.log --single-version-externally-managed install_data
+[1.141s] running egg_info
+[1.141s] creating ../../build/custom_laser_filter/custom_laser_filter.egg-info
+[1.142s] writing ../../build/custom_laser_filter/custom_laser_filter.egg-info/PKG-INFO
+[1.142s] writing dependency_links to ../../build/custom_laser_filter/custom_laser_filter.egg-info/dependency_links.txt
+[1.142s] writing entry points to ../../build/custom_laser_filter/custom_laser_filter.egg-info/entry_points.txt
+[1.142s] writing requirements to ../../build/custom_laser_filter/custom_laser_filter.egg-info/requires.txt
+[1.142s] writing top-level names to ../../build/custom_laser_filter/custom_laser_filter.egg-info/top_level.txt
+[1.143s] writing manifest file '../../build/custom_laser_filter/custom_laser_filter.egg-info/SOURCES.txt'
+[1.145s] reading manifest file '../../build/custom_laser_filter/custom_laser_filter.egg-info/SOURCES.txt'
+[1.146s] writing manifest file '../../build/custom_laser_filter/custom_laser_filter.egg-info/SOURCES.txt'
+[1.146s] running build
+[1.146s] running build_py
+[1.146s] creating /home/duo/dev_ws/build/custom_laser_filter/build
+[1.147s] creating /home/duo/dev_ws/build/custom_laser_filter/build/lib
+[1.147s] creating /home/duo/dev_ws/build/custom_laser_filter/build/lib/custom_laser_filter
+[1.147s] copying custom_laser_filter/__init__.py -> /home/duo/dev_ws/build/custom_laser_filter/build/lib/custom_laser_filter
+[1.147s] copying custom_laser_filter/laser_filter_node.py -> /home/duo/dev_ws/build/custom_laser_filter/build/lib/custom_laser_filter
+[1.148s] running install
+[1.148s] running install_lib
+[1.148s] creating /home/duo/dev_ws/install/custom_laser_filter/lib/python3.10/site-packages/custom_laser_filter
+[1.148s] copying /home/duo/dev_ws/build/custom_laser_filter/build/lib/custom_laser_filter/__init__.py -> /home/duo/dev_ws/install/custom_laser_filter/lib/python3.10/site-packages/custom_laser_filter
+[1.148s] copying /home/duo/dev_ws/build/custom_laser_filter/build/lib/custom_laser_filter/laser_filter_node.py -> /home/duo/dev_ws/install/custom_laser_filter/lib/python3.10/site-packages/custom_laser_filter
+[1.149s] byte-compiling /home/duo/dev_ws/install/custom_laser_filter/lib/python3.10/site-packages/custom_laser_filter/__init__.py to __init__.cpython-310.pyc
+[1.149s] byte-compiling /home/duo/dev_ws/install/custom_laser_filter/lib/python3.10/site-packages/custom_laser_filter/laser_filter_node.py to laser_filter_node.cpython-310.pyc
+[1.150s] running install_data
+[1.150s] creating /home/duo/dev_ws/install/custom_laser_filter/share/ament_index
+[1.150s] creating /home/duo/dev_ws/install/custom_laser_filter/share/ament_index/resource_index
+[1.150s] creating /home/duo/dev_ws/install/custom_laser_filter/share/ament_index/resource_index/packages
+[1.150s] copying resource/custom_laser_filter -> /home/duo/dev_ws/install/custom_laser_filter/share/ament_index/resource_index/packages
+[1.151s] copying package.xml -> /home/duo/dev_ws/install/custom_laser_filter/share/custom_laser_filter
+[1.151s] running install_egg_info
+[1.153s] Copying ../../build/custom_laser_filter/custom_laser_filter.egg-info to /home/duo/dev_ws/install/custom_laser_filter/lib/python3.10/site-packages/custom_laser_filter-0.0.0-py3.10.egg-info
+[1.154s] running install_scripts
+[1.177s] Installing laser_filter script to /home/duo/dev_ws/install/custom_laser_filter/lib/custom_laser_filter
+[1.177s] writing list of installed files to '/home/duo/dev_ws/build/custom_laser_filter/install.log'
+[1.213s] Invoked command in '/home/duo/dev_ws/src/custom_laser_filter' returned '0': PYTHONPATH=/home/duo/dev_ws/build/custom_laser_filter/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/duo/dev_ws/install/custom_laser_filter/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/custom_laser_filter build --build-base /home/duo/dev_ws/build/custom_laser_filter/build install --record /home/duo/dev_ws/build/custom_laser_filter/install.log --single-version-externally-managed install_data

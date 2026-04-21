@@ -1,0 +1,6 @@
+Invoking command in '/home/duo/dev_ws/build/duobot_one': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/duo/dev_ws/src/duobot_one -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/duo/dev_ws/install/duobot_one
+Invoked command in '/home/duo/dev_ws/build/duobot_one' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/duo/dev_ws/src/duobot_one -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/duo/dev_ws/install/duobot_one
+Invoking command in '/home/duo/dev_ws/build/duobot_one': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/duobot_one -- -j8 -l8
+Invoked command in '/home/duo/dev_ws/build/duobot_one' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/duobot_one -- -j8 -l8
+Invoking command in '/home/duo/dev_ws/build/duobot_one': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/duobot_one
+Invoked command in '/home/duo/dev_ws/build/duobot_one' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/duobot_one

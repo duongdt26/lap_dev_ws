@@ -1,0 +1,4 @@
+source;share/duobot_one/local_setup.bash
+source;share/duobot_one/local_setup.dsv
+source;share/duobot_one/local_setup.sh
+source;share/duobot_one/local_setup.zsh

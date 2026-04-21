@@ -1,0 +1,2 @@
+Invoking command in '/home/duo/dev_ws/build/hinson_hardware': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/duo/dev_ws/src/hinson_hardware -DCMAKE_INSTALL_PREFIX=/home/duo/dev_ws/install/hinson_hardware
+Invoked command in '/home/duo/dev_ws/build/hinson_hardware' returned '1': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/duo/dev_ws/src/hinson_hardware -DCMAKE_INSTALL_PREFIX=/home/duo/dev_ws/install/hinson_hardware

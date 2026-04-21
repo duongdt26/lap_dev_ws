@@ -1,0 +1,567 @@
+<?xml version="1.0"?>
+<!-- <?xml version="1.0" encoding="utf-8"?> -->
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="lap_thu_AMR_test_2">
+
+  <material name="white">
+    <color rgba="1 1 1 1"/> 
+  </material>
+  <material name="orange">
+    <color rgba="1 0.3 0.1 1"/> 
+  </material>
+  <material name="blue">
+    <color rgba="0.2 0.2 1 1"/> 
+  </material>
+  <material name="black">
+    <color rgba="0 0 0 1"/> 
+  </material>
+  <material name="red">
+    <color rgba="1 0 0 1"/> 
+  </material>
+  <material name="green">
+    <color rgba="0 1 0 1"/> 
+  </material>
+  <material name="vibrantorange">
+    <color rgba="1.0 0.5 0 1"/>
+  </material>
+  <material name="xanhlo">
+    <color rgba="0.18 0.85 0.8 1"/>
+  </material>
+  <material name="xanhdaquang">
+    <color rgba="0.4 0.91 0.22 1"/>
+  </material>
+  <material name="tim">
+    <color rgba="0.62 0.22 0.9 1"/>
+  </material>
+
+  <link
+    name="base_footprint">
+    <!-- <inertial>
+      <origin
+        xyz="-3.65311647133953E-07 -1.98612745581428E-07 0.176405339893634"
+        rpy="0 0 0" />
+      <mass
+        value="231.181608249293" />
+      <inertia
+        ixx="10.0290682857335"
+        ixy="0.0023843027450301"
+        ixz="1.24328856292512E-05"
+        iyy="28.9641863399"
+        iyz="6.75951493313755E-06"
+        izz="35.561302677831" />
+    </inertial> -->
+    <!-- <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/base_footprint.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual> -->
+    <!-- <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/base_footprint.STL" />
+      </geometry>
+    </collision> -->
+  </link>
+  <link
+    name="base_link">
+    <inertial>
+      <!-- <origin
+        xyz="-3.65311647147675E-07 -1.98612745582668E-07 0.0864053398936338"
+        rpy="0 0 0" /> -->
+      <origin
+        xyz="0 0 0.08640"
+        rpy="0 0 0" />
+      <mass
+        value="231.181608249293" />
+      <!-- <mass
+        value="23" /> -->
+      <!-- <inertia
+        ixx="10.0290682857335"
+        ixy="0.00238430274502995"
+        ixz="1.24328856292135E-05"
+        iyy="28.9641863399"
+        iyz="6.75951493313046E-06"
+        izz="35.561302677831" /> -->
+      <inertia
+        ixx="10.0290682857335"
+        ixy="0"
+        ixz="0"
+        iyy="28.9641863399"
+        iyz="0"
+        izz="35.561302677831" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/base_link.STL"/>
+      </geometry>
+      <material name="xanhlo"/>
+      <!-- <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+        <color name="xanhlo"/>
+      </material> -->
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="base_link">
+    <material>Gazebo/Cyan</material>
+  </gazebo>
+
+  <joint
+    name="base_joint"
+    type="fixed">
+    <origin
+      xyz="0 0 0.09"
+      rpy="0 0 0" />
+    <parent
+      link="base_footprint" />
+    <child
+      link="base_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="left_wheel">
+    <inertial>
+      <!-- <origin
+        xyz="-3.11758218538407E-16 4.9960036108132E-16 5.55111512312578E-17"
+        rpy="0 0 0" /> -->
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="1" />
+      <!-- <inertia
+        ixx="0.00219074810643137"
+        ixy="0"
+        ixz="0"
+        iyy="0.00219074810643137"
+        iyz="0"
+        izz="0.00413841761769615" /> -->
+      <inertia
+        ixx="0.00219"
+        ixy="0"
+        ixz="0"
+        iyy="0.00219"
+        iyz="0"
+        izz="0.004138" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/left_wheel.STL"/>
+      </geometry>
+      <material name="tim"/>
+      <!-- <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material> -->
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/left_wheel.STL"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="left_wheel">
+    <material>Gazebo/Purple</material>
+  </gazebo>
+
+  <joint
+    name="left_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="0 0.28 0"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="left_wheel" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="right_wheel">
+    <inertial>
+      <!-- <origin
+        xyz="-3.59046478856788E-16 4.85722573273506E-16 0"
+        rpy="0 0 0" /> -->
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="1" />
+      <!-- <inertia
+        ixx="0.00219074810643137"
+        ixy="0"
+        ixz="0"
+        iyy="0.00219074810643137"
+        iyz="0"
+        izz="0.00413841761769614" /> -->
+      <inertia
+        ixx="0.00219"
+        ixy="0"
+        ixz="0"
+        iyy="0.00219"
+        iyz="0"
+        izz="0.004138" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/right_wheel.STL"/>
+      </geometry>
+      <material name="tim"/>
+      <!-- <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material> -->
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/right_wheel.STL"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="right_wheel">
+    <material>Gazebo/Purple</material>
+  </gazebo>
+
+  <joint
+    name="right_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="0 -0.28 0"
+      rpy="1.5708 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="right_wheel" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="caster_wheel_right_behind">
+    <inertial>
+      <!-- <origin
+        xyz="5.55111512312578E-17 2.77555756156289E-17 -0.005625"
+        rpy="0 0 0" /> -->
+      <origin
+        xyz="0 0 -0.005625"
+        rpy="0 0 0" />
+      <mass
+        value="1" />
+      <inertia
+        ixx="0.0001"
+        ixy="0"
+        ixz="0"
+        iyy="0.0001"
+        iyz="0"
+        izz="0.0001" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/caster_wheel_right_behind.STL"/>
+      </geometry>
+      <material
+        name="blue">
+        <!-- <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" /> -->
+        <!-- <color name="xanhdaquang"/> -->
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/caster_wheel_right_behind.STL"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="caster_wheel_right_behind">
+    <material>Gazebo/Blue</material>
+    <mu1>0.001</mu1>
+    <mu2>0.001</mu2>
+  </gazebo>
+
+  <joint
+    name="caster_wheel_right_behind_joint"
+    type="fixed">
+    <!-- type="continuous"> -->
+    <origin
+      xyz="-0.4 -0.17 -0.075"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="caster_wheel_right_behind" />
+    <!-- <axis
+      xyz="0 0 1" /> -->
+  </joint>
+  <link
+    name="caster_wheel_left_behind">
+    <inertial>
+      <origin
+        xyz="0 0 -0.005625"
+        rpy="0 0 0" />
+      <mass
+        value="1" />
+      <inertia
+        ixx="0.0001"
+        ixy="0"
+        ixz="0"
+        iyy="0.0001"
+        iyz="0"
+        izz="0.0001" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/caster_wheel_left_behind.STL"/>
+      </geometry>
+      <material
+        name="blue">
+        <!-- <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" /> -->
+        <!-- <color name="xanhlo"/> -->
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/caster_wheel_left_behind.STL"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="caster_wheel_left_behind">
+    <material>Gazebo/Blue</material>
+    <mu1>0.001</mu1>
+    <mu2>0.001</mu2>
+  </gazebo>
+
+  <joint
+    name="caster_wheel_left_behind_joint"
+    type="fixed">
+    <!-- type="continuous"> -->
+    <origin
+      xyz="-0.4 0.17 -0.075"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="caster_wheel_left_behind" />
+    <!-- <axis
+      xyz="0 0 1" /> -->
+  </joint>
+  <link
+    name="caster_wheel_right_front">
+    <inertial>
+      <!-- <origin
+        xyz="-5.55111512312578E-17 2.77555756156289E-17 -0.005625"
+        rpy="0 0 0" /> -->
+      <origin
+        xyz="0 0 -0.005625"
+        rpy="0 0 0" />
+      <mass
+        value="1" />
+      <inertia
+        ixx="0.0001"
+        ixy="0"
+        ixz="0"
+        iyy="0.0001"
+        iyz="0"
+        izz="0.0001" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/caster_wheel_right_front.STL"/>
+      </geometry>
+      <material
+        name="blue">
+        <!-- <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" /> -->
+        <!-- <color name="xanhlo"/> -->
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/caster_wheel_right_front.STL"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="caster_wheel_right_front">
+    <material>Gazebo/Blue</material>
+    <mu1>0.001</mu1>
+    <mu2>0.001</mu2>
+  </gazebo>
+
+  <joint
+    name="caster_wheel_right_front_joint"
+    type="fixed">
+    <!-- type="continuous"> -->
+    <origin
+      xyz="0.4 -0.17 -0.075"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="caster_wheel_right_front" />
+    <!-- <axis
+      xyz="0 0 1" /> -->
+  </joint>
+  <link
+    name="caster_wheel_left_front">
+    <inertial>
+      <!-- <origin
+        xyz="-5.55111512312578E-17 2.77555756156289E-17 -0.005625"
+        rpy="0 0 0" /> -->
+      <origin
+        xyz="0 0 -0.005625"
+        rpy="0 0 0" />
+      <mass
+        value="1" />
+      <inertia
+        ixx="0.0001"
+        ixy="0"
+        ixz="0"
+        iyy="0.0001"
+        iyz="0"
+        izz="0.0001" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/caster_wheel_left_front.STL"/>
+      </geometry>
+      <material
+        name="blue">
+        <!-- <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" /> -->
+        <!-- <color name="xanhlo"/> -->
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/caster_wheel_left_front.STL"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="caster_wheel_left_front">
+    <material>Gazebo/Blue</material>
+    <mu1>0.001</mu1>
+    <mu2>0.001</mu2>
+  </gazebo>
+
+  <joint
+    name="caster_wheel_left_front_joint"
+    type="fixed">
+    <!-- type="continuous"> -->
+    <origin
+      xyz="0.4 0.17 -0.075"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="caster_wheel_left_front" />
+    <!-- <axis
+      xyz="0 0 1" /> -->
+  </joint>
+  
+
+  <gazebo>
+    <plugin name="diff_drive" filename="libgazebo_ros_diff_drive.so">
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+
+      <wheel_separation>0.56</wheel_separation> <wheel_diameter>0.18</wheel_diameter>   
+      <max_wheel_torque>20</max_wheel_torque>
+      <max_wheel_acceleration>1.0</max_wheel_acceleration>
+
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>true</publish_wheel_tf>
+    </plugin>
+    </gazebo>
+  
+</robot>

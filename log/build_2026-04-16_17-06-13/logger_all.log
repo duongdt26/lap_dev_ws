@@ -1,0 +1,456 @@
+[0.114s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--symlink-install']
+[0.114s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=True, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=8, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x72ec44229510>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x72ec44228f10>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x72ec44228f10>>)
+[0.313s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.313s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.313s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.313s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.313s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.313s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.313s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/duo/dev_ws'
+[0.313s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.313s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.314s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.314s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.314s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.314s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.314s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.314s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.314s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.325s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.325s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.326s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.326s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.326s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.326s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.326s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.326s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.326s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.326s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.326s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.326s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.326s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.326s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'python']
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2) by extensions ['ignore', 'ignore_ament_install']
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2) by extension 'ignore'
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2) by extension 'ignore_ament_install'
+[0.327s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2) by extensions ['colcon_pkg']
+[0.328s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2) by extension 'colcon_pkg'
+[0.328s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2) by extensions ['colcon_meta']
+[0.328s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2) by extension 'colcon_meta'
+[0.328s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2) by extensions ['ros']
+[0.328s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2) by extension 'ros'
+[0.330s] DEBUG:colcon.colcon_core.package_identification:Package 'src/amr_lan_2' with type 'ros.ament_cmake' and name 'amr_lan_2'
+[0.330s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2_mesh) by extensions ['ignore', 'ignore_ament_install']
+[0.331s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2_mesh) by extension 'ignore'
+[0.331s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2_mesh) by extension 'ignore_ament_install'
+[0.331s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2_mesh) by extensions ['colcon_pkg']
+[0.331s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2_mesh) by extension 'colcon_pkg'
+[0.331s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2_mesh) by extensions ['colcon_meta']
+[0.331s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2_mesh) by extension 'colcon_meta'
+[0.331s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2_mesh) by extensions ['ros']
+[0.331s] Level 1:colcon.colcon_core.package_identification:_identify(src/amr_lan_2_mesh) by extension 'ros'
+[0.332s] DEBUG:colcon.colcon_core.package_identification:Package 'src/amr_lan_2_mesh' with type 'ros.ament_cmake' and name 'amr_lan_2_mesh'
+[0.332s] Level 1:colcon.colcon_core.package_identification:_identify(src/custom_laser_filter) by extensions ['ignore', 'ignore_ament_install']
+[0.332s] Level 1:colcon.colcon_core.package_identification:_identify(src/custom_laser_filter) by extension 'ignore'
+[0.332s] Level 1:colcon.colcon_core.package_identification:_identify(src/custom_laser_filter) by extension 'ignore_ament_install'
+[0.332s] Level 1:colcon.colcon_core.package_identification:_identify(src/custom_laser_filter) by extensions ['colcon_pkg']
+[0.332s] Level 1:colcon.colcon_core.package_identification:_identify(src/custom_laser_filter) by extension 'colcon_pkg'
+[0.332s] Level 1:colcon.colcon_core.package_identification:_identify(src/custom_laser_filter) by extensions ['colcon_meta']
+[0.332s] Level 1:colcon.colcon_core.package_identification:_identify(src/custom_laser_filter) by extension 'colcon_meta'
+[0.332s] Level 1:colcon.colcon_core.package_identification:_identify(src/custom_laser_filter) by extensions ['ros']
+[0.332s] Level 1:colcon.colcon_core.package_identification:_identify(src/custom_laser_filter) by extension 'ros'
+[0.333s] DEBUG:colcon.colcon_core.package_identification:Package 'src/custom_laser_filter' with type 'ros.ament_python' and name 'custom_laser_filter'
+[0.333s] Level 1:colcon.colcon_core.package_identification:_identify(src/duobot_one) by extensions ['ignore', 'ignore_ament_install']
+[0.333s] Level 1:colcon.colcon_core.package_identification:_identify(src/duobot_one) by extension 'ignore'
+[0.333s] Level 1:colcon.colcon_core.package_identification:_identify(src/duobot_one) by extension 'ignore_ament_install'
+[0.333s] Level 1:colcon.colcon_core.package_identification:_identify(src/duobot_one) by extensions ['colcon_pkg']
+[0.333s] Level 1:colcon.colcon_core.package_identification:_identify(src/duobot_one) by extension 'colcon_pkg'
+[0.333s] Level 1:colcon.colcon_core.package_identification:_identify(src/duobot_one) by extensions ['colcon_meta']
+[0.333s] Level 1:colcon.colcon_core.package_identification:_identify(src/duobot_one) by extension 'colcon_meta'
+[0.334s] Level 1:colcon.colcon_core.package_identification:_identify(src/duobot_one) by extensions ['ros']
+[0.334s] Level 1:colcon.colcon_core.package_identification:_identify(src/duobot_one) by extension 'ros'
+[0.334s] DEBUG:colcon.colcon_core.package_identification:Package 'src/duobot_one' with type 'ros.ament_cmake' and name 'duobot_one'
+[0.334s] Level 1:colcon.colcon_core.package_identification:_identify(src/hinson_hardware) by extensions ['ignore', 'ignore_ament_install']
+[0.334s] Level 1:colcon.colcon_core.package_identification:_identify(src/hinson_hardware) by extension 'ignore'
+[0.334s] Level 1:colcon.colcon_core.package_identification:_identify(src/hinson_hardware) by extension 'ignore_ament_install'
+[0.335s] Level 1:colcon.colcon_core.package_identification:_identify(src/hinson_hardware) by extensions ['colcon_pkg']
+[0.335s] Level 1:colcon.colcon_core.package_identification:_identify(src/hinson_hardware) by extension 'colcon_pkg'
+[0.335s] Level 1:colcon.colcon_core.package_identification:_identify(src/hinson_hardware) by extensions ['colcon_meta']
+[0.335s] Level 1:colcon.colcon_core.package_identification:_identify(src/hinson_hardware) by extension 'colcon_meta'
+[0.335s] Level 1:colcon.colcon_core.package_identification:_identify(src/hinson_hardware) by extensions ['ros']
+[0.335s] Level 1:colcon.colcon_core.package_identification:_identify(src/hinson_hardware) by extension 'ros'
+[0.336s] DEBUG:colcon.colcon_core.package_identification:Package 'src/hinson_hardware' with type 'ros.ament_cmake' and name 'hinson_hardware'
+[0.336s] Level 1:colcon.colcon_core.package_identification:_identify(src/lap_thu_amr_description) by extensions ['ignore', 'ignore_ament_install']
+[0.336s] Level 1:colcon.colcon_core.package_identification:_identify(src/lap_thu_amr_description) by extension 'ignore'
+[0.336s] Level 1:colcon.colcon_core.package_identification:_identify(src/lap_thu_amr_description) by extension 'ignore_ament_install'
+[0.336s] Level 1:colcon.colcon_core.package_identification:_identify(src/lap_thu_amr_description) by extensions ['colcon_pkg']
+[0.336s] Level 1:colcon.colcon_core.package_identification:_identify(src/lap_thu_amr_description) by extension 'colcon_pkg'
+[0.336s] Level 1:colcon.colcon_core.package_identification:_identify(src/lap_thu_amr_description) by extensions ['colcon_meta']
+[0.336s] Level 1:colcon.colcon_core.package_identification:_identify(src/lap_thu_amr_description) by extension 'colcon_meta'
+[0.336s] Level 1:colcon.colcon_core.package_identification:_identify(src/lap_thu_amr_description) by extensions ['ros']
+[0.336s] Level 1:colcon.colcon_core.package_identification:_identify(src/lap_thu_amr_description) by extension 'ros'
+[0.337s] DEBUG:colcon.colcon_core.package_identification:Package 'src/lap_thu_amr_description' with type 'ros.ament_cmake' and name 'lap_thu_amr_description'
+[0.337s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.337s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.337s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.337s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.337s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.373s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.373s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.375s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 6 installed packages in /home/duo/dev_ws/install
+[0.378s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 479 installed packages in /opt/ros/humble
+[0.380s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[0.447s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2' build argument 'cmake_args' from command line to 'None'
+[0.447s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2' build argument 'cmake_target' from command line to 'None'
+[0.447s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.447s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2' build argument 'cmake_clean_cache' from command line to 'False'
+[0.447s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2' build argument 'cmake_clean_first' from command line to 'False'
+[0.447s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2' build argument 'cmake_force_configure' from command line to 'False'
+[0.447s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2' build argument 'ament_cmake_args' from command line to 'None'
+[0.447s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2' build argument 'catkin_cmake_args' from command line to 'None'
+[0.447s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.447s] DEBUG:colcon.colcon_core.verb:Building package 'amr_lan_2' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/duo/dev_ws/build/amr_lan_2', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/duo/dev_ws/install/amr_lan_2', 'merge_install': False, 'path': '/home/duo/dev_ws/src/amr_lan_2', 'symlink_install': True, 'test_result_base': None}
+[0.448s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2_mesh' build argument 'cmake_args' from command line to 'None'
+[0.448s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2_mesh' build argument 'cmake_target' from command line to 'None'
+[0.448s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2_mesh' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.448s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2_mesh' build argument 'cmake_clean_cache' from command line to 'False'
+[0.448s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2_mesh' build argument 'cmake_clean_first' from command line to 'False'
+[0.448s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2_mesh' build argument 'cmake_force_configure' from command line to 'False'
+[0.448s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2_mesh' build argument 'ament_cmake_args' from command line to 'None'
+[0.448s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2_mesh' build argument 'catkin_cmake_args' from command line to 'None'
+[0.448s] Level 5:colcon.colcon_core.verb:set package 'amr_lan_2_mesh' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.448s] DEBUG:colcon.colcon_core.verb:Building package 'amr_lan_2_mesh' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/duo/dev_ws/build/amr_lan_2_mesh', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/duo/dev_ws/install/amr_lan_2_mesh', 'merge_install': False, 'path': '/home/duo/dev_ws/src/amr_lan_2_mesh', 'symlink_install': True, 'test_result_base': None}
+[0.448s] Level 5:colcon.colcon_core.verb:set package 'custom_laser_filter' build argument 'cmake_args' from command line to 'None'
+[0.448s] Level 5:colcon.colcon_core.verb:set package 'custom_laser_filter' build argument 'cmake_target' from command line to 'None'
+[0.448s] Level 5:colcon.colcon_core.verb:set package 'custom_laser_filter' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.448s] Level 5:colcon.colcon_core.verb:set package 'custom_laser_filter' build argument 'cmake_clean_cache' from command line to 'False'
+[0.449s] Level 5:colcon.colcon_core.verb:set package 'custom_laser_filter' build argument 'cmake_clean_first' from command line to 'False'
+[0.449s] Level 5:colcon.colcon_core.verb:set package 'custom_laser_filter' build argument 'cmake_force_configure' from command line to 'False'
+[0.449s] Level 5:colcon.colcon_core.verb:set package 'custom_laser_filter' build argument 'ament_cmake_args' from command line to 'None'
+[0.449s] Level 5:colcon.colcon_core.verb:set package 'custom_laser_filter' build argument 'catkin_cmake_args' from command line to 'None'
+[0.449s] Level 5:colcon.colcon_core.verb:set package 'custom_laser_filter' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.449s] DEBUG:colcon.colcon_core.verb:Building package 'custom_laser_filter' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/duo/dev_ws/build/custom_laser_filter', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/duo/dev_ws/install/custom_laser_filter', 'merge_install': False, 'path': '/home/duo/dev_ws/src/custom_laser_filter', 'symlink_install': True, 'test_result_base': None}
+[0.449s] Level 5:colcon.colcon_core.verb:set package 'duobot_one' build argument 'cmake_args' from command line to 'None'
+[0.449s] Level 5:colcon.colcon_core.verb:set package 'duobot_one' build argument 'cmake_target' from command line to 'None'
+[0.449s] Level 5:colcon.colcon_core.verb:set package 'duobot_one' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.449s] Level 5:colcon.colcon_core.verb:set package 'duobot_one' build argument 'cmake_clean_cache' from command line to 'False'
+[0.449s] Level 5:colcon.colcon_core.verb:set package 'duobot_one' build argument 'cmake_clean_first' from command line to 'False'
+[0.449s] Level 5:colcon.colcon_core.verb:set package 'duobot_one' build argument 'cmake_force_configure' from command line to 'False'
+[0.449s] Level 5:colcon.colcon_core.verb:set package 'duobot_one' build argument 'ament_cmake_args' from command line to 'None'
+[0.449s] Level 5:colcon.colcon_core.verb:set package 'duobot_one' build argument 'catkin_cmake_args' from command line to 'None'
+[0.449s] Level 5:colcon.colcon_core.verb:set package 'duobot_one' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.449s] DEBUG:colcon.colcon_core.verb:Building package 'duobot_one' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/duo/dev_ws/build/duobot_one', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/duo/dev_ws/install/duobot_one', 'merge_install': False, 'path': '/home/duo/dev_ws/src/duobot_one', 'symlink_install': True, 'test_result_base': None}
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'hinson_hardware' build argument 'cmake_args' from command line to 'None'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'hinson_hardware' build argument 'cmake_target' from command line to 'None'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'hinson_hardware' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'hinson_hardware' build argument 'cmake_clean_cache' from command line to 'False'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'hinson_hardware' build argument 'cmake_clean_first' from command line to 'False'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'hinson_hardware' build argument 'cmake_force_configure' from command line to 'False'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'hinson_hardware' build argument 'ament_cmake_args' from command line to 'None'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'hinson_hardware' build argument 'catkin_cmake_args' from command line to 'None'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'hinson_hardware' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.450s] DEBUG:colcon.colcon_core.verb:Building package 'hinson_hardware' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/duo/dev_ws/build/hinson_hardware', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/duo/dev_ws/install/hinson_hardware', 'merge_install': False, 'path': '/home/duo/dev_ws/src/hinson_hardware', 'symlink_install': True, 'test_result_base': None}
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'lap_thu_amr_description' build argument 'cmake_args' from command line to 'None'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'lap_thu_amr_description' build argument 'cmake_target' from command line to 'None'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'lap_thu_amr_description' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'lap_thu_amr_description' build argument 'cmake_clean_cache' from command line to 'False'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'lap_thu_amr_description' build argument 'cmake_clean_first' from command line to 'False'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'lap_thu_amr_description' build argument 'cmake_force_configure' from command line to 'False'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'lap_thu_amr_description' build argument 'ament_cmake_args' from command line to 'None'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'lap_thu_amr_description' build argument 'catkin_cmake_args' from command line to 'None'
+[0.450s] Level 5:colcon.colcon_core.verb:set package 'lap_thu_amr_description' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.450s] DEBUG:colcon.colcon_core.verb:Building package 'lap_thu_amr_description' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/duo/dev_ws/build/lap_thu_amr_description', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/duo/dev_ws/install/lap_thu_amr_description', 'merge_install': False, 'path': '/home/duo/dev_ws/src/lap_thu_amr_description', 'symlink_install': True, 'test_result_base': None}
+[0.451s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.452s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.452s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/duo/dev_ws/src/amr_lan_2' with build type 'ament_cmake'
+[0.452s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/duo/dev_ws/src/amr_lan_2'
+[0.455s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.455s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.455s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.460s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/duo/dev_ws/src/amr_lan_2_mesh' with build type 'ament_cmake'
+[0.461s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/duo/dev_ws/src/amr_lan_2_mesh'
+[0.461s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.461s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.466s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/duo/dev_ws/src/custom_laser_filter' with build type 'ament_python'
+[0.466s] Level 1:colcon.colcon_core.shell:create_environment_hook('custom_laser_filter', 'ament_prefix_path')
+[0.466s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/custom_laser_filter/share/custom_laser_filter/hook/ament_prefix_path.ps1'
+[0.468s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/duo/dev_ws/install/custom_laser_filter/share/custom_laser_filter/hook/ament_prefix_path.dsv'
+[0.468s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/custom_laser_filter/share/custom_laser_filter/hook/ament_prefix_path.sh'
+[0.469s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.469s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.475s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/duo/dev_ws/src/duobot_one' with build type 'ament_cmake'
+[0.475s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/duo/dev_ws/src/duobot_one'
+[0.476s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.476s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.481s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/duo/dev_ws/src/hinson_hardware' with build type 'ament_cmake'
+[0.481s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/duo/dev_ws/src/hinson_hardware'
+[0.481s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.481s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.487s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/duo/dev_ws/src/lap_thu_amr_description' with build type 'ament_cmake'
+[0.487s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/duo/dev_ws/src/lap_thu_amr_description'
+[0.488s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.488s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.499s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/duo/dev_ws/build/amr_lan_2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_2 -- -j8 -l8
+[0.503s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/duo/dev_ws/build/amr_lan_2_mesh': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_2_mesh -- -j8 -l8
+[0.835s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/duo/dev_ws/src/custom_laser_filter'
+[0.836s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.836s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.846s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/duo/dev_ws/build/duobot_one': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/duobot_one -- -j8 -l8
+[0.850s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/duo/dev_ws/build/hinson_hardware': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake /home/duo/dev_ws/src/hinson_hardware -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/duo/dev_ws/install/hinson_hardware
+[0.857s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/duo/dev_ws/build/lap_thu_amr_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/lap_thu_amr_description -- -j8 -l8
+[0.858s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/duo/dev_ws/build/amr_lan_2_mesh' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_2_mesh -- -j8 -l8
+[0.871s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/duo/dev_ws/build/amr_lan_2_mesh': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_2_mesh
+[0.872s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/duo/dev_ws/build/amr_lan_2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_2 -- -j8 -l8
+[0.875s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/duo/dev_ws/build/amr_lan_2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_2
+[0.910s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/duo/dev_ws/build/duobot_one' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/duobot_one -- -j8 -l8
+[0.913s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/duo/dev_ws/build/duobot_one': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/duobot_one
+[0.921s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/duo/dev_ws/build/lap_thu_amr_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/lap_thu_amr_description -- -j8 -l8
+[0.926s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/duo/dev_ws/build/lap_thu_amr_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/lap_thu_amr_description
+[0.927s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(amr_lan_2)
+[0.928s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/duo/dev_ws/build/amr_lan_2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_2
+[0.936s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2' for CMake module files
+[0.943s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2' for CMake config files
+[0.945s] Level 1:colcon.colcon_core.shell:create_environment_hook('amr_lan_2', 'cmake_prefix_path')
+[0.945s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/hook/cmake_prefix_path.ps1'
+[0.946s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/hook/cmake_prefix_path.dsv'
+[0.948s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/hook/cmake_prefix_path.sh'
+[0.951s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2/bin'
+[0.951s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2/lib/pkgconfig/amr_lan_2.pc'
+[0.952s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2/lib/python3.10/site-packages'
+[0.952s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2/bin'
+[0.953s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/package.ps1'
+[0.955s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/package.dsv'
+[0.958s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/package.sh'
+[0.961s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/package.bash'
+[0.963s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/package.zsh'
+[0.965s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/duo/dev_ws/install/amr_lan_2/share/colcon-core/packages/amr_lan_2)
+[0.966s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(amr_lan_2)
+[0.967s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2' for CMake module files
+[0.968s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2' for CMake config files
+[0.968s] Level 1:colcon.colcon_core.shell:create_environment_hook('amr_lan_2', 'cmake_prefix_path')
+[0.969s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/hook/cmake_prefix_path.ps1'
+[0.970s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/hook/cmake_prefix_path.dsv'
+[0.970s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/hook/cmake_prefix_path.sh'
+[0.971s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2/bin'
+[0.971s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2/lib/pkgconfig/amr_lan_2.pc'
+[0.972s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2/lib/python3.10/site-packages'
+[0.972s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2/bin'
+[0.973s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/package.ps1'
+[0.974s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/package.dsv'
+[0.974s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/package.sh'
+[0.975s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/package.bash'
+[0.976s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/package.zsh'
+[0.976s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/duo/dev_ws/install/amr_lan_2/share/colcon-core/packages/amr_lan_2)
+[0.978s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(duobot_one)
+[0.979s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/duobot_one' for CMake module files
+[0.979s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/duo/dev_ws/build/duobot_one' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/duobot_one
+[0.980s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/duobot_one' for CMake config files
+[0.980s] Level 1:colcon.colcon_core.shell:create_environment_hook('duobot_one', 'cmake_prefix_path')
+[0.981s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/duobot_one/share/duobot_one/hook/cmake_prefix_path.ps1'
+[0.982s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/duo/dev_ws/install/duobot_one/share/duobot_one/hook/cmake_prefix_path.dsv'
+[0.982s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/duobot_one/share/duobot_one/hook/cmake_prefix_path.sh'
+[0.983s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/duobot_one/bin'
+[0.983s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/duobot_one/lib/pkgconfig/duobot_one.pc'
+[0.984s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/duobot_one/lib/python3.10/site-packages'
+[0.984s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/duobot_one/bin'
+[0.985s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/duobot_one/share/duobot_one/package.ps1'
+[0.986s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/duo/dev_ws/install/duobot_one/share/duobot_one/package.dsv'
+[0.986s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/duobot_one/share/duobot_one/package.sh'
+[0.987s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/duobot_one/share/duobot_one/package.bash'
+[0.988s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/duobot_one/share/duobot_one/package.zsh'
+[0.988s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/duo/dev_ws/install/duobot_one/share/colcon-core/packages/duobot_one)
+[0.989s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(duobot_one)
+[0.989s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/duobot_one' for CMake module files
+[0.990s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/duobot_one' for CMake config files
+[0.991s] Level 1:colcon.colcon_core.shell:create_environment_hook('duobot_one', 'cmake_prefix_path')
+[0.991s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/duobot_one/share/duobot_one/hook/cmake_prefix_path.ps1'
+[0.992s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/duo/dev_ws/install/duobot_one/share/duobot_one/hook/cmake_prefix_path.dsv'
+[0.992s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/duobot_one/share/duobot_one/hook/cmake_prefix_path.sh'
+[0.993s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/duobot_one/bin'
+[0.993s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/duobot_one/lib/pkgconfig/duobot_one.pc'
+[0.993s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/duobot_one/lib/python3.10/site-packages'
+[0.994s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/duobot_one/bin'
+[0.994s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/duobot_one/share/duobot_one/package.ps1'
+[0.995s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/duo/dev_ws/install/duobot_one/share/duobot_one/package.dsv'
+[0.995s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/duobot_one/share/duobot_one/package.sh'
+[0.996s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/duobot_one/share/duobot_one/package.bash'
+[0.997s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/duobot_one/share/duobot_one/package.zsh'
+[0.998s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/duo/dev_ws/install/duobot_one/share/colcon-core/packages/duobot_one)
+[0.998s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(amr_lan_2_mesh)
+[0.998s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2_mesh' for CMake module files
+[1.000s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/duo/dev_ws/build/amr_lan_2_mesh' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_2_mesh
+[1.000s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2_mesh' for CMake config files
+[1.001s] Level 1:colcon.colcon_core.shell:create_environment_hook('amr_lan_2_mesh', 'cmake_prefix_path')
+[1.001s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/hook/cmake_prefix_path.ps1'
+[1.002s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/hook/cmake_prefix_path.dsv'
+[1.002s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/hook/cmake_prefix_path.sh'
+[1.003s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2_mesh/bin'
+[1.003s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2_mesh/lib/pkgconfig/amr_lan_2_mesh.pc'
+[1.003s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2_mesh/lib/python3.10/site-packages'
+[1.003s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2_mesh/bin'
+[1.004s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/package.ps1'
+[1.005s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/package.dsv'
+[1.005s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/package.sh'
+[1.006s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/package.bash'
+[1.006s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/package.zsh'
+[1.007s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/duo/dev_ws/install/amr_lan_2_mesh/share/colcon-core/packages/amr_lan_2_mesh)
+[1.008s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(amr_lan_2_mesh)
+[1.008s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2_mesh' for CMake module files
+[1.008s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2_mesh' for CMake config files
+[1.009s] Level 1:colcon.colcon_core.shell:create_environment_hook('amr_lan_2_mesh', 'cmake_prefix_path')
+[1.010s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/hook/cmake_prefix_path.ps1'
+[1.010s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/hook/cmake_prefix_path.dsv'
+[1.011s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/hook/cmake_prefix_path.sh'
+[1.011s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2_mesh/bin'
+[1.011s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2_mesh/lib/pkgconfig/amr_lan_2_mesh.pc'
+[1.012s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2_mesh/lib/python3.10/site-packages'
+[1.012s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/amr_lan_2_mesh/bin'
+[1.013s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/package.ps1'
+[1.014s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/package.dsv'
+[1.015s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/package.sh'
+[1.015s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/package.bash'
+[1.016s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/package.zsh'
+[1.017s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/duo/dev_ws/install/amr_lan_2_mesh/share/colcon-core/packages/amr_lan_2_mesh)
+[1.018s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(lap_thu_amr_description)
+[1.018s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/lap_thu_amr_description' for CMake module files
+[1.020s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/duo/dev_ws/build/lap_thu_amr_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/lap_thu_amr_description
+[1.020s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/lap_thu_amr_description' for CMake config files
+[1.021s] Level 1:colcon.colcon_core.shell:create_environment_hook('lap_thu_amr_description', 'cmake_prefix_path')
+[1.021s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/hook/cmake_prefix_path.ps1'
+[1.022s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/hook/cmake_prefix_path.dsv'
+[1.022s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/hook/cmake_prefix_path.sh'
+[1.023s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/lap_thu_amr_description/bin'
+[1.023s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/lap_thu_amr_description/lib/pkgconfig/lap_thu_amr_description.pc'
+[1.024s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/lap_thu_amr_description/lib/python3.10/site-packages'
+[1.024s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/lap_thu_amr_description/bin'
+[1.024s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/package.ps1'
+[1.025s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/package.dsv'
+[1.026s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/package.sh'
+[1.026s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/package.bash'
+[1.027s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/package.zsh'
+[1.027s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/duo/dev_ws/install/lap_thu_amr_description/share/colcon-core/packages/lap_thu_amr_description)
+[1.028s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(lap_thu_amr_description)
+[1.028s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/lap_thu_amr_description' for CMake module files
+[1.029s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/lap_thu_amr_description' for CMake config files
+[1.030s] Level 1:colcon.colcon_core.shell:create_environment_hook('lap_thu_amr_description', 'cmake_prefix_path')
+[1.030s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/hook/cmake_prefix_path.ps1'
+[1.031s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/hook/cmake_prefix_path.dsv'
+[1.031s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/hook/cmake_prefix_path.sh'
+[1.032s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/lap_thu_amr_description/bin'
+[1.032s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/lap_thu_amr_description/lib/pkgconfig/lap_thu_amr_description.pc'
+[1.032s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/lap_thu_amr_description/lib/python3.10/site-packages'
+[1.032s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/lap_thu_amr_description/bin'
+[1.033s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/package.ps1'
+[1.034s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/package.dsv'
+[1.034s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/package.sh'
+[1.035s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/package.bash'
+[1.035s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/package.zsh'
+[1.036s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/duo/dev_ws/install/lap_thu_amr_description/share/colcon-core/packages/lap_thu_amr_description)
+[1.394s] DEBUG:colcon.colcon_core.task.python.build:While undoing a previous installation files outside the Python library path are being ignored: /home/duo/dev_ws/install/custom_laser_filter/share/ament_index/resource_index/packages/custom_laser_filter
+[1.394s] DEBUG:colcon.colcon_core.task.python.build:While undoing a previous installation files outside the Python library path are being ignored: /home/duo/dev_ws/install/custom_laser_filter/share/custom_laser_filter/package.xml
+[1.395s] DEBUG:colcon.colcon_core.task.python.build:While undoing a previous installation files outside the Python library path are being ignored: /home/duo/dev_ws/install/custom_laser_filter/lib/custom_laser_filter/laser_filter
+[1.400s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/duo/dev_ws/build/custom_laser_filter': PYTHONPATH=/home/duo/dev_ws/build/custom_laser_filter/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/duo/dev_ws/install/custom_laser_filter/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/duo/dev_ws/build/custom_laser_filter/build --no-deps symlink_data --force
+[1.714s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/duo/dev_ws/build/hinson_hardware' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake /home/duo/dev_ws/src/hinson_hardware -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/duo/dev_ws/install/hinson_hardware
+[1.717s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/duo/dev_ws/build/hinson_hardware': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/hinson_hardware -- -j8 -l8
+[2.081s] Level 1:colcon.colcon_core.shell:create_environment_hook('custom_laser_filter', 'pythonpath_develop')
+[2.081s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/build/custom_laser_filter/share/custom_laser_filter/hook/pythonpath_develop.ps1'
+[2.082s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/duo/dev_ws/build/custom_laser_filter' returned '0': PYTHONPATH=/home/duo/dev_ws/build/custom_laser_filter/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/duo/dev_ws/install/custom_laser_filter/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/duo/dev_ws/build/custom_laser_filter/build --no-deps symlink_data --force
+[2.082s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/duo/dev_ws/build/custom_laser_filter/share/custom_laser_filter/hook/pythonpath_develop.dsv'
+[2.083s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/build/custom_laser_filter/share/custom_laser_filter/hook/pythonpath_develop.sh'
+[2.084s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/custom_laser_filter' for CMake module files
+[2.085s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/custom_laser_filter' for CMake config files
+[2.085s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/custom_laser_filter/lib'
+[2.086s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/custom_laser_filter/bin'
+[2.086s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/custom_laser_filter/lib/pkgconfig/custom_laser_filter.pc'
+[2.086s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/custom_laser_filter/lib/python3.10/site-packages'
+[2.086s] Level 1:colcon.colcon_core.shell:create_environment_hook('custom_laser_filter', 'pythonpath')
+[2.086s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/custom_laser_filter/share/custom_laser_filter/hook/pythonpath.ps1'
+[2.087s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/duo/dev_ws/install/custom_laser_filter/share/custom_laser_filter/hook/pythonpath.dsv'
+[2.088s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/custom_laser_filter/share/custom_laser_filter/hook/pythonpath.sh'
+[2.088s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/custom_laser_filter/bin'
+[2.089s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(custom_laser_filter)
+[2.089s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/custom_laser_filter/share/custom_laser_filter/package.ps1'
+[2.090s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/duo/dev_ws/install/custom_laser_filter/share/custom_laser_filter/package.dsv'
+[2.091s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/custom_laser_filter/share/custom_laser_filter/package.sh'
+[2.091s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/custom_laser_filter/share/custom_laser_filter/package.bash'
+[2.092s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/custom_laser_filter/share/custom_laser_filter/package.zsh'
+[2.092s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/duo/dev_ws/install/custom_laser_filter/share/colcon-core/packages/custom_laser_filter)
+[2.173s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/duo/dev_ws/build/hinson_hardware' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/hinson_hardware -- -j8 -l8
+[2.176s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/duo/dev_ws/build/hinson_hardware': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/hinson_hardware
+[2.527s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(hinson_hardware)
+[2.527s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/hinson_hardware' for CMake module files
+[2.528s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/duo/dev_ws/build/hinson_hardware' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/hinson_hardware
+[2.529s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/hinson_hardware' for CMake config files
+[2.529s] Level 1:colcon.colcon_core.shell:create_environment_hook('hinson_hardware', 'cmake_prefix_path')
+[2.529s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/hook/cmake_prefix_path.ps1'
+[2.530s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/hook/cmake_prefix_path.dsv'
+[2.531s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/hook/cmake_prefix_path.sh'
+[2.531s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/hinson_hardware/lib'
+[2.532s] Level 1:colcon.colcon_core.shell:create_environment_hook('hinson_hardware', 'ld_library_path_lib')
+[2.532s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/hook/ld_library_path_lib.ps1'
+[2.533s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/hook/ld_library_path_lib.dsv'
+[2.533s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/hook/ld_library_path_lib.sh'
+[2.534s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/hinson_hardware/bin'
+[2.534s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/hinson_hardware/lib/pkgconfig/hinson_hardware.pc'
+[2.534s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/hinson_hardware/lib/python3.10/site-packages'
+[2.534s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/hinson_hardware/bin'
+[2.535s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/package.ps1'
+[2.536s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/package.dsv'
+[2.537s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/package.sh'
+[2.537s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/package.bash'
+[2.538s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/package.zsh'
+[2.538s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/duo/dev_ws/install/hinson_hardware/share/colcon-core/packages/hinson_hardware)
+[2.539s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(hinson_hardware)
+[2.539s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/hinson_hardware' for CMake module files
+[2.540s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/hinson_hardware' for CMake config files
+[2.540s] Level 1:colcon.colcon_core.shell:create_environment_hook('hinson_hardware', 'cmake_prefix_path')
+[2.540s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/hook/cmake_prefix_path.ps1'
+[2.541s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/hook/cmake_prefix_path.dsv'
+[2.541s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/hook/cmake_prefix_path.sh'
+[2.542s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/hinson_hardware/lib'
+[2.542s] Level 1:colcon.colcon_core.shell:create_environment_hook('hinson_hardware', 'ld_library_path_lib')
+[2.542s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/hook/ld_library_path_lib.ps1'
+[2.543s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/hook/ld_library_path_lib.dsv'
+[2.543s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/hook/ld_library_path_lib.sh'
+[2.544s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/hinson_hardware/bin'
+[2.544s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/hinson_hardware/lib/pkgconfig/hinson_hardware.pc'
+[2.544s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/hinson_hardware/lib/python3.10/site-packages'
+[2.544s] Level 1:colcon.colcon_core.environment:checking '/home/duo/dev_ws/install/hinson_hardware/bin'
+[2.545s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/package.ps1'
+[2.545s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/package.dsv'
+[2.546s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/package.sh'
+[2.547s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/package.bash'
+[2.547s] INFO:colcon.colcon_core.shell:Creating package script '/home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/package.zsh'
+[2.548s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/duo/dev_ws/install/hinson_hardware/share/colcon-core/packages/hinson_hardware)
+[2.548s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[2.548s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[2.549s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[2.549s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[2.556s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[2.557s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[2.557s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[2.587s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[2.587s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/duo/dev_ws/install/local_setup.ps1'
+[2.589s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/duo/dev_ws/install/_local_setup_util_ps1.py'
+[2.591s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/duo/dev_ws/install/setup.ps1'
+[2.593s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/duo/dev_ws/install/local_setup.sh'
+[2.594s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/duo/dev_ws/install/_local_setup_util_sh.py'
+[2.596s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/duo/dev_ws/install/setup.sh'
+[2.598s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/duo/dev_ws/install/local_setup.bash'
+[2.599s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/duo/dev_ws/install/setup.bash'
+[2.602s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/duo/dev_ws/install/local_setup.zsh'
+[2.603s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/duo/dev_ws/install/setup.zsh'

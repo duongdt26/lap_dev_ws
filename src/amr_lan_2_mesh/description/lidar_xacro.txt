@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- LASER FRAME -->
+
+    <joint name="laser_joint" type="fixed">
+        <!-- <origin xyz="0.545 0.2925 0.283"
+        rpy="0 0 3.1416" /> -->
+        <origin xyz="0.545 0.2925 0.283" rpy="0 0 ${pi}" />
+        <parent link="base_link" />
+        <child link="laser_frame" />
+        <axis xyz="0 0 0" />
+    </joint>
+
+    <link name="laser_frame">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <!-- <cylinder radius="0.035" length="0.04"/> -->
+                <mesh filename="package://amr_lan_2_mesh/meshes/laser_frame.STL"/>
+            </geometry>
+            <material
+                name="">
+                <color
+                rgba="0.211764705882353 0.211764705882353 0.203921568627451 1"/>
+                <!-- <color name="xanhlo"/> -->
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="0.035" length="0.04"/>
+                <!-- <mesh filename="package://amr_lan_2_mesh/meshes/laser_frame.STL"/> -->
+            </geometry>
+        </collision>
+
+        <xacro:inertial_cylinder mass="0.1" length="0.04" radius="0.035">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+        <!-- <inertial> -->
+        <!-- <origin
+            xyz="0.00512745596438602 0.000556520497701551 -0.0195507847870177"
+            rpy="0 0 0" /> -->
+        <!-- <origin
+            xyz="0.00512745596438602 0.000556520497701551 -0.0195507847870177"
+            rpy="0 0 0" />
+        <mass
+            value="0.141654473640087" />
+        <inertia
+            ixx="0.01"
+            ixy="0"
+            ixz="0"
+            iyy="0.01"
+            iyz="0"
+            izz="0.01" />
+            </inertial> -->
+            
+    </link>
+    
+    <gazebo reference="laser_frame">
+        <!-- <material>Gazebo/Red</material> -->
+        <material>Gazebo/Black</material>
+
+        <sensor name="laser" type="ray">
+            <pose> 0 0 0 0 0 0 </pose>
+            <visualize>true</visualize>
+            <update_rate>8</update_rate>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-3.14</min_angle>
+                        <max_angle>3.14</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.15</min>
+                    <max>12</max>
+                    <resolution>0.01</resolution>
+                </range>
+                <!-- <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.01</stddev> Small noise for realism
+                </noise> -->
+            </ray>
+            <plugin name="laser_controller" filename="libgazebo_ros_ray_sensor.so">
+                <ros>
+                    <argument>~/out:=scan</argument>
+                </ros>
+                <output_type>sensor_msgs/LaserScan</output_type>
+                <frame_name>laser_frame</frame_name>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+
+
+
+
+</robot>

@@ -1,0 +1,1 @@
+/home/duo/dev_ws/build/hinson_hardware/ament_cmake_core/hinson_hardwareConfig.cmake

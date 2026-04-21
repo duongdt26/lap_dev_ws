@@ -1,0 +1,4 @@
+source;share/lap_thu_amr_description/local_setup.bash
+source;share/lap_thu_amr_description/local_setup.dsv
+source;share/lap_thu_amr_description/local_setup.sh
+source;share/lap_thu_amr_description/local_setup.zsh

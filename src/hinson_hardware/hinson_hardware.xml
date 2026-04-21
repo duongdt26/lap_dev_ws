@@ -1,0 +1,9 @@
+<library path="hinson_hardware">
+    <class name="hinson_hardware/HinsonSystemHardware"
+            type="hinson_hardware::HinsonSystemHardware"
+            base_class_type="hardware_interface::SystemInterface">
+        <decription>
+            Hardware interface for Hinson CNS-BL30HDN driver via Modbus RTU.
+        </decription>   
+    </class>
+</library>

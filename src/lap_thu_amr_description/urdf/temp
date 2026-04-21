@@ -1,0 +1,121 @@
+<link
+    name="laser_frame">
+    <inertial>
+      <!-- <origin
+        xyz="0.00512745596438602 0.000556520497701551 -0.0195507847870177"
+        rpy="0 0 0" /> -->
+      <origin
+        xyz="0.00512745596438602 0.000556520497701551 -0.0195507847870177"
+        rpy="0 0 0" />
+      <mass
+        value="0.141654473640087" />
+      <inertia
+        ixx="0.01"
+        ixy="0"
+        ixz="0"
+        iyy="0.01"
+        iyz="0"
+        izz="0.01" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/laser_frame.STL"/>
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.211764705882353 0.211764705882353 0.203921568627451 1" />
+        <!-- <color name="xanhlo"/> -->
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/laser_frame.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="laser_joint"
+    type="fixed">
+    <origin
+      xyz="0.545 0.2925 0.283"
+      rpy="0 0 3.1416" />
+    <parent
+      link="base_link" />
+    <child
+      link="laser_frame" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="imu_link">
+    <inertial>
+      <origin
+        xyz="0.000337950864786984 0.000243898911057051 -0.00130420688882604"
+        rpy="0 0 0" />
+      <mass
+        value="0.01" />
+      <!-- <inertia
+        ixx="9.45690179472923E-09"
+        ixy="-2.68793364809672E-13"
+        ixz="-5.21685957186913E-25"
+        iyy="5.2352665677984E-09"
+        iyz="-2.61800056754948E-23"
+        izz="1.46360849067926E-08" /> -->
+        <inertia
+        ixx="0.0001"
+        ixy="0"
+        ixz="0"
+        iyy="0.0001"
+        iyz="0"
+        izz="0.0001" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/imu_link.STL"/>
+      </geometry>
+      <material
+        name="blue">
+        <!-- <color
+          rgba="0.964705882352941 0.964705882352941 0.952941176470588 1" /> -->
+        <!-- <color name="xanhlo"/> -->
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lap_thu_amr_description/meshes/imu_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="imu_joint"
+    type="fixed">
+    <!-- <origin
+      xyz="-9.7332E-05 -8.7723E-05 0.231"
+      rpy="0 0 0" /> -->
+    <origin
+      xyz="0 0 0.231"
+      rpy="0 0 0" />
+      <parent
+      link="base_link" />
+    <child
+      link="imu_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>

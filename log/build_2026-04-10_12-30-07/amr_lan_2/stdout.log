@@ -1,0 +1,35 @@
+-- Install configuration: ""
+-- Execute custom install script
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/config/view_bot.rviz
+-- Symlinking: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/description/gazebo_control.xacro
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/description/inertial_macros.xacro
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/description/robot.urdf.xacro
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/description/robot_core.xacro
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/description/tmep
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/launch/launch_sim.launch.py
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/launch/rsp.launch.py
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/base_footprint.STL
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/base_link.STL
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/caster_wheel_left_behind.STL
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/caster_wheel_left_front.STL
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/caster_wheel_right_behind.STL
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/caster_wheel_right_front.STL
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/imu_link.STL
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/laser_frame.STL
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/left_wheel.STL
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/right_wheel.STL
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/ament_index/resource_index/package_run_dependencies/amr_lan_2
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/ament_index/resource_index/parent_prefix_path/amr_lan_2
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/environment/ament_prefix_path.sh
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/environment/ament_prefix_path.dsv
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/environment/path.sh
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/environment/path.dsv
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/local_setup.bash
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/local_setup.sh
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/local_setup.zsh
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/local_setup.dsv
+-- Symlinking: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/package.dsv
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/ament_index/resource_index/packages/amr_lan_2
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/cmake/amr_lan_2Config.cmake
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/cmake/amr_lan_2Config-version.cmake
+-- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/package.xml

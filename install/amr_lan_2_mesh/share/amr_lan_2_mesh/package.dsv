@@ -1,0 +1,8 @@
+source;share/amr_lan_2_mesh/hook/cmake_prefix_path.ps1
+source;share/amr_lan_2_mesh/hook/cmake_prefix_path.dsv
+source;share/amr_lan_2_mesh/hook/cmake_prefix_path.sh
+source;share/amr_lan_2_mesh/local_setup.bash
+source;share/amr_lan_2_mesh/local_setup.dsv
+source;share/amr_lan_2_mesh/local_setup.ps1
+source;share/amr_lan_2_mesh/local_setup.sh
+source;share/amr_lan_2_mesh/local_setup.zsh

@@ -1,0 +1,61 @@
+[0.021s] Invoking command in '/home/duo/dev_ws/build/duobot_one': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/duo/dev_ws/src/duobot_one -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/duo/dev_ws/install/duobot_one
+[0.147s] -- The C compiler identification is GNU 11.4.0
+[0.279s] -- The CXX compiler identification is GNU 11.4.0
+[0.307s] -- Detecting C compiler ABI info
+[0.436s] -- Detecting C compiler ABI info - done
+[0.459s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.460s] -- Detecting C compile features
+[0.462s] -- Detecting C compile features - done
+[0.473s] -- Detecting CXX compiler ABI info
+[0.596s] -- Detecting CXX compiler ABI info - done
+[0.619s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.620s] -- Detecting CXX compile features
+[0.621s] -- Detecting CXX compile features - done
+[0.634s] -- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.817s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.894s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.964s] -- Found ament_lint_auto: 0.12.15 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[1.076s] -- Added test 'flake8' to check Python code syntax and style conventions
+[1.078s] -- Added test 'lint_cmake' to check CMake code style
+[1.079s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[1.085s] -- Added test 'xmllint' to check XML markup files
+[1.087s] -- Configuring done
+[1.091s] -- Generating done
+[1.093s] -- Build files have been written to: /home/duo/dev_ws/build/duobot_one
+[1.098s] Invoked command in '/home/duo/dev_ws/build/duobot_one' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/duo/dev_ws/src/duobot_one -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/duo/dev_ws/install/duobot_one
+[1.101s] Invoking command in '/home/duo/dev_ws/build/duobot_one': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/duobot_one -- -j8 -l8
+[1.165s] Invoked command in '/home/duo/dev_ws/build/duobot_one' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/duobot_one -- -j8 -l8
+[1.168s] Invoking command in '/home/duo/dev_ws/build/duobot_one': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/duobot_one
+[1.177s] -- Install configuration: ""
+[1.177s] -- Execute custom install script
+[1.178s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/config/drive_bot.rviz
+[1.196s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/config/my_controllers.yaml
+[1.208s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/config/view_bot.rviz
+[1.220s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/description/gazebo_control.xacro
+[1.232s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/description/inertial_macros.xacro
+[1.245s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/description/lidar.xacro
+[1.258s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/description/robot.urdf.xacro
+[1.270s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/description/robot_core.xacro
+[1.281s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/description/robot_core_temp.xacro
+[1.295s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/description/ros2_control.xacro
+[1.315s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/launch/launch_robot.launch.py
+[1.327s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/launch/launch_sim.launch.py
+[1.339s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/launch/rplidar.launch.py
+[1.350s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/launch/rsp.launch.py
+[1.361s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/worlds/obstacles.world
+[1.373s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/ament_index/resource_index/package_run_dependencies/duobot_one
+[1.384s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/ament_index/resource_index/parent_prefix_path/duobot_one
+[1.396s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/environment/ament_prefix_path.sh
+[1.409s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/environment/ament_prefix_path.dsv
+[1.421s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/environment/path.sh
+[1.432s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/environment/path.dsv
+[1.445s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/local_setup.bash
+[1.461s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/local_setup.sh
+[1.482s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/local_setup.zsh
+[1.495s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/local_setup.dsv
+[1.518s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/package.dsv
+[1.532s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/ament_index/resource_index/packages/duobot_one
+[1.551s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/cmake/duobot_oneConfig.cmake
+[1.570s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/cmake/duobot_oneConfig-version.cmake
+[1.589s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/package.xml
+[1.607s] Invoked command in '/home/duo/dev_ws/build/duobot_one' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/duobot_one
