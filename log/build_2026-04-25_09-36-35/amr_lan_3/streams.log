@@ -1,0 +1,44 @@
+[0.016s] Invoking command in '/home/duo/dev_ws/build/amr_lan_3': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/duo/dev_ws/src/amr_lan_3 -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/duo/dev_ws/install/amr_lan_3
+[0.164s] -- The C compiler identification is GNU 11.4.0
+[0.290s] -- The CXX compiler identification is GNU 11.4.0
+[0.311s] -- Detecting C compiler ABI info
+[0.425s] -- Detecting C compiler ABI info - done
+[0.435s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.436s] -- Detecting C compile features
+[0.437s] -- Detecting C compile features - done
+[0.441s] -- Detecting CXX compiler ABI info
+[0.575s] -- Detecting CXX compiler ABI info - done
+[0.585s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.586s] -- Detecting CXX compile features
+[0.586s] -- Detecting CXX compile features - done
+[0.594s] -- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.775s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.866s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.944s] -- Found ament_lint_auto: 0.12.15 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[1.053s] -- Added test 'lint_cmake' to check CMake code style
+[1.055s] -- Added test 'xmllint' to check XML markup files
+[1.058s] -- Configuring done
+[1.062s] -- Generating done
+[1.064s] -- Build files have been written to: /home/duo/dev_ws/build/amr_lan_3
+[1.070s] Invoked command in '/home/duo/dev_ws/build/amr_lan_3' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/duo/dev_ws/src/amr_lan_3 -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/duo/dev_ws/install/amr_lan_3
+[1.073s] Invoking command in '/home/duo/dev_ws/build/amr_lan_3': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_3 -- -j8 -l8
+[1.129s] Invoked command in '/home/duo/dev_ws/build/amr_lan_3' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_3 -- -j8 -l8
+[1.152s] Invoking command in '/home/duo/dev_ws/build/amr_lan_3': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_3
+[1.161s] -- Install configuration: ""
+[1.162s] -- Execute custom install script
+[1.163s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/ament_index/resource_index/package_run_dependencies/amr_lan_3
+[1.174s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/ament_index/resource_index/parent_prefix_path/amr_lan_3
+[1.185s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/environment/ament_prefix_path.sh
+[1.198s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/environment/ament_prefix_path.dsv
+[1.210s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/environment/path.sh
+[1.226s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/environment/path.dsv
+[1.240s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/local_setup.bash
+[1.260s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/local_setup.sh
+[1.272s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/local_setup.zsh
+[1.284s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/local_setup.dsv
+[1.296s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/package.dsv
+[1.307s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/ament_index/resource_index/packages/amr_lan_3
+[1.318s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/cmake/amr_lan_3Config.cmake
+[1.337s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/cmake/amr_lan_3Config-version.cmake
+[1.349s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/package.xml
+[1.363s] Invoked command in '/home/duo/dev_ws/build/amr_lan_3' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_3

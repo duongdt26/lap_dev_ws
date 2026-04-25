@@ -1,0 +1,39 @@
+[0.051s] Invoking command in '/home/duo/dev_ws/build/amr_lan_2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_2 -- -j8 -l8
+[0.482s] Invoked command in '/home/duo/dev_ws/build/amr_lan_2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_2 -- -j8 -l8
+[0.486s] Invoking command in '/home/duo/dev_ws/build/amr_lan_2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_2
+[0.506s] -- Install configuration: ""
+[0.508s] -- Execute custom install script
+[0.509s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/config/view_bot.rviz
+[0.509s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/description/gazebo_control.xacro
+[0.509s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/description/inertial_macros.xacro
+[0.510s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/description/robot.urdf.xacro
+[0.510s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/description/robot_core.xacro
+[0.511s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/description/tmep
+[0.511s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/launch/launch_sim.launch.py
+[0.511s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/launch/rsp.launch.py
+[0.512s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/base_footprint.STL
+[0.512s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/base_link.STL
+[0.512s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/caster_wheel_left_behind.STL
+[0.513s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/caster_wheel_left_front.STL
+[0.514s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/caster_wheel_right_behind.STL
+[0.514s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/caster_wheel_right_front.STL
+[0.514s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/imu_link.STL
+[0.514s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/laser_frame.STL
+[0.514s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/left_wheel.STL
+[0.515s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/right_wheel.STL
+[0.515s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/ament_index/resource_index/package_run_dependencies/amr_lan_2
+[0.515s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/ament_index/resource_index/parent_prefix_path/amr_lan_2
+[0.516s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/environment/ament_prefix_path.sh
+[0.516s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/environment/ament_prefix_path.dsv
+[0.516s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/environment/path.sh
+[0.516s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/environment/path.dsv
+[0.516s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/local_setup.bash
+[0.517s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/local_setup.sh
+[0.517s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/local_setup.zsh
+[0.517s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/local_setup.dsv
+[0.517s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/package.dsv
+[0.534s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/ament_index/resource_index/packages/amr_lan_2
+[0.534s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/cmake/amr_lan_2Config.cmake
+[0.534s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/cmake/amr_lan_2Config-version.cmake
+[0.535s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/package.xml
+[0.572s] Invoked command in '/home/duo/dev_ws/build/amr_lan_2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_2

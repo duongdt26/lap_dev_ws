@@ -121,6 +121,11 @@ hardware_interface::CallbackReturn HinsonSystemHardware::on_init(
   hw_positions_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_velocities_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_commands_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+  // Trong hinson_system.cpp -> hàm on_init
+  // hw_positions_.assign(info_.joints.size(), 0.0);
+  // hw_velocities_.assign(info_.joints.size(), 0.0);
+  // hw_commands_.assign(info_.joints.size(), 0.0);
+  
   prev_hall_counts_.resize(info_.joints.size(), 0);
 
   // Đọc params từ URDF

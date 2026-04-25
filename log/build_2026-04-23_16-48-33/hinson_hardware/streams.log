@@ -1,0 +1,32 @@
+[0.363s] Invoking command in '/home/duo/dev_ws/build/hinson_hardware': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/hinson_hardware -- -j8 -l8
+[0.456s] [100%] Built target hinson_hardware
+[0.532s] Invoked command in '/home/duo/dev_ws/build/hinson_hardware' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/hinson_hardware -- -j8 -l8
+[0.532s] Invoking command in '/home/duo/dev_ws/build/hinson_hardware': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/hinson_hardware
+[0.541s] -- Install configuration: ""
+[0.541s] -- Execute custom install script
+[0.541s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware//hinson_hardware.xml
+[0.542s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/lib/libhinson_hardware.so
+[0.542s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/include/hinson_hardware/hinson_system.hpp
+[0.543s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/hinson_hardware.xml
+[0.543s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/environment/library_path.sh
+[0.543s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/environment/library_path.dsv
+[0.543s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/ament_index/resource_index/package_run_dependencies/hinson_hardware
+[0.544s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/ament_index/resource_index/parent_prefix_path/hinson_hardware
+[0.544s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/environment/ament_prefix_path.sh
+[0.544s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/environment/ament_prefix_path.dsv
+[0.544s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/environment/path.sh
+[0.545s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/environment/path.dsv
+[0.545s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/local_setup.bash
+[0.545s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/local_setup.sh
+[0.545s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/local_setup.zsh
+[0.546s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/local_setup.dsv
+[0.546s] -- Symlinking: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/package.dsv
+[0.560s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/ament_index/resource_index/packages/hinson_hardware
+[0.560s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/ament_index/resource_index/hardware_interface__pluginlib__plugin/hinson_hardware
+[0.561s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/cmake/ament_cmake_export_include_directories-extras.cmake
+[0.561s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/cmake/ament_cmake_export_libraries-extras.cmake
+[0.561s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/cmake/ament_cmake_export_dependencies-extras.cmake
+[0.561s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/cmake/hinson_hardwareConfig.cmake
+[0.562s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/cmake/hinson_hardwareConfig-version.cmake
+[0.562s] -- Up-to-date symlink: /home/duo/dev_ws/install/hinson_hardware/share/hinson_hardware/package.xml
+[0.566s] Invoked command in '/home/duo/dev_ws/build/hinson_hardware' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/hinson_hardware

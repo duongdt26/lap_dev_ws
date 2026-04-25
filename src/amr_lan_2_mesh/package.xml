@@ -12,7 +12,6 @@
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
-
   <!-- day ne -->
   <exec_depend>joint_state_publisher</exec_depend>
   <exec_depend>joint_state_publisher_gui</exec_depend>
@@ -21,8 +20,6 @@
 
   <exec_depend>robot_state_publisher</exec_depend>
   <!-- day ne -->
-
-  
 
   <export>
     <build_type>ament_cmake</build_type>

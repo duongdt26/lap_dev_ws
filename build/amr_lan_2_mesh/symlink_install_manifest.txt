@@ -2,6 +2,7 @@
 /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/gazebo_control.xacro
 /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/inertial_macros.xacro
 /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/lidar.xacro
+/home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/lidar_xacro.txt
 /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/robot.urdf.xacro
 /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/robot_core.xacro
 /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/ros2_control.xacro

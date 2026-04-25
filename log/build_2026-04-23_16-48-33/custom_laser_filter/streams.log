@@ -1,0 +1,17 @@
+[0.885s] Invoking command in '/home/duo/dev_ws/build/custom_laser_filter': PYTHONPATH=/home/duo/dev_ws/build/custom_laser_filter/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/duo/dev_ws/install/custom_laser_filter/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/duo/dev_ws/build/custom_laser_filter/build --no-deps symlink_data
+[1.197s] running develop
+[1.420s] running egg_info
+[1.420s] writing custom_laser_filter.egg-info/PKG-INFO
+[1.420s] writing dependency_links to custom_laser_filter.egg-info/dependency_links.txt
+[1.421s] writing entry points to custom_laser_filter.egg-info/entry_points.txt
+[1.421s] writing requirements to custom_laser_filter.egg-info/requires.txt
+[1.421s] writing top-level names to custom_laser_filter.egg-info/top_level.txt
+[1.424s] reading manifest file 'custom_laser_filter.egg-info/SOURCES.txt'
+[1.425s] writing manifest file 'custom_laser_filter.egg-info/SOURCES.txt'
+[1.426s] running build_ext
+[1.426s] Creating /home/duo/dev_ws/install/custom_laser_filter/lib/python3.10/site-packages/custom-laser-filter.egg-link (link to .)
+[1.428s] Installing laser_filter script to /home/duo/dev_ws/install/custom_laser_filter/lib/custom_laser_filter
+[1.428s] 
+[1.428s] Installed /home/duo/dev_ws/build/custom_laser_filter
+[1.428s] running symlink_data
+[1.468s] Invoked command in '/home/duo/dev_ws/build/custom_laser_filter' returned '0': PYTHONPATH=/home/duo/dev_ws/build/custom_laser_filter/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/duo/dev_ws/install/custom_laser_filter/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/duo/dev_ws/build/custom_laser_filter/build --no-deps symlink_data
