@@ -1,0 +1,36 @@
+[0.402s] Invoking command in '/home/duo/dev_ws/build/duobot_one': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/duobot_one -- -j8 -l8
+[0.467s] Invoked command in '/home/duo/dev_ws/build/duobot_one' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/duobot_one -- -j8 -l8
+[0.468s] Invoking command in '/home/duo/dev_ws/build/duobot_one': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/duobot_one
+[0.484s] -- Install configuration: ""
+[0.492s] -- Execute custom install script
+[0.494s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/config/drive_bot.rviz
+[0.494s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/config/my_controllers.yaml
+[0.495s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/config/view_bot.rviz
+[0.495s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/description/gazebo_control.xacro
+[0.495s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/description/inertial_macros.xacro
+[0.495s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/description/lidar.xacro
+[0.496s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/description/robot.urdf.xacro
+[0.496s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/description/robot_core.xacro
+[0.496s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/description/robot_core_temp.xacro
+[0.497s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/description/ros2_control.xacro
+[0.497s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/launch/launch_robot.launch.py
+[0.497s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/launch/launch_sim.launch.py
+[0.497s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/launch/rplidar.launch.py
+[0.498s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/launch/rsp.launch.py
+[0.498s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/worlds/obstacles.world
+[0.498s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/ament_index/resource_index/package_run_dependencies/duobot_one
+[0.498s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/ament_index/resource_index/parent_prefix_path/duobot_one
+[0.499s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/environment/ament_prefix_path.sh
+[0.499s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/environment/ament_prefix_path.dsv
+[0.500s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/environment/path.sh
+[0.500s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/environment/path.dsv
+[0.501s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/local_setup.bash
+[0.501s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/local_setup.sh
+[0.502s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/local_setup.zsh
+[0.503s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/local_setup.dsv
+[0.503s] -- Symlinking: /home/duo/dev_ws/install/duobot_one/share/duobot_one/package.dsv
+[0.510s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/ament_index/resource_index/packages/duobot_one
+[0.510s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/cmake/duobot_oneConfig.cmake
+[0.511s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/cmake/duobot_oneConfig-version.cmake
+[0.512s] -- Up-to-date symlink: /home/duo/dev_ws/install/duobot_one/share/duobot_one/package.xml
+[0.573s] Invoked command in '/home/duo/dev_ws/build/duobot_one' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/duobot_one

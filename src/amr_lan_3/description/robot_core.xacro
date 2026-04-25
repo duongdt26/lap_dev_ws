@@ -79,9 +79,9 @@
         </xacro:inertial_box>
     </link>
 
-    <!-- <gazebo reference="base_link">
+    <gazebo reference="base_link">
         <material>Gazebo/Green</material>
-    </gazebo> -->
+    </gazebo>
 
 
      <!-- CHASSIS 1 LINK -->
@@ -112,9 +112,9 @@
         </xacro:inertial_box>
     </link>
 
-    <!-- <gazebo reference="base_link">
-        <material>Gazebo/Green</material>
-    </gazebo> -->
+    <gazebo reference="chassis_1_link">
+        <material>Gazebo/Orange</material>
+    </gazebo>
 
 
 
@@ -147,11 +147,11 @@
         </xacro:inertial_cylinder>
     </link>
 
-    <!-- <gazebo reference="left_wheel">
+    <gazebo reference="left_wheel">
         <material>Gazebo/Purple</material>
-        <mu1 value="0.4"/>
-        <mu2 value="0.4"/>
-    </gazebo> -->
+        <mu1 value="0.7"/>
+        <mu2 value="0.7"/>
+    </gazebo>
 
 
     <!-- RIGHT WHEEL LINK -->
@@ -183,11 +183,11 @@
         </xacro:inertial_cylinder>
     </link>
 
-    <!-- <gazebo reference="right_wheel">
+    <gazebo reference="right_wheel">
         <material>Gazebo/Purple</material>
-        <mu1 value="0.4"/>
-        <mu2 value="0.4"/>
-    </gazebo> -->
+        <mu1 value="0.7"/>
+        <mu2 value="0.7"/>
+    </gazebo>
 
 
 
@@ -220,13 +220,13 @@
         </xacro:inertial_sphere>
     </link>
 
-    <!-- <gazebo reference="caster_wheel_right_behind">
+    <gazebo reference="caster_wheel_right_behind">
         <material>Gazebo/Blue</material>
         <mu1 value="0"/>
         <mu2 value="0"/>
-        <slip1>1.0</slip1>
-        <slip2>1.0</slip2>
-    </gazebo> -->
+        <!-- <slip1>1.0</slip1>
+        <slip2>1.0</slip2> -->
+    </gazebo>
 
 
     <!-- CASTER WHEEL LEFT BEHIND LINK -->
@@ -257,13 +257,13 @@
         </xacro:inertial_sphere>
     </link>
 
-    <!-- <gazebo reference="caster_wheel_left_behind">
+    <gazebo reference="caster_wheel_left_behind">
         <material>Gazebo/Blue</material>
         <mu1 value="0"/>
         <mu2 value="0"/>
-        <slip1>1.0</slip1>
-        <slip2>1.0</slip2>
-    </gazebo> -->
+        <!-- <slip1>1.0</slip1>
+        <slip2>1.0</slip2> -->
+    </gazebo>
 
 
 
@@ -295,13 +295,13 @@
         </xacro:inertial_sphere>
     </link>
 
-    <!-- <gazebo reference="caster_wheel_right_front">
+    <gazebo reference="caster_wheel_right_front">
         <material>Gazebo/Blue</material>
         <mu1 value="0"/>
         <mu2 value="0"/>
-        <slip1>1.0</slip1>
-        <slip2>1.0</slip2>
-    </gazebo> -->
+        <!-- <slip1>1.0</slip1>
+        <slip2>1.0</slip2> -->
+    </gazebo>
 
 
 
@@ -333,13 +333,13 @@
         </xacro:inertial_sphere>
     </link>
 
-    <!-- <gazebo reference="caster_wheel_left_front">
+    <gazebo reference="caster_wheel_left_front">
         <material>Gazebo/Blue</material>
         <mu1 value="0"/>
         <mu2 value="0"/>
-        <slip1>1.0</slip1>
-        <slip2>1.0</slip2>
-    </gazebo> -->
+        <!-- <slip1>1.0</slip1>
+        <slip2>1.0</slip2> -->
+    </gazebo>
     
 
 </robot>

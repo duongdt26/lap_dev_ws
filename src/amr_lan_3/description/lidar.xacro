@@ -17,26 +17,19 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
                 <cylinder radius="0.035" length="0.04"/>
-                <!-- <mesh filename="package://amr_lan_2_mesh/meshes/laser_frame.STL"/> -->
             </geometry>
-            <material
-                name="">
-                <color
-                rgba="0.211764705882353 0.211764705882353 0.203921568627451 1"/>
-                <!-- <color name="xanhlo"/> -->
-            </material>
+            <material name="black"/>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <cylinder radius="0.035" length="0.04"/>
-                <!-- <mesh filename="package://amr_lan_2_mesh/meshes/laser_frame.STL"/> -->
             </geometry>
         </collision>
 
-        <!-- <xacro:inertial_cylinder mass="0.1" length="0.04" radius="0.035">
+        <xacro:inertial_cylinder mass="0.1" length="0.04" radius="0.035">
             <origin xyz="0 0 0" rpy="0 0 0"/>
-        </xacro:inertial_cylinder> -->
+        </xacro:inertial_cylinder>
             
     </link>
     
