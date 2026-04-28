@@ -1,0 +1,34 @@
+[0.046s] Invoking command in '/home/duo/dev_ws/build/amr_lan_3': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_3 -- -j8 -l8
+[0.423s] Invoked command in '/home/duo/dev_ws/build/amr_lan_3' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_3 -- -j8 -l8
+[0.426s] Invoking command in '/home/duo/dev_ws/build/amr_lan_3': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_3
+[0.449s] -- Install configuration: ""
+[0.449s] -- Execute custom install script
+[0.449s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/config/my_controllers.yaml
+[0.449s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/description/gazebo_control.xacro
+[0.449s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/description/inertial_macros.xacro
+[0.450s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/description/lidar.xacro
+[0.450s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/description/robot.urdf.xacro
+[0.452s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/description/robot_core.xacro
+[0.453s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/description/ros2_control.xacro
+[0.453s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/launch/launch_sim.launch.py
+[0.453s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/launch/rplidar.launch.py
+[0.455s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/launch/rsp.launch.py
+[0.460s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/worlds/MKS_1/model.config
+[0.462s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/worlds/MKS_1/model.sdf
+[0.462s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/worlds/obstacle_1.world
+[0.463s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/ament_index/resource_index/package_run_dependencies/amr_lan_3
+[0.464s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/ament_index/resource_index/parent_prefix_path/amr_lan_3
+[0.465s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/environment/ament_prefix_path.sh
+[0.467s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/environment/ament_prefix_path.dsv
+[0.472s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/environment/path.sh
+[0.473s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/environment/path.dsv
+[0.474s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/local_setup.bash
+[0.475s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/local_setup.sh
+[0.475s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/local_setup.zsh
+[0.476s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/local_setup.dsv
+[0.477s] -- Symlinking: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/package.dsv
+[0.480s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/ament_index/resource_index/packages/amr_lan_3
+[0.483s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/cmake/amr_lan_3Config.cmake
+[0.483s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/cmake/amr_lan_3Config-version.cmake
+[0.483s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/package.xml
+[0.522s] Invoked command in '/home/duo/dev_ws/build/amr_lan_3' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_3

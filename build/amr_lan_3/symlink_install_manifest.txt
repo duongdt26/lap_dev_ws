@@ -1,10 +1,16 @@
+/home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/config/my_controllers.yaml
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/description/gazebo_control.xacro
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/description/inertial_macros.xacro
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/description/lidar.xacro
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/description/robot.urdf.xacro
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/description/robot_core.xacro
+/home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/description/ros2_control.xacro
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/launch/launch_sim.launch.py
+/home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/launch/rplidar.launch.py
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/launch/rsp.launch.py
+/home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/worlds/MKS_1/model.config
+/home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/worlds/MKS_1/model.sdf
+/home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/worlds/obstacle_1.world
 /home/duo/dev_ws/install/amr_lan_3/share/ament_index/resource_index/package_run_dependencies/amr_lan_3
 /home/duo/dev_ws/install/amr_lan_3/share/ament_index/resource_index/parent_prefix_path/amr_lan_3
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/environment/ament_prefix_path.sh

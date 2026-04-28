@@ -33,8 +33,8 @@
             
     </link>
     
-    <!-- <gazebo reference="laser_frame">
-        <material>Gazebo/Red</material>
+    <gazebo reference="laser_frame">
+        <!-- <material>Gazebo/Red</material> -->
         <material>Gazebo/Black</material>
 
         <sensor name="laser" type="ray">
@@ -55,11 +55,11 @@
                     <max>12</max>
                     <resolution>0.01</resolution>
                 </range>
-                <noise>
+                <!-- <noise>
                     <type>gaussian</type>
                     <mean>0.0</mean>
                     <stddev>0.01</stddev> Small noise for realism
-                </noise>
+                </noise> -->
             </ray>
             <plugin name="laser_controller" filename="libgazebo_ros_ray_sensor.so">
                 <ros>
@@ -69,10 +69,6 @@
                 <frame_name>laser_frame</frame_name>
             </plugin>
         </sensor>
-    </gazebo> -->
-
-
-
-
+    </gazebo>
 
 </robot>

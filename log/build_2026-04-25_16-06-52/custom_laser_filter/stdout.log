@@ -1,0 +1,15 @@
+running develop
+running egg_info
+writing custom_laser_filter.egg-info/PKG-INFO
+writing dependency_links to custom_laser_filter.egg-info/dependency_links.txt
+writing entry points to custom_laser_filter.egg-info/entry_points.txt
+writing requirements to custom_laser_filter.egg-info/requires.txt
+writing top-level names to custom_laser_filter.egg-info/top_level.txt
+reading manifest file 'custom_laser_filter.egg-info/SOURCES.txt'
+writing manifest file 'custom_laser_filter.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/duo/dev_ws/install/custom_laser_filter/lib/python3.10/site-packages/custom-laser-filter.egg-link (link to .)
+Installing laser_filter script to /home/duo/dev_ws/install/custom_laser_filter/lib/custom_laser_filter
+
+Installed /home/duo/dev_ws/build/custom_laser_filter
+running symlink_data
