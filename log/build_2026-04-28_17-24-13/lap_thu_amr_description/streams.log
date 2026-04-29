@@ -1,0 +1,1 @@
+[0.380s] Invoking command in '/home/duo/dev_ws/build/lap_thu_amr_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/lap_thu_amr_description -- -j8 -l8

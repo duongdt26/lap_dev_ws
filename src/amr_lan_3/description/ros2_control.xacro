@@ -1,6 +1,31 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+    <ros2_control name="RealRobot" type="system">
+        <hardware>
+            <plugin>hinson_hardware/HinsonSystemHardware</plugin>
+            <param name="port">/dev/ttyUSB0</param>
+            <param name="baudrate">115200</param>
+        </hardware>
+        
+        <joint name="left_wheel_joint">
+            <command_interface name="velocity"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        
+        <joint name="right_wheel_joint">
+            <command_interface name="velocity"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+    </ros2_control>
+
+</robot>
+<!-- 
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
     <ros2_control name="GazeboSystem" type="system">
         <hardware>
             <plugin>gazebo_ros2_control/GazeboSystem</plugin>
@@ -28,30 +53,4 @@
             <parameters>$(find amr_lan_3)/config/my_controllers.yaml</parameters>
         </plugin>
     </gazebo>
-</robot>
-
-
-<!-- <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-
-    <ros2_control name="RealRobot" type="system">
-        <hardware>
-            <plugin>hinson_hardware/HinsonSystemHardware</plugin>
-            <param name="port">/dev/ttyUSB0</param>
-            <param name="baudrate">115200</param>
-        </hardware>
-        
-        <joint name="left_wheel_joint">
-            <command_interface name="velocity"/>
-            <state_interface name="position"/>
-            <state_interface name="velocity"/>
-        </joint>
-        
-        <joint name="right_wheel_joint">
-            <command_interface name="velocity"/>
-            <state_interface name="position"/>
-            <state_interface name="velocity"/>
-        </joint>
-    </ros2_control>
-
 </robot> -->

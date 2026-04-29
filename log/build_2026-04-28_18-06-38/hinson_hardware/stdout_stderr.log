@@ -1,0 +1,8 @@
+[ 50%] [32mBuilding CXX object CMakeFiles/hinson_hardware.dir/src/hinson_system.cpp.o[0m
+[01m[K/home/duo/dev_ws/src/hinson_hardware/src/hinson_system.cpp:109:10:[m[K [01;31m[Kfatal error: [m[Klogging.hpp: No such file or directory
+  109 | #include [01;31m[K<logging.hpp>[m[K
+      |          [01;31m[K^~~~~~~~~~~~~[m[K
+compilation terminated.
+gmake[2]: *** [CMakeFiles/hinson_hardware.dir/build.make:76: CMakeFiles/hinson_hardware.dir/src/hinson_system.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/hinson_hardware.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

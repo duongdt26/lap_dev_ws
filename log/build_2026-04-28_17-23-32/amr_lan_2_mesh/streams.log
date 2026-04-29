@@ -1,0 +1,37 @@
+[0.053s] Invoking command in '/home/duo/dev_ws/build/amr_lan_2_mesh': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_2_mesh -- -j8 -l8
+[0.426s] Invoked command in '/home/duo/dev_ws/build/amr_lan_2_mesh' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_2_mesh -- -j8 -l8
+[0.427s] Invoking command in '/home/duo/dev_ws/build/amr_lan_2_mesh': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_2_mesh
+[0.435s] -- Install configuration: ""
+[0.437s] -- Execute custom install script
+[0.437s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/config/controllers.yaml
+[0.438s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/gazebo_control.xacro
+[0.438s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/inertial_macros.xacro
+[0.438s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/lidar.xacro
+[0.439s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/lidar_xacro.txt
+[0.439s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/robot.urdf.xacro
+[0.440s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/robot_core.xacro
+[0.440s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/ros2_control.xacro
+[0.440s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/temp_2
+[0.440s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/description/tmep
+[0.441s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/launch/launch_robot.launch.py
+[0.442s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/launch/launch_sim.launch.py
+[0.442s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/launch/rsp.launch.py
+[0.443s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/meshes/base_footprint.STL
+[0.443s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/meshes/base_link.STL
+[0.443s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/meshes/caster_wheel_left_behind.STL
+[0.445s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/meshes/caster_wheel_left_front.STL
+[0.445s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/meshes/caster_wheel_right_behind.STL
+[0.445s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/meshes/caster_wheel_right_front.STL
+[0.446s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/meshes/imu_link.STL
+[0.446s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/meshes/laser_frame.STL
+[0.446s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/meshes/left_wheel.STL
+[0.446s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2_mesh/share/amr_lan_2_mesh/meshes/right_wheel.STL
+[0.448s] [31mCMake Error at ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:105 (message):
+[0.448s]   ament_cmake_symlink_install_directory() can't find
+[0.448s]   '/home/duo/dev_ws/src/amr_lan_2_mesh/worlds'
+[0.449s] Call Stack (most recent call first):
+[0.450s]   ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:319 (ament_cmake_symlink_install_directory)
+[0.450s]   cmake_install.cmake:46 (include)
+[0.450s] 
+[0.450s] [0m
+[0.459s] Invoked command in '/home/duo/dev_ws/build/amr_lan_2_mesh' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_2_mesh

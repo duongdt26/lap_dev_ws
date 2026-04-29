@@ -1,0 +1,10 @@
+[0.399s] Invoking command in '/home/duo/dev_ws/build/hinson_hardware': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/hinson_hardware -- -j8 -l8
+[0.537s] [ 50%] [32mBuilding CXX object CMakeFiles/hinson_hardware.dir/src/hinson_system.cpp.o[0m
+[1.028s] [01m[K/home/duo/dev_ws/src/hinson_hardware/src/hinson_system.cpp:109:10:[m[K [01;31m[Kfatal error: [m[Klogging.hpp: No such file or directory
+[1.028s]   109 | #include [01;31m[K<logging.hpp>[m[K
+[1.028s]       |          [01;31m[K^~~~~~~~~~~~~[m[K
+[1.028s] compilation terminated.
+[1.035s] gmake[2]: *** [CMakeFiles/hinson_hardware.dir/build.make:76: CMakeFiles/hinson_hardware.dir/src/hinson_system.cpp.o] Error 1
+[1.035s] gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/hinson_hardware.dir/all] Error 2
+[1.036s] gmake: *** [Makefile:146: all] Error 2
+[1.043s] Invoked command in '/home/duo/dev_ws/build/hinson_hardware' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/hinson_hardware -- -j8 -l8

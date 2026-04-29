@@ -138,7 +138,8 @@
         <collision>
             <origin xyz="0 0 0"/>
             <geometry>
-                <cylinder radius="0.09" length="0.04"/>
+                <!-- <cylinder radius="0.09" length="0.04"/> -->
+            <sphere radius="0.09"/>
             </geometry>
         </collision>
 
@@ -149,8 +150,8 @@
 
     <gazebo reference="left_wheel">
         <material>Gazebo/Purple</material>
-        <mu1 value="0.7"/>
-        <mu2 value="0.7"/>
+        <mu1 value="10.0"/>
+        <mu2 value="10.0"/>
     </gazebo>
 
 
@@ -174,7 +175,8 @@
         <collision>
             <origin xyz="0 0 0"/>
             <geometry>
-                <cylinder radius="0.09" length="0.04"/>
+                <!-- <cylinder radius="0.09" length="0.04"/> -->
+                <sphere radius="0.09"/>
             </geometry>
         </collision>
 
@@ -185,8 +187,8 @@
 
     <gazebo reference="right_wheel">
         <material>Gazebo/Purple</material>
-        <mu1 value="0.7"/>
-        <mu2 value="0.7"/>
+        <mu1 value="10.0"/>
+        <mu2 value="10.0"/>
     </gazebo>
 
 

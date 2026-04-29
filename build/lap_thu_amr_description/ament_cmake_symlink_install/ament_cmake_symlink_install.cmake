@@ -315,8 +315,8 @@ message(STATUS "Execute custom install script")
 
 # begin of custom install code
 
-# install(DIRECTORY "urdf" "meshes" "launch" "config" "rviz" "DESTINATION" "share/lap_thu_amr_description")
-ament_cmake_symlink_install_directory("/home/duo/dev_ws/src/lap_thu_amr_description" DIRECTORY "urdf" "meshes" "launch" "config" "rviz" "DESTINATION" "share/lap_thu_amr_description")
+# install(DIRECTORY "urdf" "meshes" "launch" "rviz" "DESTINATION" "share/lap_thu_amr_description")
+ament_cmake_symlink_install_directory("/home/duo/dev_ws/src/lap_thu_amr_description" DIRECTORY "urdf" "meshes" "launch" "rviz" "DESTINATION" "share/lap_thu_amr_description")
 
 # install(FILES "/home/duo/dev_ws/build/lap_thu_amr_description/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/lap_thu_amr_description" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")
 ament_cmake_symlink_install_files("/home/duo/dev_ws/src/lap_thu_amr_description" FILES "/home/duo/dev_ws/build/lap_thu_amr_description/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/lap_thu_amr_description" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")

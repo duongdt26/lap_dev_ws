@@ -29,7 +29,7 @@ install(DIRECTORY
   description
   launch
   meshes
-  worlds
+  # worlds
   DESTINATION share/${PROJECT_NAME}
 )
 # day_ne 

@@ -1,0 +1,36 @@
+[0.416s] Invoking command in '/home/duo/dev_ws/build/lap_thu_amr_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/lap_thu_amr_description -- -j8 -l8
+[0.535s] Invoked command in '/home/duo/dev_ws/build/lap_thu_amr_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/lap_thu_amr_description -- -j8 -l8
+[0.537s] Invoking command in '/home/duo/dev_ws/build/lap_thu_amr_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/lap_thu_amr_description
+[0.550s] -- Install configuration: ""
+[0.551s] -- Execute custom install script
+[0.551s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/urdf/lap_thu_AMR_test_2.urdf.xacro
+[0.551s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/urdf/temp
+[0.551s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/base_footprint.STL
+[0.552s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/base_link.STL
+[0.553s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/caster_wheel_left_behind.STL
+[0.554s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/caster_wheel_left_front.STL
+[0.556s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/caster_wheel_right_behind.STL
+[0.556s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/caster_wheel_right_front.STL
+[0.556s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/imu_link.STL
+[0.557s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/laser_frame.STL
+[0.557s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/left_wheel.STL
+[0.557s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/meshes/right_wheel.STL
+[0.557s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/launch/gazebo.launch.py
+[0.557s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/launch/rsp.launch.py
+[0.558s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/rviz/urdf_1.rviz
+[0.558s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/ament_index/resource_index/package_run_dependencies/lap_thu_amr_description
+[0.558s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/ament_index/resource_index/parent_prefix_path/lap_thu_amr_description
+[0.558s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/environment/ament_prefix_path.sh
+[0.558s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/environment/ament_prefix_path.dsv
+[0.559s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/environment/path.sh
+[0.559s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/environment/path.dsv
+[0.559s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/local_setup.bash
+[0.559s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/local_setup.sh
+[0.560s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/local_setup.zsh
+[0.560s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/local_setup.dsv
+[0.560s] -- Symlinking: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/package.dsv
+[0.582s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/ament_index/resource_index/packages/lap_thu_amr_description
+[0.582s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/cmake/lap_thu_amr_descriptionConfig.cmake
+[0.582s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/cmake/lap_thu_amr_descriptionConfig-version.cmake
+[0.582s] -- Up-to-date symlink: /home/duo/dev_ws/install/lap_thu_amr_description/share/lap_thu_amr_description/package.xml
+[0.637s] Invoked command in '/home/duo/dev_ws/build/lap_thu_amr_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/lap_thu_amr_description

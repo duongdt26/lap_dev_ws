@@ -1,0 +1,22 @@
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/duo/dev_ws/src/hinson_hardware/src/hinson_system.cpp:106[m[K:
+[01m[K/home/duo/dev_ws/src/hinson_hardware/src/hinson_system.cpp:[m[K In member function ‘[01m[Kvirtual hardware_interface::return_type hinson_hardware::HinsonSystemHardware::read(const rclcpp::Time&, const rclcpp::Duration&)[m[K’:
+[01m[K/home/duo/dev_ws/src/hinson_hardware/src/hinson_system.cpp:286:16:[m[K [01;31m[Kerror: [m[K‘[01m[Kget_clock[m[K’ is not a member of ‘[01m[Krclcpp[m[K’
+  286 |       *rclcpp::[01;31m[Kget_clock[m[K(),
+      |                [01;31m[K^~~~~~~~~[m[K
+[01m[K/home/duo/dev_ws/src/hinson_hardware/src/hinson_system.cpp:[m[K In lambda function:
+[01m[K/home/duo/dev_ws/src/hinson_hardware/src/hinson_system.cpp:284:5:[m[K [01;31m[Kerror: [m[K‘[01m[Kc[m[K’ was not declared in this scope; did you mean ‘[01m[Krc[m[K’?
+  284 |     [01;31m[KRCLCPP_WARN_THROTTLE[m[K(
+      |     [01;31m[K^~~~~~~~~~~~~~~~~~~~[m[K
+gmake[2]: *** [CMakeFiles/hinson_hardware.dir/build.make:76: CMakeFiles/hinson_hardware.dir/src/hinson_system.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/hinson_hardware.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

@@ -315,8 +315,8 @@ message(STATUS "Execute custom install script")
 
 # begin of custom install code
 
-# install(DIRECTORY "config" "description" "launch" "meshes" "worlds" "DESTINATION" "share/amr_lan_2")
-ament_cmake_symlink_install_directory("/home/duo/dev_ws/src/amr_lan_2" DIRECTORY "config" "description" "launch" "meshes" "worlds" "DESTINATION" "share/amr_lan_2")
+# install(DIRECTORY "config" "description" "launch" "meshes" "DESTINATION" "share/amr_lan_2")
+ament_cmake_symlink_install_directory("/home/duo/dev_ws/src/amr_lan_2" DIRECTORY "config" "description" "launch" "meshes" "DESTINATION" "share/amr_lan_2")
 
 # install(FILES "/home/duo/dev_ws/build/amr_lan_2/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/amr_lan_2" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")
 ament_cmake_symlink_install_files("/home/duo/dev_ws/src/amr_lan_2" FILES "/home/duo/dev_ws/build/amr_lan_2/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/amr_lan_2" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")
