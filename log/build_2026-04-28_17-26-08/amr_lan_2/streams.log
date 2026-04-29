@@ -1,0 +1,32 @@
+[0.060s] Invoking command in '/home/duo/dev_ws/build/amr_lan_2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_2 -- -j8 -l8
+[0.496s] Invoked command in '/home/duo/dev_ws/build/amr_lan_2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/amr_lan_2 -- -j8 -l8
+[0.498s] Invoking command in '/home/duo/dev_ws/build/amr_lan_2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_2
+[0.525s] -- Install configuration: ""
+[0.526s] -- Execute custom install script
+[0.537s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/config/view_bot.rviz
+[0.541s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/description/gazebo_control.xacro
+[0.542s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/description/inertial_macros.xacro
+[0.542s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/description/robot.urdf.xacro
+[0.543s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/description/robot_core.xacro
+[0.543s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/description/tmep
+[0.543s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/launch/launch_sim.launch.py
+[0.543s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/launch/rsp.launch.py
+[0.544s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/base_footprint.STL
+[0.544s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/base_link.STL
+[0.544s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/caster_wheel_left_behind.STL
+[0.546s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/caster_wheel_left_front.STL
+[0.546s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/caster_wheel_right_behind.STL
+[0.546s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/caster_wheel_right_front.STL
+[0.547s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/imu_link.STL
+[0.547s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/laser_frame.STL
+[0.548s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/left_wheel.STL
+[0.548s] -- Up-to-date symlink: /home/duo/dev_ws/install/amr_lan_2/share/amr_lan_2/meshes/right_wheel.STL
+[0.551s] [31mCMake Error at ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:105 (message):
+[0.552s]   ament_cmake_symlink_install_directory() can't find
+[0.553s]   '/home/duo/dev_ws/src/amr_lan_2/worlds'
+[0.553s] Call Stack (most recent call first):
+[0.555s]   ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:319 (ament_cmake_symlink_install_directory)
+[0.555s]   cmake_install.cmake:46 (include)
+[0.556s] 
+[0.556s] [0m
+[0.558s] Invoked command in '/home/duo/dev_ws/build/amr_lan_2' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --install /home/duo/dev_ws/build/amr_lan_2

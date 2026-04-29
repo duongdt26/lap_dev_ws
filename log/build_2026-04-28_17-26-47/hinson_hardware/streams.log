@@ -1,0 +1,2 @@
+[0.442s] Invoking command in '/home/duo/dev_ws/build/hinson_hardware': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/duo/dev_ws/install/custom_laser_filter:/opt/ros/humble /usr/bin/cmake --build /home/duo/dev_ws/build/hinson_hardware -- -j8 -l8
+[0.544s] [100%] Built target hinson_hardware
