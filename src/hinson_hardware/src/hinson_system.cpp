@@ -320,7 +320,7 @@ hardware_interface::return_type HinsonSystemHardware::read(
     int16_t delta_m0 = static_cast<int16_t>(hall_regs[0] - prev_hall_counts_[0]);
     int16_t delta_m1 = static_cast<int16_t>(hall_regs[1] - prev_hall_counts_[1]);
     
-    // Đảo dấu chiều quay của bánh phải (m0) do tính chất đối xứng
+    // Đảo dấu chiều quay của bánh trái (m1) do tính chất đối xứng
     // delta_m0 = -delta_m0;
     delta_m1 = -delta_m1;
 
