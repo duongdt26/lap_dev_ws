@@ -1,5 +1,6 @@
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/config/gaz_ros2_ctl_use_sim.yaml
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/config/gazebo_params.yaml
+/home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/config/mapper_params_online_async.yaml
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/config/my_controllers.yaml
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/description/gazebo_control.xacro
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/description/inertial_macros.xacro
@@ -9,6 +10,7 @@
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/description/ros2_control.xacro
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/launch/launch_robot.launch.py
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/launch/launch_sim.launch.py
+/home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/launch/online_async_launch.py
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/launch/rplidar.launch.py
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/launch/rsp.launch.py
 /home/duo/dev_ws/install/amr_lan_3/share/amr_lan_3/worlds/MKS_1/model.config

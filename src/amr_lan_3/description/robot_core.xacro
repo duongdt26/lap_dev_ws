@@ -96,14 +96,18 @@
         <visual>
             <origin xyz="0 0 0"/>
             <geometry>
-                <box size="1.04 0.51 0.06"/>
+                <!-- <box size="1.04 0.51 0.06"/> -->
+                <!-- <box size="1.05 0.54 0.06"/> -->
+                <box size="1.1 0.6 0.06"/>
             </geometry>
             <material name="vibrantorange"/>
         </visual>
         <collision>
             <origin xyz="0 0 0"/>
             <geometry>
-                <box size="1.04 0.51 0.06"/>
+                <!-- <box size="1.04 0.51 0.06"/> -->
+                <!-- <box size="1.05 0.54 0.06"/> -->
+                <box size="1.1 0.6 0.06"/>
             </geometry>
         </collision>
         
@@ -123,7 +127,11 @@
     <joint name="left_wheel_joint" type="continuous">
         <parent link="base_link"/>
         <child link="left_wheel"/>
-        <origin xyz="0 0.28 0" rpy="-${pi/2} 0 0"/>
+        <!-- <origin xyz="0 0.28 0" rpy="-${pi/2} 0 0"/> -->
+        <!-- <origin xyz="0 0.297 0" rpy="-${pi/2} 0 0"/> -->
+        <!-- <origin xyz="0 0.288 0" rpy="-${pi/2} 0 0"/> -->
+        <!-- <origin xyz="0 0.2765 0" rpy="-${pi/2} 0 0"/> -->
+         <origin xyz="0 0.284 0" rpy="-${pi/2} 0 0"/>
         <axis xyz="0 0 1"/>
     </joint>
     
@@ -131,7 +139,8 @@
         <visual>
             <origin xyz="0 0 0"/>
             <geometry>
-                <cylinder radius="0.09" length="0.04"/>
+                <!-- <cylinder radius="0.09" length="0.04"/> -->
+                <cylinder radius="0.09" length="0.046"/>
             </geometry>
             <material name="tim"/>
         </visual>
@@ -143,7 +152,7 @@
             </geometry>
         </collision>
 
-        <xacro:inertial_cylinder mass = "1.5" length="0.04" radius="0.09">
+        <xacro:inertial_cylinder mass = "1.5" length="0.046" radius="0.09">
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_cylinder>
     </link>
@@ -160,7 +169,11 @@
     <joint name="right_wheel_joint" type="continuous">
         <parent link="base_link"/>
         <child link="right_wheel"/>
-        <origin xyz="0 -0.28 0" rpy="${pi/2} 0 0"/>
+        <!-- <origin xyz="0 -0.28 0" rpy="${pi/2} 0 0"/> -->
+        <!-- <origin xyz="0 -0.297 0" rpy="${pi/2} 0 0"/> -->
+        <!-- <origin xyz="0 -0.288 0" rpy="${pi/2} 0 0"/> -->
+        <!-- <origin xyz="0 -0.2765 0" rpy="${pi/2} 0 0"/> -->
+        <origin xyz="0 -0.284 0" rpy="${pi/2} 0 0"/>
         <axis xyz="0 0 -1"/>
     </joint>
     
@@ -168,7 +181,8 @@
         <visual>
             <origin xyz="0 0 0"/>
             <geometry>
-                <cylinder radius="0.09" length="0.04"/>
+                <!-- <cylinder radius="0.09" length="0.04"/> -->
+                <cylinder radius="0.09" length="0.046"/>
             </geometry>
             <material name="tim"/>
         </visual>
@@ -180,7 +194,7 @@
             </geometry>
         </collision>
 
-        <xacro:inertial_cylinder mass = "1.5" length="0.04" radius="0.09">
+        <xacro:inertial_cylinder mass = "1.5" length="0.046" radius="0.09">
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_cylinder>
     </link>
