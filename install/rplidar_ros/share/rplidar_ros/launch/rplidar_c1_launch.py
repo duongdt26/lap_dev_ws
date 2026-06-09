@@ -1,0 +1,1 @@
+/home/duo/dev_ws/src/rplidar_ros/launch/rplidar_c1_launch.py
