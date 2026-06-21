@@ -403,6 +403,35 @@ hardware_interface::return_type HinsonSystemHardware::read(
 //   return hardware_interface::return_type::OK;
 // }
 
+// hardware_interface::return_type HinsonSystemHardware::write(
+//   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
+// {
+//   if (ctx_ == nullptr) return hardware_interface::return_type::ERROR;
+
+//   // 1. Lấy lệnh từ ROS: [0] là Trái, [1] là Phải
+//   int rpm_left = hw_commands_[0] * 900.0 / M_PI;
+//   int rpm_right = hw_commands_[1] * 900.0 / M_PI;
+
+//   uint16_t dir_cmds[2];
+//   uint16_t speed_cmds[2];
+
+//   // 2. Ghi xuống Kênh 0 của Driver (Nối với BÁNH PHẢI vật lý)
+//   // Logic: Tiến là 0, Lùi là 1
+//   dir_cmds[0] = (rpm_right >= 0) ? 0 : 1; 
+//   speed_cmds[0] = static_cast<uint16_t>(std::abs(rpm_right));
+
+//   // 3. Ghi xuống Kênh 1 của Driver (Nối với BÁNH TRÁI vật lý)
+//   // Logic: Tiến là 1, Lùi là 0 (vì lắp đối xứng)
+//   dir_cmds[1] = (rpm_left >= 0) ? 1 : 0;
+//   speed_cmds[1] = static_cast<uint16_t>(std::abs(rpm_left));
+
+//   // 4. Đẩy 2 mảng xuống Modbus
+//   modbus_write_registers(ctx_, 2004, 2, dir_cmds);
+//   modbus_write_registers(ctx_, 2006, 2, speed_cmds);
+
+//   return hardware_interface::return_type::OK;
+// }
+
 hardware_interface::return_type HinsonSystemHardware::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
@@ -412,22 +441,23 @@ hardware_interface::return_type HinsonSystemHardware::write(
   int rpm_left = hw_commands_[0] * 900.0 / M_PI;
   int rpm_right = hw_commands_[1] * 900.0 / M_PI;
 
-  uint16_t dir_cmds[2];
-  uint16_t speed_cmds[2];
+  // 2. Gộp 4 thanh ghi: 2004(dir phải), 2005(dir trái), 2006(tốc phải), 2007(tốc trái)
+  uint16_t cmds[4];
+  cmds[0] = (rpm_right >= 0) ? 0 : 1;                              // 2004
+  cmds[1] = (rpm_left >= 0) ? 1 : 0;                              // 2005
+  cmds[2] = static_cast<uint16_t>(std::abs(rpm_right));             // 2006
+  cmds[3] = static_cast<uint16_t>(std::abs(rpm_left));              // 2007
 
-  // 2. Ghi xuống Kênh 0 của Driver (Nối với BÁNH PHẢI vật lý)
-  // Logic: Tiến là 0, Lùi là 1
-  dir_cmds[0] = (rpm_right >= 0) ? 0 : 1; 
-  speed_cmds[0] = static_cast<uint16_t>(std::abs(rpm_right));
-
-  // 3. Ghi xuống Kênh 1 của Driver (Nối với BÁNH TRÁI vật lý)
-  // Logic: Tiến là 1, Lùi là 0 (vì lắp đối xứng)
-  dir_cmds[1] = (rpm_left >= 0) ? 1 : 0;
-  speed_cmds[1] = static_cast<uint16_t>(std::abs(rpm_left));
-
-  // 4. Đẩy 2 mảng xuống Modbus
-  modbus_write_registers(ctx_, 2004, 2, dir_cmds);
-  modbus_write_registers(ctx_, 2006, 2, speed_cmds);
+  // 3. Một lần ghi duy nhất xuống 2004–2007
+  if (modbus_write_registers(ctx_, 2004, 4, cmds) != 4) {
+    static int error_counter = 0;
+    if (error_counter++ % 30 == 0) {
+      RCLCPP_WARN(
+        rclcpp::get_logger("HinsonSystemHardware"),
+        "Lỗi ghi Modbus: %s (Mã lỗi: %d)", modbus_strerror(errno), errno);
+    }
+    return hardware_interface::return_type::ERROR;
+  }
 
   return hardware_interface::return_type::OK;
 }

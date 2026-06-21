@@ -1,0 +1,24 @@
+# ROS2 workspace artifacts
+build/
+install/
+log/
+
+# Python
+# __pycache__/
+# *.pyc
+# *.pyo
+
+# Compiled
+# *.o
+# *.so
+
+# Map / SLAM outputs (ở root workspace)
+# *.pgm
+# *.data
+# *.posegraph
+# frames_*.gv
+# frames_*.pdf
+
+# Giữ lại config yaml trong src
+# !src/**/*.yaml
+# !src/**/*.yml

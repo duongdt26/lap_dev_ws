@@ -1,1 +1,0 @@
-/home/duo/dev_ws/build/lap_thu_amr_description/ament_cmake_environment_hooks/local_setup.sh

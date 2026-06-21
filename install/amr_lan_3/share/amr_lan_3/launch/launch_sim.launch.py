@@ -1,1 +1,0 @@
-/home/duo/dev_ws/src/amr_lan_3/launch/launch_sim.launch.py

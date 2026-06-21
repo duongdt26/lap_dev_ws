@@ -1,0 +1,181 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    background: #1a1a2e;
+    color: #eee;
+  }
+  
+  header {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: #16213e;
+  }
+  
+  .connected { color: #4ade80; }
+  .disconnected { color: #f87171; }
+  
+  .layout {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+  }
+  
+  .panel {
+    width: 280px;
+    background: #0f3460;
+    padding: 16px;
+    border-radius: 8px;
+  }
+  
+  .panel input {
+    width: 100%;
+    margin: 4px 0 12px;
+  }
+  
+  .map-area {
+    flex: 1;
+    background: #0f3460;
+    padding: 16px;
+    border-radius: 8px;
+  }
+  
+  #map-canvas {
+    background: #222;
+    border: 1px solid #444;
+  }
+  
+  .hint {
+    color: #888;
+    font-size: 0.85rem;
+  }
+
+  /* ── Bàn điều khiển 4 hướng (D-pad) ── */
+.teleop-grid {
+  display: grid;
+  /* Hàng 1: trống | tiến | trống
+     Hàng 2: trái | dừng | phải
+     Hàng 3: trống | lùi | trống */
+  grid-template-areas:
+    ". fwd ."
+    "left stop right"
+    ". back .";
+  grid-template-columns: repeat(3, 64px);
+  grid-template-rows: repeat(3, 64px);
+  gap: 8px;
+  justify-content: center;
+  margin: 16px auto;
+}
+
+#btn-forward { grid-area: fwd; }
+#btn-left    { grid-area: left; }
+#btn-stop    { grid-area: stop; }
+#btn-right   { grid-area: right; }
+#btn-back    { grid-area: back; }
+
+.teleop-btn {
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+  border: none;
+  border-radius: 12px;
+  background: #1e5a8a;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;       /* giảm delay chạm trên mobile */
+  -webkit-tap-highlight-color: transparent;
+}
+
+.teleop-btn:active {
+  background: #2d7ab8;
+  transform: scale(0.96);
+}
+
+/* Nút dừng giữa — to hơn, màu đỏ */
+.teleop-stop {
+  width: 60px;
+  height: 60px;
+  font-size: 1.6rem;
+  background: #9b1c1c;
+  border-radius: 14px;
+}
+
+.teleop-stop:active {
+  background: #dc2626;
+}
+
+/* Canvas map co giãn theo vùng bên phải */
+.map-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#map-canvas {
+  max-width: 100%;
+  height: auto;
+  image-rendering: pixelated; /* map occupancy rõ nét hơn */
+}
+
+#map-status {
+  margin: 0 0 8px;
+  align-self: flex-start;
+}
+
+
+.btn-action {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background: #16a34a;
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn-action:active {
+  background: #15803d;
+}
+
+#map-name-input {
+  margin-top: 4px;
+}
+
+
+.btn-secondary {
+  background: #334155;
+  margin-top: 6px;
+}
+
+.btn-secondary:active {
+  background: #475569;
+}
+
+.btn-secondary.active {
+  background: #ca8a04;
+  color: #111;
+}
+
+#map-select {
+  width: 100%;
+  margin: 4px 0 8px;
+  padding: 6px;
+}
+
+#map-canvas.pose-mode {
+  cursor: crosshair;
+}
+
+#map-canvas.nav-mode {
+  cursor: cell;   /* hoặc crosshair — báo hiệu đang chọn goal */
+}
+
+#map-canvas.pose-mode.nav-mode {
+  cursor: not-allowed; /* không nên xảy ra nếu logic loại trừ đúng */
+}

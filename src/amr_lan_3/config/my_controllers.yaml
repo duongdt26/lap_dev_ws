@@ -1,7 +1,8 @@
 controller_manager:
   ros__parameters:
+    # update_rate: 30
     update_rate: 30
-    # use_sim_time: false #(Bắt buộc false khi chạy thật)
+    use_sim_time: false #(Bắt buộc false khi chạy thật)
     # use_sim_time: true #(Bắt buộc false khi chạy thật)
 
     diff_cont:
@@ -37,7 +38,8 @@ diff_cont:
     # twist_covariance_diagonal: x
     # open_loop: x
     
-    enable_odom_tf: true
+    # enable_odom_tf: true
+    enable_odom_tf: false
 
     cmd_vel_timeout: 0.5
     # publish_limited_velocity: x
@@ -49,12 +51,12 @@ diff_cont:
     # linear.x.has_jerk_limits: false
     # linear.x.max_velocity: NAN
     # linear.x.min_velocity: NAN
-    linear.x.max_velocity: 0.6
-    linear.x.min_velocity: -0.6
+    linear.x.max_velocity: 0.8
+    linear.x.min_velocity: -0.8
     # linear.x.max_acceleration: NAN
     # linear.x.min_acceleration: NAN
-    linear.x.max_acceleration: 0.4
-    linear.x.min_acceleration: -0.8
+    linear.x.max_acceleration: 0.35
+    linear.x.min_acceleration: -0.35
     # linear.x.max_jerk: NAN
     # linear.x.min_jerk: NAN
 
@@ -75,10 +77,15 @@ diff_cont:
     # angular.z.has_jerk_limits: false
     # angular.z.max_velocity: NAN
     # angular.z.min_velocity: NAN
+    # angular.z.max_velocity: 0.5
+    # angular.z.min_velocity: -0.5
+    # angular.z.max_acceleration: 0.5
+    # angular.z.min_acceleration: -1.0
     angular.z.max_velocity: 0.5
     angular.z.min_velocity: -0.5
-    angular.z.max_acceleration: 0.5
-    angular.z.min_acceleration: -1.0
+    # angular.z.max_acceleration: 1.4
+    angular.z.max_acceleration: 0.4
+    angular.z.min_acceleration: -0.4
     # angular.z.max_jerk: NAN
     # angular.z.min_jerk: NAN
 
