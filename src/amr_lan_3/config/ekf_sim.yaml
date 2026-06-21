@@ -1,0 +1,37 @@
+ekf_filter_node:
+  ros__parameters:
+    use_sim_time: true
+    # frequency: 15.0
+    frequency: 20.0
+    two_d_mode: true
+    publish_tf: true
+
+    map_frame: map              # id của frame map
+    odom_frame: odom            # id của frame odom phát ra từ EKF
+    base_link_frame: base_footprint # frame gốc của robot
+    world_frame: odom           # Trong chế độ odom-local, world_frame khớp với odom_frame
+
+    # Cấu hình Odometry từ diff_drive_controller
+    odom0: /diff_cont/odom
+    odom0_config: [false, false, false,
+                   false, false, false,
+                   true,  false, false,  # Chỉ lấy vx
+                   false, false, true]   # Lấy vyaw từ bánh xe để hỗ trợ
+    # odom0_differential: false
+    # odom0_config: [false, false, false,
+    #                false, false, false,
+    #                true,  false, false,  # Chỉ lấy vx
+    #                false, false, true,   # Lấy vyaw từ bánh xe để hỗ trợ
+    #                false, false, false]  # KHÔNG LẤY gia tốc (3 giá trị bị thiếu)
+    odom0_differential: false
+    odom0_queue_size: 10
+
+    # Cấu hình IMU từ node tự viết
+    imu0: /imu/data
+    imu0_config: [false, false, false,
+                  false, false, false,   # Không lấy góc Roll, Pitch, Yaw thô bị trôi
+                  false, false, false,
+                  false, false, true,    # CHỈ LẤY vận tốc góc Z (ngăn trôi hướng)
+                  false,  false, false]   # Lấy gia tốc X nếu muốn (hoặc bỏ qua bằng false)
+    imu0_differential: false
+    imu0_queue_size: 10

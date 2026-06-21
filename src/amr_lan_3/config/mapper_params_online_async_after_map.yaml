@@ -27,7 +27,7 @@ slam_toolbox:
 
     # map_file_name: /home/duo/dev_ws/obs_3_map_serial      # khi dung lai map
     map_file_name: /home/duo/dev_ws/obs_3_map_serial      # khi dung lai map
-
+    # map_file_name: /home/duo/dev_ws/mks_007_serial 
 
     # map_start_pose: [0.0, 0.0, 0.0]
     map_start_at_dock: true       # khi dung lai map
@@ -57,7 +57,8 @@ slam_toolbox:
     link_match_minimum_response_fine: 0.1  
     link_scan_maximum_distance: 1.5
     loop_search_maximum_distance: 3.0
-    do_loop_closing: true 
+    # do_loop_closing: true # chạy lâu drift  
+    do_loop_closing: false
     loop_match_minimum_chain_size: 10           
     loop_match_maximum_variance_coarse: 3.0  
     loop_match_minimum_response_coarse: 0.35    

@@ -93,7 +93,7 @@ def generate_launch_description():
         parameters=[{'robot_description': robot_description}, 
                     controller_params_file],
         output='screen'
-    )
+    )   
 
     delayed_controller_manager = TimerAction(period=3.0, actions=[controller_manager])
 
@@ -125,10 +125,49 @@ def generate_launch_description():
         )
     )
 
+    ekf_params_file = os.path.join(get_package_share_directory(package_name), 'config', 'ekf.yaml')
+    # Node chạy bộ lọc EKF
+    robot_localization_node = Node(
+       package='robot_localization',
+       executable='ekf_node',
+       name='ekf_filter_node',
+       output='screen',
+       parameters=[ekf_params_file]
+    )
+
+    # Node đọc IMU UART 
+    imu_node = Node(
+        package='amr_imu_driver', # Tên package chứa file imu_uart_node.py
+        executable='imu_uart_node', # Tên executable cậu khai báo trong setup.py
+        output='screen'
+    )
+
+    # Filtered laser scan
+    laser_filter_node = Node(
+        package='custom_laser_filter',
+        executable='laser_filter',
+        name='laser_filter',
+        output='screen'
+    )
+
+    web_support = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(
+                get_package_share_directory(package_name),
+                'launch',
+                'web_support.launch.py',
+            )
+        ]),
+    )
+
     return LaunchDescription([
         rsp,
         delayed_controller_manager,
         # Dùng TimerAction để delay spawner 3 giây, đợi Hardware Interface connect Modbus xong
         delayed_diff_drive_spawner,
         delayed_joint_broad_spawner,
+        robot_localization_node, # Chạy EKF kèm theo hệ thống
+        imu_node,                 # Chạy IMU node
+        laser_filter_node,
+        web_support, # twist_mux + bridge + rosbridge
     ])

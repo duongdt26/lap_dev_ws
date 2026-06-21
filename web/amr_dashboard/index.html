@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>AMR Dashboard</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- roslibjs: thư viện nói chuyện với rosbridge qua WebSocket -->
+  <script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>AMR Dashboard</h1>
+    <!-- Trạng thái kết nối rosbridge -->
+    <span id="conn-status" class="disconnected">Chưa kết nối</span>
+  </header>
+
+  <main class="layout">
+    <!-- Cột trái: điều khiển + trạng thái (Bước 2 sẽ thêm nút) -->
+    <aside class="panel">
+      <h2>Cấu hình</h2>
+      <label>
+        IP rosbridge:
+        <!-- Mặc định localhost; đổi thành IP laptop khi dùng điện thoại -->
+        <input id="ros-host" type="text" value="localhost" />
+      </label>
+      <button id="btn-connect">Kết nối</button>
+
+      <h2>Trạng thái robot</h2>
+      <p>Vx: <span id="val-vx">--</span> m/s</p>
+      <p>Vyaw: <span id="val-vyaw">--</span> rad/s</p>
+      <p>X: <span id="val-x">--</span> m</p>
+      <p>Y: <span id="val-y">--</span> m</p>
+      <p>Yaw: <span id="val-yaw">--</span> °</p>
+      <p>Pin: <span id="val-battery">N/A</span></p>
+
+      <h2>Điều khiển thủ công</h2>
+        <p>Tốc độ: <input id="speed-slider" type="range" min="0.05" max="0.5" step="0.05" value="0.2" />
+        <span id="speed-label">0.20</span> m/s
+        </p>
+        <!-- <div class="teleop-grid">
+        <button id="btn-forward">▲</button>
+        <button id="btn-left">◄</button>
+        <button id="btn-stop">■</button>
+        <button id="btn-right">►</button>
+        <button id="btn-back">▼</button>
+        </div> -->
+        <!-- Lưới 3x3: tiến trên, lùi dưới, trái/phải hai bên, dừng giữa -->
+        <div class="teleop-grid">
+          <button id="btn-forward" class="teleop-btn" type="button" aria-label="Tiến">▲</button>
+          <button id="btn-left"     class="teleop-btn" type="button" aria-label="Quay trái">◄</button>
+          <button id="btn-stop"     class="teleop-btn teleop-stop" type="button" aria-label="Dừng">■</button>
+          <button id="btn-right"    class="teleop-btn" type="button" aria-label="Quay phải">►</button>
+          <button id="btn-back"     class="teleop-btn" type="button" aria-label="Lùi">▼</button>
+        </div>
+
+        <h2>Bản đồ (SLAM)</h2>
+        <p id="slam-mode-hint" class="hint">
+          SLAM: tắt localization → chạy online_async_launch (xem hướng dẫn bên dưới)
+        </p>
+        <label>
+          Tên map khi lưu:
+          <input id="map-name-input" type="text" placeholder="obs_4_map_save" />
+        </label>
+        <button id="btn-save-map" type="button" class="btn-action">Lưu map</button>
+        <p id="save-map-status" class="hint"></p>
+
+        <h2>Localization</h2>
+        <p class="hint">Cần localization_launch đang chạy</p>
+        <label>
+          Chọn map:
+          <select id="map-select">
+            <option value="">-- bấm Làm mới danh sách --</option>
+          </select>
+        </label>
+        <button id="btn-refresh-maps" type="button" class="btn-action btn-secondary">Làm mới danh sách</button>
+        <button id="btn-load-map" type="button" class="btn-action">Nạp map đã chọn</button>
+        <p id="load-map-status" class="hint"></p>
+  
+        <button id="btn-pose-mode" type="button" class="btn-action btn-secondary">
+          Đặt vị trí ban đầu: TẮT
+        </button>
+        <p class="hint">Bật → click + kéo trên map (hướng mũi tên)</p>
+        
+        <h2>Điều hướng (Nav2)</h2>
+        <p class="hint">Cần navigation_launch đang chạy</p>
+        <button id="btn-nav-mode" type="button" class="btn-action btn-secondary">
+          Nav mode: TẮT
+        </button>
+        <button id="btn-nav-cancel" type="button" class="btn-action" style="background:#ef4444">
+          Huỷ điều hướng
+        </button>
+        <p id="nav-status" class="hint">Chưa có goal</p>
+
+    </aside>
+
+    <!-- Cột phải: map (Bước 3 sẽ vẽ canvas ở đây) -->
+    <section class="map-area">
+      <p id="map-status" class="hint">Chưa có bản đồ - chạy localization hoặc SLAM</p>
+      <canvas id="map-canvas" width="600" height="400"></canvas>
+      <!-- <p class="hint">Bước 3: hiển thị bản đồ tại đây</p> -->
+    </section>
+  </main>
+
+  <!-- Load JS theo thứ tự: ros trước, status sau -->
+  <script src="js/ros.js"></script>
+  <script src="js/status.js"></script>
+  <script src="js/teleop.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/slam.js"></script>
+  <script src="js/localization.js"></script>
+  <script src="js/navigation.js"></script>
+</body>
+</html>

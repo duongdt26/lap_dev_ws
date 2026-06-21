@@ -1,1 +1,0 @@
-/home/duo/dev_ws/build/amr_lan_2_mesh/ament_cmake_core/amr_lan_2_meshConfig.cmake

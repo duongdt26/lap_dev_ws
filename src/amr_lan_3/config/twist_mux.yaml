@@ -1,0 +1,16 @@
+twist_mux:
+  ros__parameters:
+    topics:
+      navigation:
+        topic   : cmd_vel
+        timeout : 0.5
+        priority: 10
+      web:
+        topic   : cmd_vel_web
+        timeout : 0.5
+        priority: 80
+      keyboard:
+        topic   : cmd_vel_key
+        # topic   : diff_cont/cmd_vel_unstamped
+        timeout : 0.5
+        priority: 100
