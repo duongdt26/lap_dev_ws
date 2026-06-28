@@ -10,7 +10,8 @@
             <!-- <wheel_separation>0.56</wheel_separation> -->
             <!-- <wheel_separation>0.594</wheel_separation>  -->
             <!-- <wheel_separation>0.553</wheel_separation>  -->
-            <wheel_separation>0.568</wheel_separation> 
+            <!-- <wheel_separation>0.568</wheel_separation> bua  -->
+            <wheel_separation>0.572</wheel_separation> 
             <wheel_diameter>0.18</wheel_diameter>
 
             <!-- Limits -->

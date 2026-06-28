@@ -1,0 +1,34 @@
+ps2_teleop_node:
+  ros__parameters:
+    device: "/dev/input/js0"
+    cmd_vel_topic: "cmd_vel_key"
+
+    max_linear: 0.8
+    max_angular: 0.5
+    deadzone: 0.15
+    publish_rate_hz: 10.0
+
+    # Không cần giữ L1
+    require_enable_button: false
+
+    # Stick trái
+    axis_linear: 1          # stick trái Y
+    axis_angular: 0         # stick trái X
+    invert_linear: true     # đảo lại vì trước bị ngược tiến/lùi
+    invert_angular: true    # đảo lại vì trái/phải bị ngược
+
+    # Stick phải (cùng logic với stick trái)
+    use_right_stick: true
+    axis_linear_right: 4    # stick phải Y — thường là 3 hoặc 4, xem jstest
+    axis_angular_right: 3   # stick phải X — thường là 2 hoặc 3
+    invert_linear_right: true
+    invert_angular_right: true
+
+    # D-pad (nút mũi tên)
+    use_dpad: true
+    dpad_hat_x: 6
+    dpad_hat_y: 7
+    invert_dpad_linear: true    # sửa tiến/lùi nút bấm bị ngược
+    invert_dpad_angular: false
+    dpad_linear_speed: 0.4
+    dpad_angular_speed: 0.4

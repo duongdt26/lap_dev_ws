@@ -37,8 +37,10 @@ class LaserFilterNode(Node):
         new_ranges = list(msg.ranges)
 
         # Size of robot AMR's frame
-        box_x_min, box_x_max = -0.567, 0.567 #after measure in real world 0.532 + 0.035
-        box_y_min, box_y_max = -0.323, 0.323 #after measure in real world 0.288 + 0.035
+        box_x_min, box_x_max = -0.600, 0.600 #after measure in real world 0.532 + 0.035
+        box_y_min, box_y_max = -0.340, 0.340 #after measure in real world 0.288 + 0.035
+        # box_x_min, box_x_max = -0.567, 0.567 #after measure in real world 0.532 + 0.035
+        # box_y_min, box_y_max = -0.323, 0.323 #after measure in real world 0.288 + 0.035
         # box_x_min, box_x_max = -0.7, 0.7 #before measure in real world
         # box_y_min, box_y_max = -0.35, 0.35 #before measure in real world
 

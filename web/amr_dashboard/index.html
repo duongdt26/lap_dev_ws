@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>AMR Dashboard</title>
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
   <link rel="stylesheet" href="css/style.css" />
   <!-- roslibjs: thư viện nói chuyện với rosbridge qua WebSocket -->
   <script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
@@ -24,18 +25,9 @@
         <input id="ros-host" type="text" value="localhost" />
       </label>
       <button id="btn-connect">Kết nối</button>
-
-      <h2>Trạng thái robot</h2>
-      <p>Vx: <span id="val-vx">--</span> m/s</p>
-      <p>Vyaw: <span id="val-vyaw">--</span> rad/s</p>
-      <p>X: <span id="val-x">--</span> m</p>
-      <p>Y: <span id="val-y">--</span> m</p>
-      <p>Yaw: <span id="val-yaw">--</span> °</p>
-      <p>Pin: <span id="val-battery">N/A</span></p>
-
+      
       <h2>Điều khiển thủ công</h2>
-        <p>Tốc độ: <input id="speed-slider" type="range" min="0.05" max="0.5" step="0.05" value="0.2" />
-        <span id="speed-label">0.20</span> m/s
+        <p>Tốc độ: <span id="speed-label">0.20</span> m/s <input id="speed-slider" type="range" min="0.05" max="0.8" step="0.05" value="0.2" />
         </p>
         <!-- <div class="teleop-grid">
         <button id="btn-forward">▲</button>
@@ -52,6 +44,15 @@
           <button id="btn-right"    class="teleop-btn" type="button" aria-label="Quay phải">►</button>
           <button id="btn-back"     class="teleop-btn" type="button" aria-label="Lùi">▼</button>
         </div>
+
+      <h2>Trạng thái robot</h2>
+      <p>Vx: <span id="val-vx">--</span> m/s</p>
+      <p>Vyaw: <span id="val-vyaw">--</span> rad/s</p>
+      <p>X: <span id="val-x">--</span> m</p>
+      <p>Y: <span id="val-y">--</span> m</p>
+      <p>Yaw: <span id="val-yaw">--</span> °</p>
+      <p>Pin: <span id="val-battery">N/A</span></p>
+
 
         <h2>Bản đồ (SLAM)</h2>
         <p id="slam-mode-hint" class="hint">
@@ -96,7 +97,10 @@
     <!-- Cột phải: map (Bước 3 sẽ vẽ canvas ở đây) -->
     <section class="map-area">
       <p id="map-status" class="hint">Chưa có bản đồ - chạy localization hoặc SLAM</p>
-      <canvas id="map-canvas" width="600" height="400"></canvas>
+      <!-- <canvas id="map-canvas" width="600" height="400"></canvas> -->
+      <div class="map-canvas-wrap">
+        <canvas id="map-canvas" width="1024" height="700"></canvas>
+      </div>
       <!-- <p class="hint">Bước 3: hiển thị bản đồ tại đây</p> -->
     </section>
   </main>
