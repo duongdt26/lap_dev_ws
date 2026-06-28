@@ -15,29 +15,62 @@ body {
   .connected { color: #4ade80; }
   .disconnected { color: #f87171; }
   
+  /* .layout {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+  } */
+  
   .layout {
     display: flex;
     gap: 16px;
     padding: 16px;
+    align-items: stretch;
+    min-height: calc(100vh - 56px); /* 56px ≈ chiều cao header */
+    box-sizing: border-box;
   }
-  
-  .panel {
+
+  /* .panel {
     width: 280px;
     background: #0f3460;
     padding: 16px;
     border-radius: 8px;
-  }
+  } */
   
+  .panel {
+    width: 280px;
+    min-width: 260px;
+    flex-shrink: 0;
+    background: #0f3460;
+    padding: 16px;
+    border-radius: 8px;
+    overflow-y: auto;
+    max-height: calc(100vh - 56px);
+    box-sizing: border-box;
+  }
+
   .panel input {
     width: 100%;
     margin: 4px 0 12px;
   }
   
-  .map-area {
+  /* .map-area {
     flex: 1;
     background: #0f3460;
     padding: 16px;
     border-radius: 8px;
+  } */
+
+  .map-area {
+    flex: 1;
+    min-width: 0;
+    background: #0f3460;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    box-sizing: border-box;
   }
   
   #map-canvas {
@@ -45,6 +78,26 @@ body {
     border: 1px solid #444;
   }
   
+  /* .map-canvas-wrap {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    width: 100%;
+  }
+  
+  #map-canvas {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 4px;
+    image-rendering: pixelated;
+  } */
+
   .hint {
     color: #888;
     font-size: 0.85rem;
@@ -178,4 +231,21 @@ body {
 
 #map-canvas.pose-mode.nav-mode {
   cursor: not-allowed; /* không nên xảy ra nếu logic loại trừ đúng */
+}
+
+@media (max-width: 900px) {
+  .layout {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .panel {
+    width: 100%;
+    max-width: none;
+    max-height: none;
+  }
+
+  .map-canvas-wrap {
+    min-height: 280px;
+  }
 }

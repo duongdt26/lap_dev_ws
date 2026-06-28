@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'amr_imu_driver'
+package_name = 'ps2_duo_teleop'
 
 setup(
     name=package_name,
@@ -10,6 +10,8 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/config', ['config/ps2_teleop.yaml']),
+        ('share/' + package_name + '/launch', ['launch/ps2_teleop.launch.py']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -24,8 +26,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'imu_uart_node = amr_imu_driver.imu_uart_node:main',
-            'imu_uart_test_node = amr_imu_driver.imu_uart_test_node:main',
+            'ps2_teleop_node = ps2_duo_teleop.ps2_teleop_node:main',
         ],
     },
 )

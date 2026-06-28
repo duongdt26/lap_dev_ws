@@ -1,0 +1,120 @@
+duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 localization_launch.py map:=./obs_3_map_save.yaml  use_sim_time:=false
+[INFO] [launch]: All log files can be found below /home/duo/.ros/log/2026-06-21-18-11-14-821569-duolap-36513
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [map_server-1]: process started with pid [36514]
+[INFO] [amcl-2]: process started with pid [36516]
+[INFO] [lifecycle_manager-3]: process started with pid [36518]
+[lifecycle_manager-3] [INFO] [1782040275.707395249] [lifecycle_manager_localization]: Creating
+[lifecycle_manager-3] [INFO] [1782040275.740863766] [lifecycle_manager_localization]: Creating and initializing lifecycle service clients
+[amcl-2] [INFO] [1782040275.741660601] [amcl]: 
+[amcl-2] 	amcl lifecycle node launched. 
+[amcl-2] 	Waiting on external lifecycle transitions to activate
+[amcl-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[amcl-2] [INFO] [1782040275.749627605] [amcl]: Creating
+[map_server-1] [INFO] [1782040275.772023121] [map_server]: 
+[map_server-1] 	map_server lifecycle node launched. 
+[map_server-1] 	Waiting on external lifecycle transitions to activate
+[map_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[map_server-1] [INFO] [1782040275.772744022] [map_server]: Creating
+[lifecycle_manager-3] [INFO] [1782040276.349431789] [lifecycle_manager_localization]: Starting managed nodes bringup...
+[lifecycle_manager-3] [INFO] [1782040276.349527030] [lifecycle_manager_localization]: Configuring map_server
+[map_server-1] [INFO] [1782040276.350200761] [map_server]: Configuring
+[map_server-1] [INFO] [1782040276.350359934] [map_io]: Loading yaml file: ./obs_3_map_save.yaml
+[map_server-1] [INFO] [1782040276.350988419] [map_io]: resolution: 0.05
+[map_server-1] [INFO] [1782040276.351034377] [map_io]: origin[0]: -21.7
+[map_server-1] [INFO] [1782040276.351047281] [map_io]: origin[1]: -10.8
+[map_server-1] [INFO] [1782040276.351075645] [map_io]: origin[2]: 0
+[map_server-1] [INFO] [1782040276.351087448] [map_io]: free_thresh: 0.25
+[map_server-1] [INFO] [1782040276.351096214] [map_io]: occupied_thresh: 0.65
+[map_server-1] [INFO] [1782040276.351108798] [map_io]: mode: trinary
+[map_server-1] [INFO] [1782040276.351120851] [map_io]: negate: 0
+[map_server-1] [INFO] [1782040276.351609200] [map_io]: Loading image_file: ./obs_3_map_save.pgm
+[map_server-1] [INFO] [1782040276.433745412] [map_io]: Read map ./obs_3_map_save.pgm: 859 X 399 map @ 0.05 m/cell
+[lifecycle_manager-3] [INFO] [1782040276.449779489] [lifecycle_manager_localization]: Configuring amcl
+[amcl-2] [INFO] [1782040276.450465483] [amcl]: Configuring
+[amcl-2] [INFO] [1782040276.450635707] [amcl]: initTransforms
+[amcl-2] [INFO] [1782040276.480611721] [amcl]: initPubSub
+[amcl-2] [INFO] [1782040276.494490989] [amcl]: Subscribed to map topic.
+[lifecycle_manager-3] [INFO] [1782040276.508792611] [lifecycle_manager_localization]: Activating map_server
+[map_server-1] [INFO] [1782040276.509765631] [map_server]: Activating
+[map_server-1] [INFO] [1782040276.511514127] [map_server]: Creating bond (map_server) to lifecycle manager.
+[amcl-2] [INFO] [1782040276.513007558] [amcl]: Received a 859 X 399 map @ 0.050 m/pix
+[lifecycle_manager-3] [INFO] [1782040276.619570389] [lifecycle_manager_localization]: Server map_server connected with bond.
+[lifecycle_manager-3] [INFO] [1782040276.619689916] [lifecycle_manager_localization]: Activating amcl
+[amcl-2] [INFO] [1782040276.620236275] [amcl]: Activating
+[amcl-2] [INFO] [1782040276.620319033] [amcl]: Creating bond (amcl) to lifecycle manager.
+[lifecycle_manager-3] [INFO] [1782040276.730975530] [lifecycle_manager_localization]: Server amcl connected with bond.
+[lifecycle_manager-3] [INFO] [1782040276.731103093] [lifecycle_manager_localization]: Managed nodes are active
+[lifecycle_manager-3] [INFO] [1782040276.731144050] [lifecycle_manager_localization]: Creating bond timer...
+[amcl-2] [INFO] [1782040276.737358450] [amcl]: createLaserObject
+[amcl-2] [INFO] [1782040276.878704719] [amcl]: Message Filter dropping message: frame 'laser_frame' at time 1782040276.355 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[amcl-2] [WARN] [1782040278.500651992] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040280.511105177] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040282.633956912] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040284.639909754] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040286.645691209] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040288.652455102] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040290.656849460] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040292.673309534] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040294.682999263] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040296.688049220] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[map_server-1] [INFO] [1782040298.044686597] [map_server]: Handling LoadMap request
+[map_server-1] [INFO] [1782040298.044793470] [map_io]: Loading yaml file: /home/duo/maps/mks_2106_001_map_save.yaml
+[map_server-1] [INFO] [1782040298.045104021] [map_io]: resolution: 0.05
+[map_server-1] [INFO] [1782040298.045120492] [map_io]: origin[0]: -5.36
+[map_server-1] [INFO] [1782040298.045130671] [map_io]: origin[1]: -15.3
+[map_server-1] [INFO] [1782040298.045138616] [map_io]: origin[2]: 0
+[map_server-1] [INFO] [1782040298.045146952] [map_io]: free_thresh: 0.25
+[map_server-1] [INFO] [1782040298.045154817] [map_io]: occupied_thresh: 0.65
+[map_server-1] [INFO] [1782040298.045161811] [map_io]: mode: trinary
+[map_server-1] [INFO] [1782040298.045170026] [map_io]: negate: 0
+[map_server-1] [INFO] [1782040298.045189453] [map_io]: Loading image_file: /home/duo/maps/mks_2106_001_map_save.pgm
+[map_server-1] [INFO] [1782040298.104177869] [map_io]: Read map /home/duo/maps/mks_2106_001_map_save.pgm: 435 X 651 map @ 0.05 m/cell
+[amcl-2] [INFO] [1782040298.106915475] [amcl]: Received a 435 X 651 map @ 0.050 m/pix
+[amcl-2] [INFO] [1782040298.194306343] [amcl]: createLaserObject
+[amcl-2] [WARN] [1782040298.699453581] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040300.706254780] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040302.716779291] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040304.721592303] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040306.730010032] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040308.737276564] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040310.743901388] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040312.755111724] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040314.761414131] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [WARN] [1782040316.778543067] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [INFO] [1782040317.613419294] [amcl]: initialPoseReceived
+[amcl-2] [WARN] [1782040317.613713003] [amcl]: Failed to transform initial pose in time (Lookup would require extrapolation into the future.  Requested time 1782040317.613546 but the latest data is at time 1782040317.567662, when looking up transform from frame [base_footprint] to frame [odom])
+[amcl-2] [INFO] [1782040317.613774570] [amcl]: Setting pose (1782040317.613774): 1.553 0.408 2.308
+[amcl-2] [INFO] [1782040458.013491915] [amcl]: Message Filter dropping message: frame 'laser_frame' at time 1782040457.481 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[amcl-2] [INFO] [1782040463.303033357] [amcl]: Message Filter dropping message: frame 'laser_frame' at time 1782040462.875 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[amcl-2] [INFO] [1782040662.635363406] [amcl]: Message Filter dropping message: frame 'laser_frame' at time 1782040662.206 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[amcl-2] [INFO] [1782040669.470532657] [amcl]: Message Filter dropping message: frame 'laser_frame' at time 1782040668.970 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[amcl-2] [INFO] [1782040742.890187782] [amcl]: Message Filter dropping message: frame 'laser_frame' at time 1782040742.463 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[amcl-2] [INFO] [1782041427.692237420] [amcl]: Message Filter dropping message: frame 'laser_frame' at time 1782041427.035 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[amcl-2] [INFO] [1782041433.478426874] [amcl]: Message Filter dropping message: frame 'laser_frame' at time 1782041433.020 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[amcl-2] [INFO] [1782041438.814754880] [amcl]: Message Filter dropping message: frame 'laser_frame' at time 1782041438.132 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+^C[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[map_server-1] [INFO] [1782042069.087825402] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[map_server-1] [INFO] [1782042069.088047793] [map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
+[map_server-1] [INFO] [1782042069.088193249] [map_server]: Deactivating
+[map_server-1] [INFO] [1782042069.088237332] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[lifecycle_manager-3] [INFO] [1782042069.087833086] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-3] [INFO] [1782042069.088011575] [lifecycle_manager_localization]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_localization)
+[lifecycle_manager-3] [INFO] [1782042069.088122084] [lifecycle_manager_localization]: Terminating bond timer...
+[amcl-2] [INFO] [1782042069.087835551] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[amcl-2] [INFO] [1782042069.088035931] [amcl]: Running Nav2 LifecycleNode rcl preshutdown (amcl)
+[amcl-2] [INFO] [1782042069.088193599] [amcl]: Deactivating
+[amcl-2] [INFO] [1782042069.088251599] [amcl]: Destroying bond (amcl) to lifecycle manager.
+[amcl-2] [INFO] [1782042069.098609522] [amcl]: Cleaning up
+[map_server-1] [INFO] [1782042069.098629400] [map_server]: Cleaning up
+[map_server-1] [INFO] [1782042069.098830240] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[map_server-1] [INFO] [1782042069.104747290] [map_server]: Destroying
+[amcl-2] [INFO] [1782042069.104948641] [amcl]: Destroying bond (amcl) to lifecycle manager.
+[amcl-2] [INFO] [1782042069.112922988] [amcl]: Destroying
+[lifecycle_manager-3] [INFO] [1782042069.117285933] [lifecycle_manager_localization]: Destroying lifecycle_manager_localization
+[INFO] [map_server-1]: process has finished cleanly [pid 36514]
+[INFO] [lifecycle_manager-3]: process has finished cleanly [pid 36518]
+[INFO] [amcl-2]: process has finished cleanly [pid 36516]
+duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 localization_launch.py map:=./obs_3_map_save.yaml  use_sim_time:=false
+
+

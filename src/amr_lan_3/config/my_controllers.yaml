@@ -13,8 +13,9 @@ controller_manager:
 
 diff_cont:
   ros__parameters:
-    publish_rate: 30.0
+    # publish_rate: 30.0
     # publish_rate: 20.0
+    publish_rate: 15.0
     base_frame_id: base_footprint  # Hoặc base_footprint tùy URDF của cậu base_link
     left_wheel_names: ['left_wheel_joint']
     right_wheel_names: ['right_wheel_joint']
@@ -22,7 +23,9 @@ diff_cont:
     # wheel_separation: 0.594
     # wheel_separation: 0.576
     # wheel_separation: 0.553
-    wheel_separation: 0.568
+    # wheel_separation: 0.568 # bua 
+    # wheel_separation: 0.572 # 24_06
+    wheel_separation: 0.5703 # 26_06_2026
     wheel_radius: 0.09
     use_stamped_vel: false
     # open_loop: false    
@@ -36,6 +39,9 @@ diff_cont:
 
     # pose_covariance_diagonal: x
     # twist_covariance_diagonal: x
+    # Odom tin hơn IMU khi đứng yên (vyaw=0); phần tử thứ 6 = yaw/vyaw
+    pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.002]
     # open_loop: x
     
     # enable_odom_tf: true

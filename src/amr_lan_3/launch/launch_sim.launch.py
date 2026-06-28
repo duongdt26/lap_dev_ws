@@ -115,6 +115,15 @@ def generate_launch_description():
         ]),
     )
 
+    ps2_teleop = IncludeLaunchDescription(
+    PythonLaunchDescriptionSource([
+        os.path.join(
+            get_package_share_directory('ps2_duo_teleop'),
+            'launch',
+            'ps2_teleop.launch.py',
+        )
+    ]),
+    )
     # Launch them all!
     return LaunchDescription([
         rsp,
@@ -125,4 +134,5 @@ def generate_launch_description():
         joint_broad_spawner,
         robot_localization_node,
         web_support, # twist_mux + bridge + rosbridge
+        ps2_teleop,
     ])

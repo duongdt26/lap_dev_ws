@@ -135,6 +135,18 @@ def generate_launch_description():
        parameters=[ekf_params_file]
     )
 
+    delayed_ekf = RegisterEventHandler(
+    event_handler=OnProcessStart(
+        target_action=diff_drive_spawner,
+        on_start=[
+            TimerAction(
+                period=2.0,   # đợi diff_cont publish vài chu kỳ odom
+                actions=[robot_localization_node],
+            )
+        ],
+    )
+)
+
     # Node đọc IMU UART 
     imu_node = Node(
         package='amr_imu_driver', # Tên package chứa file imu_uart_node.py
@@ -160,14 +172,26 @@ def generate_launch_description():
         ]),
     )
 
+    ps2_teleop = IncludeLaunchDescription(
+    PythonLaunchDescriptionSource([
+        os.path.join(
+            get_package_share_directory('ps2_duo_teleop'),
+            'launch',
+            'ps2_teleop.launch.py',
+        )
+    ]),
+    )
+
     return LaunchDescription([
         rsp,
         delayed_controller_manager,
         # Dùng TimerAction để delay spawner 3 giây, đợi Hardware Interface connect Modbus xong
         delayed_diff_drive_spawner,
         delayed_joint_broad_spawner,
-        robot_localization_node, # Chạy EKF kèm theo hệ thống
+        # robot_localization_node, # Chạy EKF kèm theo hệ thống
+        delayed_ekf,
         imu_node,                 # Chạy IMU node
         laser_filter_node,
         web_support, # twist_mux + bridge + rosbridge
+        # ps2_teleop,
     ])

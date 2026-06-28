@@ -1,37 +1,100 @@
+# ekf_filter_node:
+#   ros__parameters:
+#     frequency: 15.0
+#     # frequency: 20.0
+#     two_d_mode: true
+#     publish_tf: true
+#     print_diagnostics: true
+
+#     map_frame: map              # id của frame map
+#     odom_frame: odom            # id của frame odom phát ra từ EKF
+#     base_link_frame: base_footprint # frame gốc của robot
+#     world_frame: odom           # Trong chế độ odom-local, world_frame khớp với odom_frame
+
+#     # Cấu hình Odometry từ diff_drive_controller
+#     odom0: /diff_cont/odom
+#     odom0_config: [false, false, false,
+#                    false, false, false,
+#                    true,  false, false,  # Chỉ lấy vx
+#                    false, false, true]   # Lấy vyaw từ bánh xe để hỗ trợ
+#     # odom0_differential: false
+#     # odom0_config: [false, false, false,
+#     #                false, false, false,
+#     #                true,  false, false,  # Chỉ lấy vx
+#     #                false, false, true,   # Lấy vyaw từ bánh xe để hỗ trợ
+#     #                false, false, false]  # KHÔNG LẤY gia tốc (3 giá trị bị thiếu)
+#     odom0_differential: false
+#     odom0_queue_size: 10
+
+#     # Cấu hình IMU từ node tự viết
+#     imu0: /imu/data
+#     imu0_config: [false, false, false,
+#                   false, false, false,   # Không lấy góc Roll, Pitch, Yaw thô bị trôi
+#                   false, false, false,
+#                   false, false, false,    # CHỈ LẤY vận tốc góc Z (ngăn trôi hướng)
+#                   false,  false, false]   # Lấy gia tốc X nếu muốn (hoặc bỏ qua bằng false)
+#     imu0_differential: false
+#     imu0_queue_size: 10
+ 
+
+
 ekf_filter_node:
   ros__parameters:
-    # frequency: 15.0
-    frequency: 20.0
+    frequency: 15.0
+    sensor_timeout: 0.1
     two_d_mode: true
     publish_tf: true
+    print_diagnostics: true
 
-    map_frame: map              # id của frame map
-    odom_frame: odom            # id của frame odom phát ra từ EKF
-    base_link_frame: base_footprint # frame gốc của robot
-    world_frame: odom           # Trong chế độ odom-local, world_frame khớp với odom_frame
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_footprint
+    world_frame: odom
 
-    # Cấu hình Odometry từ diff_drive_controller
+  # --- Odom encoder: nguồn heading chính (vyaw tin hơn gyro) ---
     odom0: /diff_cont/odom
     odom0_config: [false, false, false,
                    false, false, false,
-                   true,  false, false,  # Chỉ lấy vx
-                   false, false, true]   # Lấy vyaw từ bánh xe để hỗ trợ
-    # odom0_differential: false
-    # odom0_config: [false, false, false,
-    #                false, false, false,
-    #                true,  false, false,  # Chỉ lấy vx
-    #                false, false, true,   # Lấy vyaw từ bánh xe để hỗ trợ
-    #                false, false, false]  # KHÔNG LẤY gia tốc (3 giá trị bị thiếu)
+                   true,  false, false,   # vx
+                   false, false, true,    # vyaw từ bánh xe
+                   false, false, false]
     odom0_differential: false
     odom0_queue_size: 10
+    odom0_twist_rejection_threshold: 2.0
 
-    # Cấu hình IMU từ node tự viết
+  # --- IMU gyro Z: bổ trợ khi quay nhanh, độ tin thấp hơn odom ---
     imu0: /imu/data
     imu0_config: [false, false, false,
-                  false, false, false,   # Không lấy góc Roll, Pitch, Yaw thô bị trôi
                   false, false, false,
-                  false, false, true,    # CHỈ LẤY vận tốc góc Z (ngăn trôi hướng)
-                  false,  false, false]   # Lấy gia tốc X nếu muốn (hoặc bỏ qua bằng false)
+                  false, false, false,
+                  false, false, true,    # CHỈ vyaw (gyro Z)
+                  false, false, false]
     imu0_differential: false
-    imu0_queue_size: 10
- 
+    imu0_queue_size: 20
+    imu0_twist_rejection_threshold: 1.5
+
+    dynamic_process_noise_covariance: true
+
+    # Q: yaw/vyaw nhỏ -> ít trôi khi đứng yên; tin measurement khi có dữ liệu
+    # process_noise_covariance: [0.05, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    #                            0.0, 0.05, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    #                            0.0, 0.0, 0.06, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    #                            0.0, 0.0, 0.0, 0.03, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    #                            0.0, 0.0, 0.0, 0.0, 0.03, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    #                            0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    #                            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.025, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    #                            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.025, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    #                            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.04, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    #                            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0,
+    #                            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.0,
+    #                            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.02, 0.0, 0.0, 0.0,
+    #                            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0,
+    #                            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.0,
+    #                            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.015]
+
+    # initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9,
+    #                               1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9,
+    #                               1e-9, 1e-9, 1e-9]
+    # initial_estimate_covariance: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+    #                           1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+    #                           1.0, 1.0, 1.0]

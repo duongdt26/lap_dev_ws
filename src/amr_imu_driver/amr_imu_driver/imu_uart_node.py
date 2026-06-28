@@ -112,6 +112,9 @@ class ImuUartNode(Node):
                         msg.angular_velocity.x = float(parts[5])
                         msg.angular_velocity.y = float(parts[6])
                         msg.angular_velocity.z = float(parts[7])
+                        # self.get_logger().info(f"Angular Velocity: {msg.angular_velocity.z:.4f} rad/s")
+                        if abs(msg.angular_velocity.z) < 0.004:
+                            msg.angular_velocity.z = 0.0
 
                         # Gia tốc (m/s^2)
                         msg.linear_acceleration.x = float(parts[8])
@@ -127,9 +130,13 @@ class ImuUartNode(Node):
                         # msg.angular_velocity_covariance = [0.00001, 0.0, 0.0, 
                         #                                     0.0, 0.00001, 0.0,
                         #                                     0.0, 0.0, 0.000005]
-                        msg.angular_velocity_covariance = [0.01, 0.0, 0.0, 
-                                                            0.0, 0.01, 0.0,
-                                                            0.0, 0.0, 0.05]
+                        # msg.angular_velocity_covariance = [0.01, 0.0, 0.0, 
+                        #                                     0.0, 0.01, 0.0,
+                        #                                     0.0, 0.0, 0.00005]
+                        # Chỉ hỗ trợ lọc nhiễu khi quay nhanh
+                        msg.angular_velocity_covariance = [0.1, 0.0, 0.0,
+                                                            0.0, 0.1, 0.0,
+                                                            0.0, 0.0, 0.02]
                         msg.linear_acceleration_covariance = [0.002, 0.0, 0.0, 
                                                             0.0, 0.002, 0.0, 
                                                             0.0, 0.0, 0.002]

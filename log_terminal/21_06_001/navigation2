@@ -1,0 +1,1485 @@
+duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 navigation_launch.py use_sim_time:=false map_subscribe_transient_local:=true
+[INFO] [launch]: All log files can be found below /home/duo/.ros/log/2026-06-21-18-11-18-004376-duolap-36554
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [controller_server-1]: process started with pid [36555]
+[INFO] [smoother_server-2]: process started with pid [36557]
+[INFO] [planner_server-3]: process started with pid [36559]
+[INFO] [behavior_server-4]: process started with pid [36561]
+[INFO] [bt_navigator-5]: process started with pid [36563]
+[INFO] [waypoint_follower-6]: process started with pid [36565]
+[INFO] [velocity_smoother-7]: process started with pid [36567]
+[INFO] [lifecycle_manager-8]: process started with pid [36569]
+[waypoint_follower-6] [INFO] [1782040278.901432249] [waypoint_follower]: 
+[waypoint_follower-6] 	waypoint_follower lifecycle node launched. 
+[waypoint_follower-6] 	Waiting on external lifecycle transitions to activate
+[waypoint_follower-6] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[waypoint_follower-6] [INFO] [1782040278.903025860] [waypoint_follower]: Creating
+[bt_navigator-5] [INFO] [1782040278.929326893] [bt_navigator]: 
+[bt_navigator-5] 	bt_navigator lifecycle node launched. 
+[bt_navigator-5] 	Waiting on external lifecycle transitions to activate
+[bt_navigator-5] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[bt_navigator-5] [INFO] [1782040278.929713699] [bt_navigator]: Creating
+[controller_server-1] [INFO] [1782040279.013124212] [controller_server]: 
+[controller_server-1] 	controller_server lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[smoother_server-2] [INFO] [1782040279.078558895] [smoother_server]: 
+[smoother_server-2] 	smoother_server lifecycle node launched. 
+[smoother_server-2] 	Waiting on external lifecycle transitions to activate
+[smoother_server-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[smoother_server-2] [INFO] [1782040279.092310951] [smoother_server]: Creating smoother server
+[controller_server-1] [INFO] [1782040279.135894204] [controller_server]: Creating controller server
+[velocity_smoother-7] [INFO] [1782040279.300127556] [velocity_smoother]: 
+[velocity_smoother-7] 	velocity_smoother lifecycle node launched. 
+[velocity_smoother-7] 	Waiting on external lifecycle transitions to activate
+[velocity_smoother-7] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[lifecycle_manager-8] [INFO] [1782040279.305862303] [lifecycle_manager_navigation]: Creating
+[lifecycle_manager-8] [INFO] [1782040279.380815189] [lifecycle_manager_navigation]: Creating and initializing lifecycle service clients
+[behavior_server-4] [INFO] [1782040279.408302148] [behavior_server]: 
+[behavior_server-4] 	behavior_server lifecycle node launched. 
+[behavior_server-4] 	Waiting on external lifecycle transitions to activate
+[behavior_server-4] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-3] [INFO] [1782040279.602380063] [planner_server]: 
+[planner_server-3] 	planner_server lifecycle node launched. 
+[planner_server-3] 	Waiting on external lifecycle transitions to activate
+[planner_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-3] [INFO] [1782040279.623306924] [planner_server]: Creating
+[controller_server-1] [INFO] [1782040279.750950535] [local_costmap.local_costmap]: 
+[controller_server-1] 	local_costmap lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-1] [INFO] [1782040279.752601124] [local_costmap.local_costmap]: Creating Costmap
+[planner_server-3] [INFO] [1782040279.968731903] [global_costmap.global_costmap]: 
+[planner_server-3] 	global_costmap lifecycle node launched. 
+[planner_server-3] 	Waiting on external lifecycle transitions to activate
+[planner_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-3] [INFO] [1782040279.970368375] [global_costmap.global_costmap]: Creating Costmap
+[lifecycle_manager-8] [INFO] [1782040280.311144236] [lifecycle_manager_navigation]: Starting managed nodes bringup...
+[lifecycle_manager-8] [INFO] [1782040280.311261640] [lifecycle_manager_navigation]: Configuring controller_server
+[controller_server-1] [INFO] [1782040280.312206968] [controller_server]: Configuring controller interface
+[controller_server-1] [INFO] [1782040280.312824482] [controller_server]: getting goal checker plugins..
+[controller_server-1] [INFO] [1782040280.313593855] [controller_server]: Controller frequency set to 20.0000Hz
+[controller_server-1] [INFO] [1782040280.313789467] [local_costmap.local_costmap]: Configuring
+[controller_server-1] [INFO] [1782040280.343336604] [local_costmap.local_costmap]: Using plugin "voxel_layer"
+[controller_server-1] [INFO] [1782040280.351934607] [local_costmap.local_costmap]: Subscribed to Topics: scan
+[controller_server-1] [INFO] [1782040280.382328063] [local_costmap.local_costmap]: Initialized plugin "voxel_layer"
+[controller_server-1] [INFO] [1782040280.382534445] [local_costmap.local_costmap]: Using plugin "inflation_layer"
+[controller_server-1] [INFO] [1782040280.390159698] [local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[controller_server-1] [INFO] [1782040280.434286895] [controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[controller_server-1] [INFO] [1782040280.437101758] [controller_server]: Created goal checker : general_goal_checker of type nav2_controller::SimpleGoalChecker
+[controller_server-1] [INFO] [1782040280.437875320] [controller_server]: Controller Server has general_goal_checker  goal checkers available.
+[controller_server-1] [INFO] [1782040280.442279847] [controller_server]: Created controller : FollowPath of type dwb_core::DWBLocalPlanner
+[controller_server-1] [INFO] [1782040280.443969039] [controller_server]: Setting transform_tolerance to 0.200000
+[controller_server-1] [INFO] [1782040280.482201725] [controller_server]: Using critic "RotateToGoal" (dwb_critics::RotateToGoalCritic)
+[controller_server-1] [INFO] [1782040280.487376557] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1782040280.487908770] [controller_server]: Using critic "Oscillation" (dwb_critics::OscillationCritic)
+[controller_server-1] [INFO] [1782040280.490597313] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1782040280.491869883] [controller_server]: Using critic "BaseObstacle" (dwb_critics::BaseObstacleCritic)
+[controller_server-1] [INFO] [1782040280.493015031] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1782040280.494571011] [controller_server]: Using critic "GoalAlign" (dwb_critics::GoalAlignCritic)
+[controller_server-1] [INFO] [1782040280.495915237] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1782040280.496300751] [controller_server]: Using critic "PathAlign" (dwb_critics::PathAlignCritic)
+[controller_server-1] [INFO] [1782040280.502184190] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1782040280.503520382] [controller_server]: Using critic "PathDist" (dwb_critics::PathDistCritic)
+[controller_server-1] [INFO] [1782040280.507752401] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1782040280.511031497] [controller_server]: Using critic "GoalDist" (dwb_critics::GoalDistCritic)
+[controller_server-1] [INFO] [1782040280.511971816] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1782040280.512106502] [controller_server]: Controller Server has FollowPath  controllers available.
+[lifecycle_manager-8] [INFO] [1782040280.557637458] [lifecycle_manager_navigation]: Configuring smoother_server
+[smoother_server-2] [INFO] [1782040280.560377720] [smoother_server]: Configuring smoother server
+[smoother_server-2] [INFO] [1782040280.604469630] [smoother_server]: Created smoother : simple_smoother of type nav2_smoother::SimpleSmoother
+[smoother_server-2] [INFO] [1782040280.606496735] [smoother_server]: Smoother Server has simple_smoother  smoothers available.
+[lifecycle_manager-8] [INFO] [1782040280.659033597] [lifecycle_manager_navigation]: Configuring planner_server
+[planner_server-3] [INFO] [1782040280.660554639] [planner_server]: Configuring
+[planner_server-3] [INFO] [1782040280.660782854] [global_costmap.global_costmap]: Configuring
+[planner_server-3] [INFO] [1782040280.704985514] [global_costmap.global_costmap]: Using plugin "static_layer"
+[planner_server-3] [INFO] [1782040280.712774558] [global_costmap.global_costmap]: Subscribing to the map topic (/map) with transient local durability
+[planner_server-3] [INFO] [1782040280.717763226] [global_costmap.global_costmap]: Initialized plugin "static_layer"
+[planner_server-3] [INFO] [1782040280.717884457] [global_costmap.global_costmap]: Using plugin "obstacle_layer"
+[planner_server-3] [INFO] [1782040280.723560562] [global_costmap.global_costmap]: Subscribed to Topics: scan
+[planner_server-3] [INFO] [1782040280.767738866] [global_costmap.global_costmap]: Initialized plugin "obstacle_layer"
+[planner_server-3] [INFO] [1782040280.767872310] [global_costmap.global_costmap]: Using plugin "inflation_layer"
+[planner_server-3] [INFO] [1782040280.779774026] [global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+[planner_server-3] [INFO] [1782040280.849346588] [planner_server]: Created global planner plugin GridBased of type nav2_navfn_planner/NavfnPlanner
+[planner_server-3] [INFO] [1782040280.849465504] [planner_server]: Configuring plugin GridBased of type NavfnPlanner
+[planner_server-3] [INFO] [1782040280.849492255] [global_costmap.global_costmap]: StaticLayer: Resizing costmap to 859 X 399 at 0.050000 m/pix
+[planner_server-3] [INFO] [1782040280.852223530] [planner_server]: Planner Server has GridBased  planners available.
+[lifecycle_manager-8] [INFO] [1782040280.904755141] [lifecycle_manager_navigation]: Configuring behavior_server
+[behavior_server-4] [INFO] [1782040280.905403294] [behavior_server]: Configuring
+[behavior_server-4] [INFO] [1782040280.943338484] [behavior_server]: Creating behavior plugin spin of type nav2_behaviors/Spin
+[behavior_server-4] [INFO] [1782040280.945647415] [behavior_server]: Configuring spin
+[behavior_server-4] [INFO] [1782040280.994180992] [behavior_server]: Creating behavior plugin backup of type nav2_behaviors/BackUp
+[behavior_server-4] [INFO] [1782040280.997170799] [behavior_server]: Configuring backup
+[behavior_server-4] [INFO] [1782040281.034360871] [behavior_server]: Creating behavior plugin drive_on_heading of type nav2_behaviors/DriveOnHeading
+[behavior_server-4] [INFO] [1782040281.036701924] [behavior_server]: Configuring drive_on_heading
+[behavior_server-4] [INFO] [1782040281.067215979] [behavior_server]: Creating behavior plugin assisted_teleop of type nav2_behaviors/AssistedTeleop
+[behavior_server-4] [INFO] [1782040281.073444625] [behavior_server]: Configuring assisted_teleop
+[behavior_server-4] [INFO] [1782040281.110434527] [behavior_server]: Creating behavior plugin wait of type nav2_behaviors/Wait
+[behavior_server-4] [INFO] [1782040281.113585600] [behavior_server]: Configuring wait
+[lifecycle_manager-8] [INFO] [1782040281.146805811] [lifecycle_manager_navigation]: Configuring bt_navigator
+[bt_navigator-5] [INFO] [1782040281.148024008] [bt_navigator]: Configuring
+[lifecycle_manager-8] [INFO] [1782040281.463229812] [lifecycle_manager_navigation]: Configuring waypoint_follower
+[waypoint_follower-6] [INFO] [1782040281.464255533] [waypoint_follower]: Configuring
+[waypoint_follower-6] [INFO] [1782040281.524867521] [waypoint_follower]: Created waypoint_task_executor : wait_at_waypoint of type nav2_waypoint_follower::WaitAtWaypoint
+[lifecycle_manager-8] [INFO] [1782040281.528791715] [lifecycle_manager_navigation]: Configuring velocity_smoother
+[velocity_smoother-7] [INFO] [1782040281.529547633] [velocity_smoother]: Configuring velocity smoother
+[lifecycle_manager-8] [INFO] [1782040281.545294822] [lifecycle_manager_navigation]: Activating controller_server
+[controller_server-1] [INFO] [1782040281.546691479] [controller_server]: Activating
+[controller_server-1] [INFO] [1782040281.546806978] [local_costmap.local_costmap]: Activating
+[controller_server-1] [INFO] [1782040281.546836324] [local_costmap.local_costmap]: Checking transform
+[controller_server-1] [INFO] [1782040281.547146815] [local_costmap.local_costmap]: start
+[controller_server-1] [INFO] [1782040281.751351805] [controller_server]: Creating bond (controller_server) to lifecycle manager.
+[lifecycle_manager-8] [INFO] [1782040281.863673511] [lifecycle_manager_navigation]: Server controller_server connected with bond.
+[lifecycle_manager-8] [INFO] [1782040281.863836992] [lifecycle_manager_navigation]: Activating smoother_server
+[smoother_server-2] [INFO] [1782040281.865888273] [smoother_server]: Activating
+[smoother_server-2] [INFO] [1782040281.866047977] [smoother_server]: Creating bond (smoother_server) to lifecycle manager.
+[lifecycle_manager-8] [INFO] [1782040281.997007360] [lifecycle_manager_navigation]: Server smoother_server connected with bond.
+[lifecycle_manager-8] [INFO] [1782040281.997136766] [lifecycle_manager_navigation]: Activating planner_server
+[planner_server-3] [INFO] [1782040281.997828492] [planner_server]: Activating
+[planner_server-3] [INFO] [1782040281.997918803] [global_costmap.global_costmap]: Activating
+[planner_server-3] [INFO] [1782040281.997945454] [global_costmap.global_costmap]: Checking transform
+[planner_server-3] [INFO] [1782040281.997993586] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040282.498091610] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040282.998113491] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040283.498054349] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040283.998109355] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040284.498065034] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040284.998101386] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040285.498107274] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040285.998094625] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040286.498508431] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040286.998076438] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040287.498116365] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040287.998054358] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040288.498054783] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040288.998095444] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040289.498090401] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040289.998062814] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040290.498071921] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040290.998053314] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040291.498111717] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040291.998056443] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040292.498073429] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040292.998073774] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040293.498056087] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040293.998065371] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040294.498103383] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040294.998115896] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040295.498081573] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040295.998080654] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040296.498110976] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040296.998090823] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040297.498093535] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040297.998113370] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040298.498093763] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040298.998090297] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040299.498092834] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040299.998087357] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040300.498103002] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040300.998100283] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040301.498115009] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040301.998111190] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040302.498102135] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040302.998077329] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040303.498084246] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040303.998084380] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040304.498068807] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040304.998046982] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040305.498052272] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040305.998045940] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040306.498045812] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040306.998046586] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040307.498047573] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040307.998049241] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040308.498080789] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040308.998049097] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040309.498053386] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040309.998126476] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040310.498054133] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040310.998121665] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040311.498085944] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040311.998101761] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040312.498098224] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040312.998074498] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040313.498079641] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040313.998110702] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040314.498073146] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040314.998072401] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040315.498082198] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040315.998050115] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040316.498050037] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040316.998100614] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040317.498140785] [global_costmap.global_costmap]: Timed out waiting for transform from base_footprint to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[planner_server-3] [INFO] [1782040317.998303709] [global_costmap.global_costmap]: start
+[planner_server-3] [INFO] [1782040318.998890480] [global_costmap.global_costmap]: StaticLayer: Resizing costmap to 435 X 651 at 0.050000 m/pix
+[planner_server-3] [INFO] [1782040319.054544388] [planner_server]: Activating plugin GridBased of type NavfnPlanner
+[planner_server-3] [INFO] [1782040319.059514859] [planner_server]: Creating bond (planner_server) to lifecycle manager.
+[lifecycle_manager-8] [INFO] [1782040319.174177654] [lifecycle_manager_navigation]: Server planner_server connected with bond.
+[lifecycle_manager-8] [INFO] [1782040319.174311068] [lifecycle_manager_navigation]: Activating behavior_server
+[behavior_server-4] [INFO] [1782040319.175295930] [behavior_server]: Activating
+[behavior_server-4] [INFO] [1782040319.175407002] [behavior_server]: Activating spin
+[behavior_server-4] [INFO] [1782040319.175451807] [behavior_server]: Activating backup
+[behavior_server-4] [INFO] [1782040319.175482886] [behavior_server]: Activating drive_on_heading
+[behavior_server-4] [INFO] [1782040319.175513574] [behavior_server]: Activating assisted_teleop
+[behavior_server-4] [INFO] [1782040319.175541016] [behavior_server]: Activating wait
+[behavior_server-4] [INFO] [1782040319.175575111] [behavior_server]: Creating bond (behavior_server) to lifecycle manager.
+[lifecycle_manager-8] [INFO] [1782040319.296626393] [lifecycle_manager_navigation]: Server behavior_server connected with bond.
+[lifecycle_manager-8] [INFO] [1782040319.296752453] [lifecycle_manager_navigation]: Activating bt_navigator
+[bt_navigator-5] [INFO] [1782040319.297685918] [bt_navigator]: Activating
+[bt_navigator-5] [INFO] [1782040319.574536491] [bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+[lifecycle_manager-8] [INFO] [1782040319.685673312] [lifecycle_manager_navigation]: Server bt_navigator connected with bond.
+[lifecycle_manager-8] [INFO] [1782040319.685766249] [lifecycle_manager_navigation]: Activating waypoint_follower
+[waypoint_follower-6] [INFO] [1782040319.686617948] [waypoint_follower]: Activating
+[waypoint_follower-6] [INFO] [1782040319.686853185] [waypoint_follower]: Creating bond (waypoint_follower) to lifecycle manager.
+[lifecycle_manager-8] [INFO] [1782040319.811228177] [lifecycle_manager_navigation]: Server waypoint_follower connected with bond.
+[lifecycle_manager-8] [INFO] [1782040319.811341993] [lifecycle_manager_navigation]: Activating velocity_smoother
+[velocity_smoother-7] [INFO] [1782040319.812082131] [velocity_smoother]: Activating
+[velocity_smoother-7] [INFO] [1782040319.812407509] [velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[lifecycle_manager-8] [INFO] [1782040319.936981049] [lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
+[lifecycle_manager-8] [INFO] [1782040319.937102079] [lifecycle_manager_navigation]: Managed nodes are active
+[lifecycle_manager-8] [INFO] [1782040319.937237436] [lifecycle_manager_navigation]: Creating bond timer...
+[bt_navigator-5] [INFO] [1782040351.266838301] [bt_navigator]: Begin navigating from current location (0.37, 0.28) to (7.62, 9.07)
+[controller_server-1] [INFO] [1782040351.299182786] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [WARN] [1782040351.299352669] [controller_server]: No goal checker was specified in parameter 'current_goal_checker'. Server will use only plugin loaded general_goal_checker . This warning will appear once.
+[controller_server-1] [INFO] [1782040352.350482857] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040353.400482651] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040354.400489340] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040355.450504446] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040356.450485629] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040357.500524001] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040358.550496924] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040359.550496333] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040360.600488745] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040361.600533112] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040362.650530457] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040363.700499663] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040364.700501540] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040365.750490476] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040366.750485814] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040367.800486957] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040368.850525957] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040369.850493823] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040370.900499022] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040371.900496880] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040372.950491010] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040374.000492361] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040375.000489488] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040376.050513895] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040377.050498713] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040378.100486623] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040379.150484429] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040380.150528210] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040381.200486144] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040382.200488882] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040383.250503296] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040384.300489923] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040385.300487544] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040386.350495916] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040387.350484173] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040388.400490596] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040389.450502104] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040390.450510231] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040391.500488080] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040392.500503817] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040393.550496607] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040394.600495897] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040395.600500906] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040396.650546077] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040397.650503371] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040398.700487270] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040399.750496253] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040400.750492163] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040401.800497424] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040402.800486787] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040403.850493735] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040404.900484780] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040405.006895459] [controller_server]: Reached the goal!
+[bt_navigator-5] [INFO] [1782040405.037339290] [bt_navigator]: Goal succeeded
+[bt_navigator-5] [INFO] [1782040411.180624300] [bt_navigator]: Begin navigating from current location (7.53, 8.99) to (8.92, -4.74)
+[controller_server-1] [INFO] [1782040411.203401230] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782040412.254681684] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040413.304689928] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040414.304661132] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040415.354683658] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040416.354671839] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040417.404689601] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040418.454675911] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040419.454681100] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040420.504661744] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040421.554663205] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040422.554670301] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040423.604673932] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040424.604668682] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040425.654723375] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040426.704674388] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040427.704680434] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040428.754677621] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040429.754675258] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040430.804676629] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040431.804677158] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040432.854701759] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040433.854667238] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040434.904675564] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040435.954665322] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040436.954680963] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040438.005128156] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040439.004676085] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040440.054669753] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040441.104731227] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040442.105113527] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040443.154666331] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040444.154674107] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040445.204825936] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040446.254673835] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040447.254666278] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040448.304816438] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040449.304718677] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040450.354662212] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040451.404808790] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040452.404696919] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040453.454683179] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040454.454689059] [controller_server]: Passing new path to controller.
+[controller_server-1] [WARN] [1782040455.155601143] [controller_server]: Control loop missed its desired rate of 20.0000Hz
+[bt_navigator-5] [WARN] [1782040456.591338016] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[bt_navigator-5] [WARN] [1782040456.615574097] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782040456.617048297] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [WARN] [1782040456.622783352] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [WARN] [1782040456.826360243] [controller_server]: Control loop missed its desired rate of 20.0000Hz
+[bt_navigator-5] [WARN] [1782040457.688034413] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[bt_navigator-5] [WARN] [1782040457.688161945] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782040457.709634987] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to cancel action server for follow_path
+[planner_server-3] [WARN] [1782040457.720189377] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 0.9408 Hz
+[bt_navigator-5] [ERROR] [1782040457.729961831] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[bt_navigator-5] [WARN] [1782040457.735928817] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[bt_navigator-5] [WARN] [1782040457.751682964] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to local_costmap/clear_entirely_local_costmap.
+[bt_navigator-5] [WARN] [1782040457.776024375] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for spin
+[bt_navigator-5] [WARN] [1782040457.797163122] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for wait
+[bt_navigator-5] [WARN] [1782040457.818213430] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for backup
+[bt_navigator-5] [WARN] [1782040457.826097968] [bt_navigator]: [navigate_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-5] [ERROR] [1782040457.826536551] [bt_navigator]: Goal failed
+[controller_server-1] [WARN] [1782040458.026024453] [controller_server]: Control loop missed its desired rate of 20.0000Hz
+[controller_server-1] [ERROR] [1782040458.026937397] [tf_help]: Transform data too old when converting from odom to map
+[controller_server-1] [ERROR] [1782040458.027087883] [tf_help]: Data time: 1782040457s 362480718ns, Transform time: 1782040457s 25668100ns
+[controller_server-1] [WARN] [1782040458.027212209] [controller_server]: Unable to transform robot pose into global plan's frame
+[planner_server-3] [INFO] [1782040458.028792611] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782040457.481 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[controller_server-1] [INFO] [1782040458.032749648] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[controller_server-1] [INFO] [1782040458.083002682] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782040458.083108974] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[behavior_server-4] [INFO] [1782040458.111040434] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782040458.111697042] [behavior_server]: Turning 1.57 for spin behavior.
+[behavior_server-4] [INFO] [1782040458.122586338] [behavior_server]: Running backup
+[behavior_server-4] [INFO] [1782040458.123500935] [behavior_server]: Running wait
+[behavior_server-4] [INFO] [1782040458.129295443] [behavior_server]: DriveOnHeading: no acceleration or deceleration limits set
+[behavior_server-4] [WARN] [1782040458.770154948] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
+[behavior_server-4] [WARN] [1782040458.770236563] [behavior_server]: backup failed
+[behavior_server-4] [WARN] [1782040458.770268815] [behavior_server]: [backup] [ActionServer] Aborting handle.
+[behavior_server-4] [INFO] [1782040463.166030666] [behavior_server]: wait completed successfully
+[planner_server-3] [INFO] [1782040463.177140340] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782040462.748 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[controller_server-1] [INFO] [1782040463.177205043] [local_costmap.local_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782040462.748 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[behavior_server-4] [INFO] [1782040464.010015236] [behavior_server]: spin completed successfully
+[bt_navigator-5] [INFO] [1782040518.402692540] [bt_navigator]: Begin navigating from current location (8.71, -1.27) to (9.84, -2.96)
+[bt_navigator-5] [WARN] [1782040518.424183112] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782040518.444981008] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[controller_server-1] [INFO] [1782040518.445491718] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[bt_navigator-5] [WARN] [1782040518.467022687] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[behavior_server-4] [INFO] [1782040518.468010392] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782040518.468206835] [behavior_server]: Turning 1.57 for spin behavior.
+[planner_server-3] [INFO] [1782040518.544584972] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [INFO] [1782040518.545769020] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782040519.244224335] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.4298 Hz
+[behavior_server-4] [INFO] [1782040522.568525922] [behavior_server]: spin completed successfully
+[bt_navigator-5] [WARN] [1782040522.614045344] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782040522.614334192] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [WARN] [1782040522.635190609] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[behavior_server-4] [INFO] [1782040522.638123990] [behavior_server]: Running wait
+[planner_server-3] [WARN] [1782040523.049450487] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 2.9613 Hz
+[bt_navigator-5] [INFO] [1782040525.573045391] [bt_navigator]: Received goal preemption request
+[bt_navigator-5] [INFO] [1782040525.573382922] [bt_navigator]: Begin navigating from current location (8.70, -1.31) to (8.44, -4.89)
+[behavior_server-4] [INFO] [1782040527.638509891] [behavior_server]: wait completed successfully
+[controller_server-1] [INFO] [1782040527.694200456] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782040528.744865695] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040529.794918611] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040530.694862649] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782040530.694962899] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-5] [INFO] [1782040530.695234735] [bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-5] [INFO] [1782040530.695428824] [bt_navigator]: Goal canceled
+[bt_navigator-5] [INFO] [1782040557.780448100] [bt_navigator]: Begin navigating from current location (8.77, -1.69) to (6.61, -5.99)
+[controller_server-1] [INFO] [1782040557.803647679] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782040558.854912261] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040559.904929915] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782040560.891818528] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782040560.893578580] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [WARN] [1782040560.912882231] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782040560.934414063] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782040560.935227097] [behavior_server]: Running backup
+[bt_navigator-5] [WARN] [1782040560.935390728] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782040560.954928293] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782040560.955076134] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [WARN] [1782040561.232712453] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 11.7703 Hz
+[controller_server-1] [INFO] [1782040565.441738959] [local_costmap.local_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782040565.013 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[behavior_server-4] [INFO] [1782040565.537493211] [behavior_server]: backup completed successfully
+[bt_navigator-5] [WARN] [1782040565.586629964] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782040565.607604256] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[controller_server-1] [INFO] [1782040565.608168989] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[bt_navigator-5] [WARN] [1782040565.629617571] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[behavior_server-4] [INFO] [1782040565.631006378] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782040565.631272714] [behavior_server]: Turning 1.57 for spin behavior.
+[planner_server-3] [INFO] [1782040566.647614639] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782040566.015 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[planner_server-3] [INFO] [1782040567.083581646] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [INFO] [1782040568.725554906] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782040569.347572440] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.6085 Hz
+[behavior_server-4] [INFO] [1782040569.731716966] [behavior_server]: spin completed successfully
+[controller_server-1] [INFO] [1782040569.786408133] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782040570.837030977] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040571.887040768] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782040572.876593076] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782040572.877000630] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782040573.055714841] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 5.7619 Hz
+[controller_server-1] [INFO] [1782040573.087038281] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782040574.116591042] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782040574.134854056] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782040575.310207828] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 0.8510 Hz
+[controller_server-1] [INFO] [1782040575.337029130] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040576.387036225] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040577.387016192] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040578.437032317] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040579.487037952] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782040580.496603261] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782040580.517615924] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[controller_server-1] [INFO] [1782040580.536996808] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782040580.537170729] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[behavior_server-4] [INFO] [1782040580.540211311] [behavior_server]: Running wait
+[bt_navigator-5] [WARN] [1782040580.541440194] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[planner_server-3] [INFO] [1782040580.696374227] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[behavior_server-4] [INFO] [1782040585.540516321] [behavior_server]: wait completed successfully
+[controller_server-1] [INFO] [1782040585.592775744] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782040586.643489491] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040587.693495484] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782040588.682647442] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782040588.703678267] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782040588.725268445] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782040588.727977147] [behavior_server]: Running backup
+[bt_navigator-5] [WARN] [1782040588.728434015] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782040588.743480459] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782040588.743597612] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [INFO] [1782040588.826336066] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782040589.049127601] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 4.5017 Hz
+[behavior_server-4] [WARN] [1782040598.728529646] [behavior_server]: Exceeded time allowance before reaching the DriveOnHeading goal - Exiting DriveOnHeading
+[behavior_server-4] [WARN] [1782040598.728662058] [behavior_server]: backup failed
+[behavior_server-4] [WARN] [1782040598.728690301] [behavior_server]: [backup] [ActionServer] Aborting handle.
+[controller_server-1] [INFO] [1782040598.748984307] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[planner_server-3] [INFO] [1782040598.749895566] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782040599.125909434] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 2.6753 Hz
+[controller_server-1] [INFO] [1782040599.139380637] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782040600.190052868] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040601.240077742] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040602.240079526] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040603.290732945] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040604.290137720] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040605.340075383] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040606.390241631] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782040607.379702495] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782040607.400679605] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782040607.421838541] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782040607.422820686] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782040607.423047897] [behavior_server]: Turning 1.57 for spin behavior.
+[bt_navigator-5] [WARN] [1782040607.423216667] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782040607.440071843] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782040607.440191340] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [INFO] [1782040607.495550077] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782040608.116940472] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.7023 Hz
+[behavior_server-4] [INFO] [1782040612.823648263] [behavior_server]: spin completed successfully
+[controller_server-1] [INFO] [1782040612.883968035] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782040613.934549419] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040614.984534492] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040615.984541958] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040617.034538246] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040618.034565493] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040619.084545122] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782040620.094408044] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782040620.115454083] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[controller_server-1] [INFO] [1782040620.134535804] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782040620.134654629] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[behavior_server-4] [INFO] [1782040620.135858464] [behavior_server]: Running wait
+[bt_navigator-5] [WARN] [1782040620.136282679] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[planner_server-3] [INFO] [1782040620.279147082] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[behavior_server-4] [INFO] [1782040625.136258425] [behavior_server]: wait completed successfully
+[controller_server-1] [INFO] [1782040625.187285522] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782040626.237908624] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040626.347963082] [controller_server]: Reached the goal!
+[bt_navigator-5] [INFO] [1782040626.386715740] [bt_navigator]: Goal succeeded
+[bt_navigator-5] [INFO] [1782040630.177099775] [bt_navigator]: Begin navigating from current location (6.61, -5.91) to (0.83, 1.13)
+[controller_server-1] [INFO] [1782040630.198443007] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782040631.249100404] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040632.299104163] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040633.299118418] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782040634.318482414] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782040634.318824614] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [WARN] [1782040634.339519985] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[controller_server-1] [INFO] [1782040634.349111921] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782040634.349279399] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[behavior_server-4] [INFO] [1782040634.350702079] [behavior_server]: Running backup
+[bt_navigator-5] [WARN] [1782040634.350974577] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[planner_server-3] [WARN] [1782040635.240334397] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.1325 Hz
+[behavior_server-4] [WARN] [1782040644.351090410] [behavior_server]: Exceeded time allowance before reaching the DriveOnHeading goal - Exiting DriveOnHeading
+[behavior_server-4] [WARN] [1782040644.351198836] [behavior_server]: backup failed
+[behavior_server-4] [WARN] [1782040644.351218192] [behavior_server]: [backup] [ActionServer] Aborting handle.
+[controller_server-1] [INFO] [1782040644.368262473] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[bt_navigator-5] [WARN] [1782040644.389461538] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[behavior_server-4] [INFO] [1782040644.390605480] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782040644.390843652] [behavior_server]: Turning 1.57 for spin behavior.
+[planner_server-3] [INFO] [1782040644.820103177] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[behavior_server-4] [INFO] [1782040648.491749697] [behavior_server]: spin completed successfully
+[controller_server-1] [INFO] [1782040648.548266263] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782040649.599116834] [controller_server]: Passing new path to controller.
+[planner_server-3] [INFO] [1782040650.247657398] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782040649.820 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[bt_navigator-5] [WARN] [1782040650.608791014] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782040650.629491643] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[controller_server-1] [INFO] [1782040650.649097114] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782040650.649235887] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[behavior_server-4] [INFO] [1782040650.650609865] [behavior_server]: Running wait
+[bt_navigator-5] [WARN] [1782040650.650871351] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[planner_server-3] [WARN] [1782040652.874397167] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 4.8592 Hz
+[planner_server-3] [INFO] [1782040653.619912378] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[behavior_server-4] [INFO] [1782040655.650965267] [behavior_server]: wait completed successfully
+[controller_server-1] [INFO] [1782040655.702201429] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782040656.753051734] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040657.803371564] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782040658.792107807] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782040658.813107001] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782040658.833993201] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782040658.834991847] [behavior_server]: Running backup
+[bt_navigator-5] [WARN] [1782040658.836546237] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782040658.853050570] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782040658.853192530] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [INFO] [1782040661.802903975] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[controller_server-1] [INFO] [1782040662.634876973] [local_costmap.local_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782040662.206 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[planner_server-3] [INFO] [1782040663.135481905] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782040662.709 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[behavior_server-4] [INFO] [1782040663.935355736] [behavior_server]: Canceling backup
+[behavior_server-4] [INFO] [1782040663.935512263] [behavior_server]: [backup] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-5] [INFO] [1782040663.935978247] [bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-5] [INFO] [1782040663.936326478] [bt_navigator]: Goal canceled
+[planner_server-3] [INFO] [1782040666.140881708] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782040665.714 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[planner_server-3] [INFO] [1782040672.777321992] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782040672.349 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[controller_server-1] [INFO] [1782040742.141710064] [local_costmap.local_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782040741.712 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[planner_server-3] [INFO] [1782040742.141776791] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782040741.712 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[bt_navigator-5] [INFO] [1782040768.153677183] [bt_navigator]: Begin navigating from current location (6.07, -5.72) to (1.99, -4.60)
+[controller_server-1] [INFO] [1782040768.184781513] [controller_server]: Received a goal, begin computing control effort.
+[bt_navigator-5] [WARN] [1782040769.215068388] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782040769.236097664] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782040769.257807943] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[controller_server-1] [INFO] [1782040769.258406268] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[bt_navigator-5] [WARN] [1782040769.264502534] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[bt_navigator-5] [WARN] [1782040769.280383112] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[behavior_server-4] [INFO] [1782040769.281213638] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782040769.281423937] [behavior_server]: Turning 1.57 for spin behavior.
+[controller_server-1] [INFO] [1782040769.285434475] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782040769.285563109] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [INFO] [1782040769.530752307] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [INFO] [1782040769.532170588] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782040770.338256867] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.2404 Hz
+[bt_navigator-5] [INFO] [1782040773.184647447] [bt_navigator]: Received goal preemption request
+[bt_navigator-5] [INFO] [1782040773.184934732] [bt_navigator]: Begin navigating from current location (5.81, -5.62) to (1.99, -4.60)
+[behavior_server-4] [INFO] [1782040775.281762555] [behavior_server]: spin completed successfully
+[controller_server-1] [INFO] [1782040775.325441941] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782040776.376485161] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040777.426478343] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040778.426488274] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040779.476492174] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040780.476478599] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040781.526491754] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040782.576477040] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040783.576528641] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040784.626468599] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040785.626477386] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040786.676478518] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040787.726489603] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040788.726483325] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040789.776482175] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040790.776485824] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040791.826472809] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040792.876477491] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040793.876480342] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040794.926490984] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040795.926478494] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040796.976494945] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040798.026475532] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040799.026467884] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040799.683288480] [controller_server]: Reached the goal!
+[bt_navigator-5] [INFO] [1782040799.714751256] [bt_navigator]: Goal succeeded
+[bt_navigator-5] [INFO] [1782040831.010721846] [bt_navigator]: Begin navigating from current location (2.16, -4.65) to (1.07, 1.71)
+[controller_server-1] [INFO] [1782040831.032345252] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782040832.083356474] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040833.133364708] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040834.133359779] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040835.183357342] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040836.183366700] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040837.233368770] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040838.283369933] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040839.283368145] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040840.333391899] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040841.333368760] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040842.383370953] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040843.383355608] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040844.433370244] [controller_server]: Passing new path to controller.
+[planner_server-3] [WARN] [1782040845.546151709] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 8.1576 Hz
+[controller_server-1] [INFO] [1782040845.583368761] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040846.633369679] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040847.633372858] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040848.683395778] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040849.683363599] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040850.733367983] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040851.783365338] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040852.783859753] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040853.833399910] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040854.833393395] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040855.883359018] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040856.933358941] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040857.933372179] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040858.983383525] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040859.983374019] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040861.033365375] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782040861.240900555] [controller_server]: Reached the goal!
+[bt_navigator-5] [INFO] [1782040861.271223589] [bt_navigator]: Goal succeeded
+[bt_navigator-5] [INFO] [1782041009.345285981] [bt_navigator]: Begin navigating from current location (1.05, 1.60) to (5.45, 7.92)
+[controller_server-1] [INFO] [1782041009.366843696] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041010.417638695] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041011.467640627] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041012.467650478] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041013.517642864] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041014.517639451] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041015.567643642] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041016.617642829] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041017.617640318] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041018.667642603] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041019.667626288] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041020.717642893] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041021.767645468] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041022.767678154] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041023.817644593] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041024.817642516] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041025.867645356] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041026.917657650] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041027.917636226] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041028.967641279] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041029.967625889] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041031.017648217] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041032.067666804] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041033.067650341] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041034.117640517] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041035.116805234] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041035.137771095] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782041035.158969918] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782041035.159880905] [behavior_server]: Running wait
+[bt_navigator-5] [WARN] [1782041035.160293908] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782041035.167668320] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041035.167796663] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [INFO] [1782041035.362884846] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041036.046019725] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.4649 Hz
+[behavior_server-4] [INFO] [1782041040.160227236] [behavior_server]: wait completed successfully
+[controller_server-1] [INFO] [1782041040.211376493] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041041.262099252] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041042.312029895] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041043.312038936] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041044.331519841] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782041044.335405107] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041045.051896497] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.4017 Hz
+[controller_server-1] [INFO] [1782041045.112040256] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041046.112027626] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041047.162030409] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041048.162015097] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041049.191468051] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782041049.191868130] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [WARN] [1782041049.212527889] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782041049.234242319] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782041049.235338877] [behavior_server]: Running backup
+[bt_navigator-5] [WARN] [1782041049.235404081] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782041049.262031204] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041049.262159978] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [WARN] [1782041050.050802330] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.2308 Hz
+[behavior_server-4] [INFO] [1782041055.836240393] [behavior_server]: backup completed successfully
+[controller_server-1] [INFO] [1782041055.896629526] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041056.947398527] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041057.947405635] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041058.997404780] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041060.047403870] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041061.047396350] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041062.097406445] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041063.097580512] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041064.147393967] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041065.054312647] [controller_server]: Reached the goal!
+[bt_navigator-5] [INFO] [1782041065.086353092] [bt_navigator]: Goal succeeded
+[bt_navigator-5] [INFO] [1782041110.513941763] [bt_navigator]: Begin navigating from current location (5.41, 7.77) to (1.24, 1.51)
+[controller_server-1] [INFO] [1782041110.535604380] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041111.586576716] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041112.595326677] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041112.616360662] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[controller_server-1] [INFO] [1782041112.636460305] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041112.636631520] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[controller_server-1] [INFO] [1782041112.637639731] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[bt_navigator-5] [WARN] [1782041112.643819967] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[planner_server-3] [INFO] [1782041112.653386994] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [INFO] [1782041112.654649367] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [WARN] [1782041112.659586757] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[behavior_server-4] [INFO] [1782041112.660659982] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782041112.660894025] [behavior_server]: Turning 1.57 for spin behavior.
+[planner_server-3] [WARN] [1782041113.407535066] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.3278 Hz
+[behavior_server-4] [INFO] [1782041116.361228947] [behavior_server]: spin completed successfully
+[bt_navigator-5] [WARN] [1782041116.405094634] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041116.426048046] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[behavior_server-4] [INFO] [1782041116.427738170] [behavior_server]: Running wait
+[planner_server-3] [INFO] [1782041116.448928200] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041117.136879213] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.4541 Hz
+[behavior_server-4] [INFO] [1782041121.428034899] [behavior_server]: wait completed successfully
+[controller_server-1] [INFO] [1782041121.475042902] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041122.525919253] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041123.535100189] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782041123.535435534] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [WARN] [1782041123.556045014] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[controller_server-1] [INFO] [1782041123.576215090] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041123.576576866] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-5] [ERROR] [1782041123.577486991] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782041123.578810620] [behavior_server]: Running backup
+[bt_navigator-5] [WARN] [1782041123.579266034] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[planner_server-3] [WARN] [1782041124.050046793] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 2.2456 Hz
+[behavior_server-4] [INFO] [1782041131.479350862] [behavior_server]: backup completed successfully
+[controller_server-1] [INFO] [1782041131.530290106] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041132.580970195] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041133.630974890] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041134.630963537] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041135.680974478] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041136.680970324] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041137.730977000] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041138.780971891] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041139.780977066] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041140.830965158] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041141.830957773] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041142.880973681] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041143.930978907] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041144.920451491] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041144.941598488] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782041144.964122876] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[controller_server-1] [INFO] [1782041144.964718836] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[bt_navigator-5] [WARN] [1782041144.970755249] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782041144.980966546] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041144.981092194] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-5] [WARN] [1782041144.986681640] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[behavior_server-4] [INFO] [1782041144.987751628] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782041144.987938743] [behavior_server]: Turning 1.57 for spin behavior.
+[planner_server-3] [INFO] [1782041146.982116929] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [INFO] [1782041146.984519714] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041147.053004025] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 14.0059 Hz
+[planner_server-3] [INFO] [1782041147.355626255] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782041146.754 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[behavior_server-4] [INFO] [1782041149.988280520] [behavior_server]: spin completed successfully
+[controller_server-1] [INFO] [1782041150.031802421] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041151.082655864] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041152.132741117] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041153.132662646] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041154.182658033] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041155.182634911] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041156.211996769] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041156.233081568] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782041156.254813924] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782041156.256854482] [behavior_server]: Running wait
+[bt_navigator-5] [WARN] [1782041156.256923893] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782041156.282662073] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041156.282797580] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [INFO] [1782041156.282757524] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041156.680920164] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 2.5204 Hz
+[behavior_server-4] [INFO] [1782041161.257200212] [behavior_server]: wait completed successfully
+[controller_server-1] [INFO] [1782041161.318467610] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041162.369189931] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041163.419180663] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041164.419179178] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041165.469260535] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041166.469169655] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041167.519174552] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041168.569179296] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041169.569172006] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041170.619178407] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041171.619181060] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041172.669167688] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041173.719159824] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041174.719174903] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041175.769166281] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041176.769161587] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041177.819176845] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041178.869183434] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041179.026217560] [controller_server]: Reached the goal!
+[bt_navigator-5] [INFO] [1782041179.057361625] [bt_navigator]: Goal succeeded
+[bt_navigator-5] [INFO] [1782041184.597993013] [bt_navigator]: Begin navigating from current location (1.30, 1.59) to (8.49, -2.94)
+[controller_server-1] [INFO] [1782041184.629899774] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041185.680833872] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041186.730821193] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041187.780830033] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041188.780847429] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041189.830865851] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041190.880830468] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041191.880826696] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041192.930865889] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041193.980828584] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041194.980834613] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041196.030855253] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041197.029352096] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782041197.029787591] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [WARN] [1782041197.049865439] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782041197.070853272] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782041197.072711504] [behavior_server]: Running backup
+[bt_navigator-5] [WARN] [1782041197.073802101] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782041197.080829081] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041197.080960640] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [WARN] [1782041197.834583893] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.3225 Hz
+[behavior_server-4] [WARN] [1782041207.073175640] [behavior_server]: Exceeded time allowance before reaching the DriveOnHeading goal - Exiting DriveOnHeading
+[behavior_server-4] [WARN] [1782041207.073295497] [behavior_server]: backup failed
+[behavior_server-4] [WARN] [1782041207.073320936] [behavior_server]: [backup] [ActionServer] Aborting handle.
+[controller_server-1] [INFO] [1782041207.084266142] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[planner_server-3] [INFO] [1782041207.085088972] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041207.827677550] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.3495 Hz
+[controller_server-1] [INFO] [1782041207.844968104] [controller_server]: Received a goal, begin computing control effort.
+[bt_navigator-5] [WARN] [1782041208.876031817] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041208.897038054] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782041208.918165751] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782041208.919742229] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782041208.919968057] [behavior_server]: Turning 1.57 for spin behavior.
+[bt_navigator-5] [WARN] [1782041208.920164520] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[planner_server-3] [INFO] [1782041208.935147940] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[controller_server-1] [INFO] [1782041208.946120779] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041208.946269060] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [WARN] [1782041209.862720897] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.0801 Hz
+[behavior_server-4] [INFO] [1782041214.120292402] [behavior_server]: spin completed successfully
+[controller_server-1] [INFO] [1782041214.181314757] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041215.232271641] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041216.282416394] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041217.282266732] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041218.332278688] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041219.382292213] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041220.382270177] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041221.432268729] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041222.432261396] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041223.482357147] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041224.532282813] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041225.532280421] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041226.582270504] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041227.582256285] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041228.632258226] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041229.682310960] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041230.682298256] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041231.732266706] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041232.732256612] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041233.782263650] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041234.832274812] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041235.832268990] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041236.882304874] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041237.882228844] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041238.982271416] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041240.032278458] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041241.021371983] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782041241.021921484] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041241.832081857] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.2538 Hz
+[controller_server-1] [INFO] [1782041241.882274683] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041242.882255408] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041243.911376654] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041243.932394562] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[planner_server-3] [INFO] [1782041243.948532509] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [ERROR] [1782041243.953776218] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782041243.954610990] [behavior_server]: Running wait
+[bt_navigator-5] [WARN] [1782041243.955641303] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782041243.982275195] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041243.982414659] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [WARN] [1782041245.059281950] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 0.9006 Hz
+[behavior_server-4] [INFO] [1782041248.954966388] [behavior_server]: wait completed successfully
+[controller_server-1] [INFO] [1782041249.006916033] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041250.058103227] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041251.108106015] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041252.108104123] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041253.158115722] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041254.156838287] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041254.177910757] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782041254.199211430] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782041254.200456379] [behavior_server]: Running backup
+[bt_navigator-5] [WARN] [1782041254.201105029] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782041254.208129383] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041254.208262815] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [INFO] [1782041254.211326182] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041255.021858666] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.2358 Hz
+[behavior_server-4] [WARN] [1782041264.200880014] [behavior_server]: Exceeded time allowance before reaching the DriveOnHeading goal - Exiting DriveOnHeading
+[behavior_server-4] [WARN] [1782041264.201034888] [behavior_server]: backup failed
+[behavior_server-4] [WARN] [1782041264.201091846] [behavior_server]: [backup] [ActionServer] Aborting handle.
+[controller_server-1] [INFO] [1782041264.201851626] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[planner_server-3] [INFO] [1782041264.204435423] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [WARN] [1782041264.224507396] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[behavior_server-4] [INFO] [1782041264.225828130] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782041264.226080508] [behavior_server]: Turning 1.57 for spin behavior.
+[behavior_server-4] [INFO] [1782041268.326473010] [behavior_server]: spin completed successfully
+[bt_navigator-5] [WARN] [1782041268.372338370] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041268.393377456] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[behavior_server-4] [INFO] [1782041268.394308270] [behavior_server]: Running wait
+[planner_server-3] [INFO] [1782041268.582238861] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041268.972427940] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 2.5702 Hz
+[behavior_server-4] [INFO] [1782041273.394596038] [behavior_server]: wait completed successfully
+[bt_navigator-5] [WARN] [1782041273.442310482] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041273.463351612] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[behavior_server-4] [INFO] [1782041273.464307594] [behavior_server]: Running backup
+[planner_server-3] [INFO] [1782041273.480386158] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041273.945261687] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 2.1588 Hz
+[behavior_server-4] [INFO] [1782041279.964965985] [behavior_server]: backup completed successfully
+[controller_server-1] [INFO] [1782041280.022469232] [controller_server]: Received a goal, begin computing control effort.
+[bt_navigator-5] [WARN] [1782041281.052269430] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041281.073279410] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782041281.094671795] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[bt_navigator-5] [WARN] [1782041281.095250683] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[bt_navigator-5] [WARN] [1782041281.095354720] [bt_navigator]: [navigate_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-5] [ERROR] [1782041281.095551763] [bt_navigator]: Goal failed
+[controller_server-1] [INFO] [1782041281.123416896] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041281.123555739] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [INFO] [1782041281.218517040] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041281.949101761] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.3700 Hz
+[bt_navigator-5] [INFO] [1782041356.605918754] [bt_navigator]: Begin navigating from current location (6.45, -4.70) to (8.78, -2.94)
+[controller_server-1] [INFO] [1782041356.637158308] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041357.688737274] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041358.738702920] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041359.738707190] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041360.756327203] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041360.777284751] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[controller_server-1] [INFO] [1782041360.788725663] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041360.788856371] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[controller_server-1] [INFO] [1782041360.789787696] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[bt_navigator-5] [WARN] [1782041360.795876244] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[bt_navigator-5] [WARN] [1782041360.801389082] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[bt_navigator-5] [WARN] [1782041360.807076090] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[bt_navigator-5] [WARN] [1782041360.811321475] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[behavior_server-4] [INFO] [1782041360.812384290] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782041360.812672035] [behavior_server]: Turning 1.57 for spin behavior.
+[planner_server-3] [INFO] [1782041361.045088088] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [INFO] [1782041361.102073834] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041361.483878982] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 2.2711 Hz
+[behavior_server-4] [INFO] [1782041366.113190042] [behavior_server]: spin completed successfully
+[controller_server-1] [INFO] [1782041366.167105649] [controller_server]: Received a goal, begin computing control effort.
+[bt_navigator-5] [WARN] [1782041367.197225770] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041367.218236828] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782041367.240519197] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782041367.242898666] [behavior_server]: Running wait
+[bt_navigator-5] [WARN] [1782041367.243988571] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782041367.267939973] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041367.268078205] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [INFO] [1782041367.421531820] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[behavior_server-4] [INFO] [1782041372.243314329] [behavior_server]: wait completed successfully
+[controller_server-1] [INFO] [1782041372.294880654] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041373.345533124] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041374.355184991] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041374.376211619] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[controller_server-1] [INFO] [1782041374.395527155] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041374.395689011] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[behavior_server-4] [INFO] [1782041374.397008422] [behavior_server]: Running backup
+[bt_navigator-5] [WARN] [1782041374.397115034] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[planner_server-3] [INFO] [1782041374.548095160] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041374.903325135] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 2.8142 Hz
+[behavior_server-4] [WARN] [1782041384.397417766] [behavior_server]: Exceeded time allowance before reaching the DriveOnHeading goal - Exiting DriveOnHeading
+[behavior_server-4] [WARN] [1782041384.397553644] [behavior_server]: backup failed
+[behavior_server-4] [WARN] [1782041384.397582489] [behavior_server]: [backup] [ActionServer] Aborting handle.
+[controller_server-1] [INFO] [1782041384.417637084] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[planner_server-3] [INFO] [1782041384.418482737] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041384.846592110] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 2.3454 Hz
+[controller_server-1] [INFO] [1782041384.857908736] [controller_server]: Received a goal, begin computing control effort.
+[bt_navigator-5] [WARN] [1782041385.888388915] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041385.908854449] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782041385.930900869] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782041385.932833161] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782041385.933141856] [behavior_server]: Turning 1.57 for spin behavior.
+[bt_navigator-5] [WARN] [1782041385.933829680] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782041385.958808547] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041385.958948492] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [INFO] [1782041385.979366627] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041386.843292546] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.1584 Hz
+[behavior_server-4] [INFO] [1782041391.133493222] [behavior_server]: spin completed successfully
+[bt_navigator-5] [WARN] [1782041391.175011272] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782041391.175402053] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [WARN] [1782041391.195416612] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[behavior_server-4] [INFO] [1782041391.196324934] [behavior_server]: Running wait
+[planner_server-3] [WARN] [1782041391.848283317] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.5551 Hz
+[behavior_server-4] [INFO] [1782041396.196659924] [behavior_server]: wait completed successfully
+[controller_server-1] [INFO] [1782041396.254765960] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041397.306104326] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041398.355877194] [controller_server]: Passing new path to controller.
+[planner_server-3] [WARN] [1782041399.494935734] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 5.8697 Hz
+[controller_server-1] [INFO] [1782041399.555900867] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041400.545143121] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041400.566100186] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782041400.587450747] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782041400.588371713] [behavior_server]: Running backup
+[bt_navigator-5] [WARN] [1782041400.588751432] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782041400.605870454] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041400.605994519] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [INFO] [1782041401.942034971] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041403.272580064] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 0.7524 Hz
+[behavior_server-4] [WARN] [1782041410.588704503] [behavior_server]: Exceeded time allowance before reaching the DriveOnHeading goal - Exiting DriveOnHeading
+[behavior_server-4] [WARN] [1782041410.588810133] [behavior_server]: backup failed
+[behavior_server-4] [WARN] [1782041410.588828428] [behavior_server]: [backup] [ActionServer] Aborting handle.
+[controller_server-1] [INFO] [1782041410.589268502] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[bt_navigator-5] [WARN] [1782041410.609975333] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[behavior_server-4] [INFO] [1782041410.610695467] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782041410.610881660] [behavior_server]: Turning 1.57 for spin behavior.
+[planner_server-3] [INFO] [1782041411.613577020] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [INFO] [1782041412.269177883] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782041411.578 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[bt_navigator-5] [ERROR] [1782041412.879686023] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for spin in node halt!
+[bt_navigator-5] [INFO] [1782041412.879908935] [bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-5] [INFO] [1782041412.880140855] [bt_navigator]: Goal canceled
+[behavior_server-4] [INFO] [1782041412.910996608] [behavior_server]: Canceling spin
+[behavior_server-4] [INFO] [1782041412.911243145] [behavior_server]: [spin] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [INFO] [1782041416.610051954] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782041413.195 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[planner_server-3] [INFO] [1782041425.644694301] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782041421.673 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[controller_server-1] [INFO] [1782041427.464465635] [local_costmap.local_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782041427.035 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[planner_server-3] [INFO] [1782041428.343043761] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782041422.423 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[planner_server-3] [INFO] [1782041431.453726432] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782041431.026 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[controller_server-1] [INFO] [1782041433.448667169] [local_costmap.local_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782041433.020 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[controller_server-1] [INFO] [1782041438.434269303] [local_costmap.local_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782041438.007 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[planner_server-3] [INFO] [1782041438.558669944] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782041438.132 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[planner_server-3] [INFO] [1782041441.553822023] [global_costmap.global_costmap]: Message Filter dropping message: frame 'laser_frame' at time 1782041441.127 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[bt_navigator-5] [INFO] [1782041444.196124886] [bt_navigator]: Begin navigating from current location (6.80, -3.90) to (7.61, 8.07)
+[controller_server-1] [INFO] [1782041444.229182400] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041445.280117821] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041446.330124200] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041447.380139484] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041448.430089162] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041449.480099693] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041450.480097880] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041451.530106805] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041452.580105309] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041453.630090606] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041454.680154951] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041455.680103345] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041456.730090541] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041457.730099968] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041458.780111937] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041459.830106622] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041460.830095746] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041461.880102731] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041462.880109535] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041463.930098362] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041464.980187368] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041465.980115588] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041467.030100073] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041468.030104565] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041469.080126637] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041470.130096529] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041471.130116305] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041472.180100050] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041473.180100086] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041474.230092795] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041475.280101482] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041476.280392134] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041477.330095340] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041478.330099256] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041479.380167249] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041480.430100025] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041481.430538600] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041482.480103456] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041483.480102635] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041484.530099115] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041485.580099311] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041486.580102013] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041487.630139095] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041488.630201116] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041489.680162112] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041490.730095834] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041491.730108657] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041492.780104905] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041493.780100793] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041494.830095004] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041495.880102328] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041496.880116126] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041497.930093410] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041498.930096194] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041499.980098493] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041501.030117251] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041502.030089122] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041503.080101155] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041504.080102760] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041504.087347738] [controller_server]: Reached the goal!
+[bt_navigator-5] [INFO] [1782041504.136661815] [bt_navigator]: Goal succeeded
+[bt_navigator-5] [INFO] [1782041507.520500805] [bt_navigator]: Begin navigating from current location (7.67, 8.02) to (1.12, 2.61)
+[controller_server-1] [INFO] [1782041507.542238065] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041508.593223474] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041509.642986385] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041510.642997609] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041511.693250936] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041512.693076175] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041513.742980217] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041514.793872301] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041515.793299010] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041516.842975737] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041517.893094080] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041518.892997469] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041519.942979681] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041520.942964992] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041521.993017494] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [INFO] [1782041522.770927383] [bt_navigator]: Received goal preemption request
+[bt_navigator-5] [INFO] [1782041522.771311250] [bt_navigator]: Begin navigating from current location (5.26, 6.00) to (-10.79, -2.09)
+[planner_server-3] [WARN] [1782041522.982996602] [planner_server]: The goal sent to the planner is off the global costmap. Planning will always fail to this goal.
+[planner_server-3] [WARN] [1782041522.983179889] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[planner_server-3] [WARN] [1782041522.983213673] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-10.79, -2.09)
+[planner_server-3] [WARN] [1782041522.983239352] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[planner_server-3] [INFO] [1782041523.001309503] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041523.495198190] [planner_server]: The goal sent to the planner is off the global costmap. Planning will always fail to this goal.
+[planner_server-3] [WARN] [1782041523.495354867] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[planner_server-3] [WARN] [1782041523.495387619] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-10.79, -2.09)
+[planner_server-3] [WARN] [1782041523.495425290] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-5] [ERROR] [1782041523.531877383] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[controller_server-1] [INFO] [1782041523.532507728] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[planner_server-3] [INFO] [1782041523.534085527] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [WARN] [1782041523.536345680] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782041523.542965835] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041523.543087916] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [WARN] [1782041524.486472560] [planner_server]: The goal sent to the planner is off the global costmap. Planning will always fail to this goal.
+[planner_server-3] [WARN] [1782041524.486579002] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[planner_server-3] [WARN] [1782041524.486596545] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-10.79, -2.09)
+[planner_server-3] [WARN] [1782041524.486617996] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[planner_server-3] [INFO] [1782041524.506839393] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041525.479968950] [planner_server]: The goal sent to the planner is off the global costmap. Planning will always fail to this goal.
+[planner_server-3] [WARN] [1782041525.480090991] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[planner_server-3] [WARN] [1782041525.480112181] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-10.79, -2.09)
+[planner_server-3] [WARN] [1782041525.480140875] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[behavior_server-4] [INFO] [1782041525.497101384] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782041525.497369181] [behavior_server]: Turning 1.57 for spin behavior.
+[bt_navigator-5] [INFO] [1782041527.926574049] [bt_navigator]: Received goal preemption request
+[bt_navigator-5] [INFO] [1782041527.926910206] [bt_navigator]: Begin navigating from current location (4.99, 5.76) to (-10.79, 7.42)
+[behavior_server-4] [INFO] [1782041529.597713271] [behavior_server]: spin completed successfully
+[planner_server-3] [WARN] [1782041529.628844811] [planner_server]: The goal sent to the planner is off the global costmap. Planning will always fail to this goal.
+[planner_server-3] [WARN] [1782041529.628992702] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[planner_server-3] [WARN] [1782041529.629031365] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-10.79, 7.42)
+[planner_server-3] [WARN] [1782041529.629080368] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[planner_server-3] [INFO] [1782041529.646848907] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041530.480330490] [planner_server]: The goal sent to the planner is off the global costmap. Planning will always fail to this goal.
+[planner_server-3] [WARN] [1782041530.480467840] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[planner_server-3] [WARN] [1782041530.480496545] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-10.79, 7.42)
+[planner_server-3] [WARN] [1782041530.480533284] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[behavior_server-4] [INFO] [1782041530.497251083] [behavior_server]: Running wait
+[behavior_server-4] [INFO] [1782041535.497863626] [behavior_server]: wait completed successfully
+[planner_server-3] [WARN] [1782041535.528483617] [planner_server]: The goal sent to the planner is off the global costmap. Planning will always fail to this goal.
+[planner_server-3] [WARN] [1782041535.528640735] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[planner_server-3] [WARN] [1782041535.528675521] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-10.79, 7.42)
+[planner_server-3] [WARN] [1782041535.528704025] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[planner_server-3] [INFO] [1782041535.546836654] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041536.479294909] [planner_server]: The goal sent to the planner is off the global costmap. Planning will always fail to this goal.
+[planner_server-3] [WARN] [1782041536.479430125] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[planner_server-3] [WARN] [1782041536.479455373] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-10.79, 7.42)
+[planner_server-3] [WARN] [1782041536.479486051] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[behavior_server-4] [INFO] [1782041536.497151776] [behavior_server]: Running backup
+[behavior_server-4] [INFO] [1782041542.897619312] [behavior_server]: backup completed successfully
+[planner_server-3] [WARN] [1782041542.929923815] [planner_server]: The goal sent to the planner is off the global costmap. Planning will always fail to this goal.
+[planner_server-3] [WARN] [1782041542.930238431] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[planner_server-3] [WARN] [1782041542.930328010] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-10.79, 7.42)
+[planner_server-3] [WARN] [1782041542.930372575] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[planner_server-3] [INFO] [1782041542.946983711] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041543.481345777] [planner_server]: The goal sent to the planner is off the global costmap. Planning will always fail to this goal.
+[planner_server-3] [WARN] [1782041543.481452529] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[planner_server-3] [WARN] [1782041543.481472006] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-10.79, 7.42)
+[planner_server-3] [WARN] [1782041543.481495070] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[controller_server-1] [INFO] [1782041543.496849164] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[planner_server-3] [INFO] [1782041543.497741545] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041544.479839050] [planner_server]: The goal sent to the planner is off the global costmap. Planning will always fail to this goal.
+[planner_server-3] [WARN] [1782041544.479940472] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[planner_server-3] [WARN] [1782041544.479958266] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-10.79, 7.42)
+[planner_server-3] [WARN] [1782041544.479981270] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[planner_server-3] [INFO] [1782041544.496825557] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041545.479555841] [planner_server]: The goal sent to the planner is off the global costmap. Planning will always fail to this goal.
+[planner_server-3] [WARN] [1782041545.479676389] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[planner_server-3] [WARN] [1782041545.479697429] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-10.79, 7.42)
+[planner_server-3] [WARN] [1782041545.479723118] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[behavior_server-4] [INFO] [1782041545.497259487] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782041545.497437825] [behavior_server]: Turning 1.57 for spin behavior.
+[behavior_server-4] [INFO] [1782041549.597742844] [behavior_server]: spin completed successfully
+[planner_server-3] [WARN] [1782041549.628968533] [planner_server]: The goal sent to the planner is off the global costmap. Planning will always fail to this goal.
+[planner_server-3] [WARN] [1782041549.629251579] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[planner_server-3] [WARN] [1782041549.629304870] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-10.79, 7.42)
+[planner_server-3] [WARN] [1782041549.629351889] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[planner_server-3] [INFO] [1782041549.646935257] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041550.479702916] [planner_server]: The goal sent to the planner is off the global costmap. Planning will always fail to this goal.
+[planner_server-3] [WARN] [1782041550.479805841] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[planner_server-3] [WARN] [1782041550.479826079] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-10.79, 7.42)
+[planner_server-3] [WARN] [1782041550.479851087] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-5] [WARN] [1782041550.506515151] [bt_navigator]: [navigate_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-5] [ERROR] [1782041550.507004468] [bt_navigator]: Goal failed
+[bt_navigator-5] [INFO] [1782041564.551556276] [bt_navigator]: Begin navigating from current location (4.78, 6.05) to (1.56, 1.63)
+[controller_server-1] [INFO] [1782041564.573196952] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041565.624274377] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041566.674279550] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041567.674287554] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041568.724787171] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041569.774297001] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041570.774298951] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041571.824281644] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041572.824343234] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041573.874288694] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041574.924373036] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041575.924272415] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041576.974331707] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041577.974285787] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041579.024289732] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041580.074288315] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041581.074281806] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041582.124245310] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041583.124393541] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041584.174279436] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041585.224363575] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041586.224289171] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041587.274278528] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041588.274281718] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041589.324440894] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041590.324443051] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041591.374292397] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041592.424311815] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041593.424462158] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041594.182256413] [controller_server]: Reached the goal!
+[bt_navigator-5] [INFO] [1782041594.221984410] [bt_navigator]: Goal succeeded
+[bt_navigator-5] [INFO] [1782041766.188669396] [bt_navigator]: Begin navigating from current location (1.23, 1.41) to (5.06, 8.44)
+[controller_server-1] [INFO] [1782041766.210227200] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041767.261101997] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041768.261105521] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041769.311098897] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041770.361099786] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041771.361149615] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041772.411119964] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041773.411101282] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041774.461098110] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041775.511209013] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041776.511113503] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041777.561109616] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041778.561092002] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041779.611111809] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041780.661123199] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041781.650049425] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782041781.654086023] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041782.493007775] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.1996 Hz
+[controller_server-1] [INFO] [1782041782.511113870] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041783.561116751] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041784.611117788] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041785.611179679] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041786.661103658] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041787.661103279] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041788.690109396] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782041788.710562016] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [WARN] [1782041788.720834819] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[bt_navigator-5] [WARN] [1782041788.738936725] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [ERROR] [1782041788.760198818] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[controller_server-1] [INFO] [1782041788.761124011] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041788.761247746] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[behavior_server-4] [INFO] [1782041788.764264952] [behavior_server]: Running wait
+[bt_navigator-5] [WARN] [1782041788.764775950] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[planner_server-3] [WARN] [1782041789.484953734] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.2933 Hz
+[behavior_server-4] [INFO] [1782041793.764632230] [behavior_server]: wait completed successfully
+[controller_server-1] [INFO] [1782041793.825899478] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041794.876769263] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041795.926781001] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041796.926758252] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041797.976782282] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041798.976779780] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041800.026748793] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041801.076763132] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041802.076756370] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041803.126763072] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041804.126755277] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041805.176763359] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041806.226764269] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041807.226754396] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041808.276785381] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [INFO] [1782041808.785027489] [bt_navigator]: Received goal preemption request
+[bt_navigator-5] [INFO] [1782041808.785564036] [bt_navigator]: Begin navigating from current location (4.91, 8.41) to (2.64, -0.91)
+[controller_server-1] [INFO] [1782041809.276751291] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041810.326770672] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041811.376757411] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041812.376757253] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041813.426757836] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041814.426748459] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041815.476757296] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041816.676754460] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041817.726771370] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041818.735950188] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782041818.736354083] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [WARN] [1782041818.756996312] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[controller_server-1] [INFO] [1782041818.776764735] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041818.776979472] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[behavior_server-4] [INFO] [1782041818.778502788] [behavior_server]: Running backup
+[bt_navigator-5] [WARN] [1782041818.779394958] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[planner_server-3] [WARN] [1782041819.489600932] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.4776 Hz
+[behavior_server-4] [INFO] [1782041823.279154914] [behavior_server]: backup completed successfully
+[controller_server-1] [INFO] [1782041823.330394191] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041824.381249836] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041825.431251401] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041826.431239821] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041827.481257976] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041828.481221428] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041829.531233830] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041830.581253085] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041831.581237153] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041832.631238493] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041833.631242377] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041834.681245969] [controller_server]: Passing new path to controller.
+[planner_server-3] [WARN] [1782041835.736283658] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 15.1382 Hz
+[controller_server-1] [INFO] [1782041835.781239811] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041836.781254213] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041837.809606983] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041837.830587623] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[planner_server-3] [INFO] [1782041837.844234017] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [ERROR] [1782041837.852200961] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[controller_server-1] [INFO] [1782041837.854075903] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[planner_server-3] [INFO] [1782041837.855491826] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [WARN] [1782041837.859346479] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782041837.881236902] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041837.881362160] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [WARN] [1782041838.498893424] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.5282 Hz
+[controller_server-1] [INFO] [1782041838.520582285] [controller_server]: Received a goal, begin computing control effort.
+[bt_navigator-5] [WARN] [1782041839.550593526] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041839.571597510] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[bt_navigator-5] [ERROR] [1782041839.593106561] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782041839.595635212] [behavior_server]: Running spin
+[behavior_server-4] [INFO] [1782041839.595874325] [behavior_server]: Turning 1.57 for spin behavior.
+[bt_navigator-5] [WARN] [1782041839.596087068] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782041839.622395812] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041839.622527521] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [INFO] [1782041839.833778423] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041840.574980952] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.3504 Hz
+[behavior_server-4] [INFO] [1782041845.596314649] [behavior_server]: spin completed successfully
+[bt_navigator-5] [WARN] [1782041845.647201398] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782041845.647544157] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041846.484056284] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.2234 Hz
+[controller_server-1] [INFO] [1782041846.508250091] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041847.559605865] [controller_server]: Passing new path to controller.
+[bt_navigator-5] [WARN] [1782041848.567224515] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[planner_server-3] [INFO] [1782041848.567646415] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [WARN] [1782041848.588251132] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[controller_server-1] [INFO] [1782041848.609318907] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041848.609453261] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-5] [ERROR] [1782041848.609910668] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782041848.612339479] [behavior_server]: Running wait
+[bt_navigator-5] [WARN] [1782041848.614218219] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[planner_server-3] [WARN] [1782041849.593400714] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.0112 Hz
+[behavior_server-4] [INFO] [1782041853.612906083] [behavior_server]: wait completed successfully
+[controller_server-1] [INFO] [1782041853.665371793] [controller_server]: Received a goal, begin computing control effort.
+[bt_navigator-5] [WARN] [1782041854.695410986] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[bt_navigator-5] [WARN] [1782041854.716565455] [bt_navigator_navigate_to_pose_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[planner_server-3] [INFO] [1782041854.717633839] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[bt_navigator-5] [ERROR] [1782041854.739633038] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for follow_path in node halt!
+[behavior_server-4] [INFO] [1782041854.740565665] [behavior_server]: Running backup
+[bt_navigator-5] [WARN] [1782041854.741245763] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[controller_server-1] [INFO] [1782041854.766762777] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041854.766882714] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[planner_server-3] [WARN] [1782041855.579390468] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.1607 Hz
+[behavior_server-4] [WARN] [1782041864.740951846] [behavior_server]: Exceeded time allowance before reaching the DriveOnHeading goal - Exiting DriveOnHeading
+[behavior_server-4] [WARN] [1782041864.741108793] [behavior_server]: backup failed
+[behavior_server-4] [WARN] [1782041864.741146765] [behavior_server]: [backup] [ActionServer] Aborting handle.
+[controller_server-1] [INFO] [1782041864.741731804] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[planner_server-3] [INFO] [1782041864.742584800] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[planner_server-3] [WARN] [1782041865.487724174] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.3448 Hz
+[controller_server-1] [INFO] [1782041865.502320909] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1782041866.553612117] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041867.603598753] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041868.603607021] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041869.653608353] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041870.703622139] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041871.753949357] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041872.753600065] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041873.803599390] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041874.803621029] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041875.854055829] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041876.903613395] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041877.903602079] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041878.953905187] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041879.953811284] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041881.003594755] [controller_server]: Passing new path to controller.
+[planner_server-3] [WARN] [1782041882.098688008] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 9.7150 Hz
+[controller_server-1] [INFO] [1782041882.153967407] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041883.154270153] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041884.203595916] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041885.203586238] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041886.254212463] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041887.303595832] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041888.303586954] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041889.354273090] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041890.403636730] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041891.403621248] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041892.453594361] [controller_server]: Passing new path to controller.
+[controller_server-1] [ERROR] [1782041892.853829795] [controller_server]: Failed to make progress
+[controller_server-1] [WARN] [1782041892.854945459] [controller_server]: [follow_path] [ActionServer] Aborting handle.
+[controller_server-1] [INFO] [1782041892.871720801] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[controller_server-1] [INFO] [1782041892.872878514] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [WARN] [1782041893.041292181] [controller_server]: Control loop missed its desired rate of 20.0000Hz
+[controller_server-1] [INFO] [1782041893.491377749] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041894.491379467] [controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1782041894.891424461] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1782041894.891585756] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-5] [INFO] [1782041894.892115951] [bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-5] [INFO] [1782041894.892332140] [bt_navigator]: Goal canceled
+^C[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[lifecycle_manager-8] [INFO] [1782041975.902882931] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-8] [INFO] [1782041975.903173031] [lifecycle_manager_navigation]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_navigation)
+[lifecycle_manager-8] [INFO] [1782041975.903285204] [lifecycle_manager_navigation]: Terminating bond timer...
+[velocity_smoother-7] [INFO] [1782041975.902972221] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[velocity_smoother-7] [INFO] [1782041975.903263242] [velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
+[velocity_smoother-7] [INFO] [1782041975.903381746] [velocity_smoother]: Deactivating
+[velocity_smoother-7] [INFO] [1782041975.903428655] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[bt_navigator-5] [INFO] [1782041975.903022316] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[bt_navigator-5] [INFO] [1782041975.903161038] [bt_navigator]: Running Nav2 LifecycleNode rcl preshutdown (bt_navigator)
+[bt_navigator-5] [INFO] [1782041975.903296786] [bt_navigator]: Deactivating
+[bt_navigator-5] [INFO] [1782041975.903348293] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[behavior_server-4] [INFO] [1782041975.903193019] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[behavior_server-4] [INFO] [1782041975.903298759] [behavior_server]: Running Nav2 LifecycleNode rcl preshutdown (behavior_server)
+[behavior_server-4] [INFO] [1782041975.903408227] [behavior_server]: Deactivating
+[behavior_server-4] [INFO] [1782041975.903472909] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[controller_server-1] [INFO] [1782041975.903643172] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[controller_server-1] [INFO] [1782041975.903765413] [controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[controller_server-1] [INFO] [1782041975.903909386] [controller_server]: Deactivating
+[controller_server-1] [INFO] [1782041975.903999707] [local_costmap.local_costmap]: Deactivating
+[waypoint_follower-6] [INFO] [1782041975.905048745] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[waypoint_follower-6] [INFO] [1782041975.905688256] [waypoint_follower]: Running Nav2 LifecycleNode rcl preshutdown (waypoint_follower)
+[waypoint_follower-6] [INFO] [1782041975.905955492] [waypoint_follower]: Deactivating
+[waypoint_follower-6] [INFO] [1782041975.906033019] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
+[waypoint_follower-6] [INFO] [1782041975.920511389] [waypoint_follower]: Cleaning up
+[smoother_server-2] [INFO] [1782041975.905307775] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[smoother_server-2] [INFO] [1782041975.906122028] [smoother_server]: Running Nav2 LifecycleNode rcl preshutdown (smoother_server)
+[smoother_server-2] [INFO] [1782041975.906255521] [smoother_server]: Deactivating
+[smoother_server-2] [INFO] [1782041975.906297851] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
+[planner_server-3] [INFO] [1782041975.905365385] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[planner_server-3] [INFO] [1782041975.905494750] [planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
+[planner_server-3] [INFO] [1782041975.905633973] [planner_server]: Deactivating
+[planner_server-3] [INFO] [1782041975.905714686] [global_costmap.global_costmap]: Deactivating
+[bt_navigator-5] [INFO] [1782041975.914243815] [bt_navigator]: Cleaning up
+[behavior_server-4] [INFO] [1782041975.915129953] [behavior_server]: Cleaning up
+[velocity_smoother-7] [INFO] [1782041975.915691187] [velocity_smoother]: Cleaning up
+[velocity_smoother-7] [INFO] [1782041975.915924068] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[smoother_server-2] [INFO] [1782041975.928811142] [smoother_server]: Cleaning up
+[velocity_smoother-7] [INFO] [1782041975.964229853] [velocity_smoother]: Destroying
+[behavior_server-4] [INFO] [1782041976.008415262] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[controller_server-1] [INFO] [1782041976.026787508] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-1] [INFO] [1782041976.047602993] [controller_server]: Cleaning up
+[controller_server-1] [INFO] [1782041976.050444456] [local_costmap.local_costmap]: Cleaning up
+[waypoint_follower-6] [INFO] [1782041976.065677205] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
+[smoother_server-2] [INFO] [1782041976.079237344] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
+[waypoint_follower-6] [INFO] [1782041976.113331455] [waypoint_follower]: Destroying
+[smoother_server-2] [INFO] [1782041976.123598947] [smoother_server]: Destroying
+[behavior_server-4] [INFO] [1782041976.310002268] [behavior_server]: Destroying
+[INFO] [velocity_smoother-7]: process has finished cleanly [pid 36567]
+[controller_server-1] [INFO] [1782041976.375911242] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[lifecycle_manager-8] [INFO] [1782041976.399871034] [lifecycle_manager_navigation]: Destroying lifecycle_manager_navigation
+[controller_server-1] [INFO] [1782041976.406672659] [local_costmap.local_costmap]: Destroying
+[INFO] [waypoint_follower-6]: process has finished cleanly [pid 36565]
+[INFO] [smoother_server-2]: process has finished cleanly [pid 36557]
+[planner_server-3] [INFO] [1782041976.466257493] [planner_server]: Deactivating plugin GridBased of type NavfnPlanner
+[planner_server-3] [INFO] [1782041976.466400804] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[planner_server-3] [INFO] [1782041976.477799108] [planner_server]: Cleaning up
+[controller_server-1] [INFO] [1782041976.511047417] [controller_server]: Destroying
+[planner_server-3] [INFO] [1782041976.540478123] [global_costmap.global_costmap]: Cleaning up
+[INFO] [behavior_server-4]: process has finished cleanly [pid 36561]
+[planner_server-3] [INFO] [1782041976.589938546] [planner_server]: Cleaning up plugin GridBased of type NavfnPlanner
+[planner_server-3] [INFO] [1782041976.590134577] [planner_server]: Destroying plugin GridBased of type NavfnPlanner
+[INFO] [lifecycle_manager-8]: process has finished cleanly [pid 36569]
+[planner_server-3] [INFO] [1782041976.643700468] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[planner_server-3] [INFO] [1782041976.658037489] [global_costmap.global_costmap]: Destroying
+[planner_server-3] [INFO] [1782041976.718612869] [planner_server]: Destroying
+[INFO] [controller_server-1]: process has finished cleanly [pid 36555]
+[bt_navigator-5] [INFO] [1782041976.734753056] [bt_navigator]: Completed Cleaning up
+[bt_navigator-5] [INFO] [1782041976.735704248] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[bt_navigator-5] [INFO] [1782041976.768458331] [bt_navigator]: Destroying
+[INFO] [planner_server-3]: process has finished cleanly [pid 36559]
+[INFO] [bt_navigator-5]: process has finished cleanly [pid 36563]
+
