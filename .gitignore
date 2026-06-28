@@ -22,3 +22,7 @@ log/
 # Giữ lại config yaml trong src
 # !src/**/*.yaml
 # !src/**/*.yml
+
+# ngrok runtime
+web/amr_dashboard/config.json
+scripts/.ngrok_amr.pid

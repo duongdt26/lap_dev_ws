@@ -14,9 +14,22 @@
   
 
     let canvasListenersAttached = false;
+    let mapInitialized = false;
+    let odomPollStarted = false;
 
     window.addEventListener('amr-ros-connected', () => {
     initMap();
+    });
+
+    window.addEventListener('amr-ros-disconnected', () => {
+      mapInitialized = false;
+      currentVx = 0;
+      odomReceived = false;
+      lastOdomTime = 0;
+      teleopMoving = false;
+      mapLiveMode = true;
+      mapStatusBase = '';
+      setZoomControlsEnabled(false);
     });
 
   // Trạng thái dùng chung khi vẽ
@@ -37,6 +50,103 @@
   let redrawScheduled = false;
   let ctxRef = null;
   let canvasRef = null;
+  let baseView = null;         // view fit ban đầu (reset)
+  let lastMapSizeKey = null;   // width×height×resolution — không gồm origin (SLAM đổi origin liên tục)
+  let userViewLocked = false;  // user đã zoom/pan → không auto-fit lại
+  let mapCacheRebuildQueued = false;
+
+  const ZOOM_FACTOR = 1.25;
+  const PAN_STEP = 40;
+  const MIN_SCALE = 0.2;
+  const MAX_SCALE = 20;
+  const VX_STOP = 0.02;
+  const ODOM_STALE_MS = 600;
+
+  let currentVx = 0;
+  let odomReceived = false;
+  let lastOdomTime = 0;
+  let teleopMoving = false;
+  let mapLiveMode = true;
+  let mapStatusBase = '';
+
+  function computeMapLiveMode() {
+    if (navMode || teleopMoving) return true;
+    if (!odomReceived) return false;
+    const stale = Date.now() - lastOdomTime > ODOM_STALE_MS;
+    if (stale) return false;
+    return Math.abs(currentVx) > VX_STOP;
+  }
+
+  function setZoomControlsEnabled(enabled) {
+    const panel = document.querySelector('.map-view-controls');
+    if (panel) panel.classList.toggle('map-controls-disabled', !enabled);
+  }
+
+  function updateMapStatusHint() {
+    const el = document.getElementById('map-status');
+    if (!el) return;
+    const base = mapMsg
+      ? (mapStatusBase ||
+        `Map: ${mapMsg.info.width}×${mapMsg.info.height} @ ${mapMsg.info.resolution}m/cell`)
+      : 'Chưa có bản đồ - chạy localization hoặc SLAM';
+    const modeHint = mapLiveMode
+      ? ' · LIVE (Nav/teleop/Vx — zoom tắt)'
+      : ' · Đóng băng — có thể zoom / đặt pose';
+    el.textContent = base + (mapMsg ? modeHint : '');
+  }
+
+  function updateMapInteractionMode() {
+    const live = computeMapLiveMode();
+    if (live !== mapLiveMode) {
+      mapLiveMode = live;
+      if (live) userViewLocked = false;
+    }
+    setZoomControlsEnabled(!mapLiveMode);
+    updateMapStatusHint();
+  }
+
+  function onOdomSample(vx) {
+    currentVx = vx;
+    odomReceived = true;
+    lastOdomTime = Date.now();
+    updateMapInteractionMode();
+  }
+
+  function applyMapMessage(msg) {
+    if (!canvasRef) return;
+    const isFirstMap = mapMsg === null;
+    mapMsg = msg;
+    mapStatusBase = `Map: ${msg.info.width}×${msg.info.height} @ ${msg.info.resolution}m/cell`;
+    const sizeKey = mapSizeKey(msg.info);
+    const sizeChanged = sizeKey !== lastMapSizeKey;
+
+    if (!view) {
+      computeView(msg, canvasRef);
+      lastMapSizeKey = sizeKey;
+    } else if (sizeChanged && !userViewLocked) {
+      computeView(msg, canvasRef);
+      lastMapSizeKey = sizeKey;
+    } else {
+      view.mapW = msg.info.width;
+      view.mapH = msg.info.height;
+      if (sizeChanged) lastMapSizeKey = sizeKey;
+    }
+
+    queueMapCacheRebuild();
+    updateMapStatusHint();
+    if (isFirstMap) {
+      window.dispatchEvent(new CustomEvent('amr-map-ready'));
+    }
+  }
+
+  window.addEventListener('amr-odom', (e) => {
+    onOdomSample(e.detail.vx);
+  });
+
+  window.addEventListener('amr-teleop-motion', (e) => {
+    teleopMoving = !!e.detail.moving;
+    updateMapInteractionMode();
+  });
 
   // API công khai — tạo sớm để localization/navigation gọi được ngay sau khi connect
   window.AmrMap = {
@@ -51,6 +161,7 @@
       const canvas = document.getElementById('map-canvas');
       canvas.classList.toggle('nav-mode', enabled);
       if (enabled) canvas.classList.remove('pose-mode');
+      updateMapInteractionMode();
     },
     setNavGoalCallback(cb) { navGoalCallback = cb; },
 
@@ -58,15 +169,113 @@
       planPath = [];
       scheduleRedraw();
     },
+    resetView() { resetMapView(); },
   };
-  
+
+  function applyViewChange() {
+    if (!mapMsg || !view) return;
+    rebuildMapCache();
+    scheduleRedraw();
+  }
+
+  function queueMapCacheRebuild() {
+    if (mapCacheRebuildQueued) return;
+    mapCacheRebuildQueued = true;
+    requestAnimationFrame(() => {
+      mapCacheRebuildQueued = false;
+      if (!mapMsg || !view) return;
+      rebuildMapCache();
+      scheduleRedraw();
+    });
+  }
+
+  function zoomAt(factor, cx, cy) {
+    if (mapLiveMode) return;
+    const canvas = canvasRef || document.getElementById('map-canvas');
+    if (!view || !canvas) return;
+    const newScale = Math.max(MIN_SCALE, Math.min(view.scale * factor, MAX_SCALE));
+    if (Math.abs(newScale - view.scale) < 1e-6) return;
+    view.offsetX = cx - (cx - view.offsetX) * (newScale / view.scale);
+    view.offsetY = cy - (cy - view.offsetY) * (newScale / view.scale);
+    view.scale = newScale;
+    userViewLocked = true;
+    applyViewChange();
+  }
+
+  function panMap(dx, dy) {
+    if (mapLiveMode || !view) return;
+    view.offsetX += dx;
+    view.offsetY += dy;
+    userViewLocked = true;
+    applyViewChange();
+  }
+
+  function resetMapView() {
+    if (mapLiveMode || !baseView) return;
+    view = { ...baseView };
+    userViewLocked = false;
+    applyViewChange();
+  }
+
+  let viewControlsAttached = false;
+
+  function initViewControls() {
+    if (viewControlsAttached) return;
+    viewControlsAttached = true;
+
+    const canvas = document.getElementById('map-canvas');
+    canvasRef = canvas;
+
+    document.getElementById('map-zoom-in').addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      zoomAt(ZOOM_FACTOR, canvas.width / 2, canvas.height / 2);
+    });
+    document.getElementById('map-zoom-out').addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      zoomAt(1 / ZOOM_FACTOR, canvas.width / 2, canvas.height / 2);
+    });
+    document.getElementById('map-pan-up').addEventListener('click', () => panMap(0, PAN_STEP));
+    document.getElementById('map-pan-down').addEventListener('click', () => panMap(0, -PAN_STEP));
+    document.getElementById('map-pan-left').addEventListener('click', () => panMap(PAN_STEP, 0));
+    document.getElementById('map-pan-right').addEventListener('click', () => panMap(-PAN_STEP, 0));
+    document.getElementById('map-reset-view').addEventListener('click', resetMapView);
+
+    canvas.addEventListener('wheel', (e) => {
+      if (!view || mapLiveMode) return;
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const cx = (e.clientX - rect.left) * scaleX;
+      const cy = (e.clientY - rect.top) * scaleY;
+      zoomAt(e.deltaY < 0 ? ZOOM_FACTOR : 1 / ZOOM_FACTOR, cx, cy);
+    }, { passive: false });
+  }
+
+  initViewControls();
+  setZoomControlsEnabled(false);
+
+  if (!odomPollStarted) {
+    odomPollStarted = true;
+    setInterval(() => {
+      if (odomReceived) updateMapInteractionMode();
+    }, 400);
+  }
+
   function initMap() {
+    if (mapInitialized) return;
+    mapInitialized = true;
+
     const ros = window.AmrRos.getRos();
-    if (!ros) return;
+    if (!ros) {
+      mapInitialized = false;
+      return;
+    }
   
     const canvas = document.getElementById('map-canvas');
     const ctx = canvas.getContext('2d');
-    const statusEl = document.getElementById('map-status');
 
 
     // ── Khởi tạo offscreen canvas ──
@@ -82,12 +291,20 @@
     });
   
     mapTopic.subscribe((msg) => {
-      mapMsg = msg;
-      statusEl.textContent = `Map: ${msg.info.width}×${msg.info.height} @ ${msg.info.resolution}m/cell`;
-      computeView(msg, canvas);
-      rebuildMapCache();  // map đổi → vẽ lại cache
-      scheduleRedraw();
+      if (!mapLiveMode && mapMsg) return;
+      applyMapMessage(msg);
     });
+
+    const odomTopic = new ROSLIB.Topic({
+      ros,
+      name: '/odometry/filtered',
+      messageType: 'nav_msgs/msg/Odometry',
+    });
+    odomTopic.subscribe((msg) => {
+      onOdomSample(msg.twist.twist.linear.x);
+    });
+
+    updateMapInteractionMode();
   
     // ── Subscribe /amcl_pose (vị trí robot trên map) ──
     const poseTopic = new ROSLIB.Topic({
@@ -176,8 +393,11 @@
     robotPoseMapTopic.subscribe((msg) => {
       const p = msg.pose.pose.position;
       const q = msg.pose.pose.orientation;
-      robotPose = { x: p.x, y: p.y, yawDeg: quaternionToYawDeg(q) };
-      scheduleRedraw();  // không vẽ ngay — tránh queue lag
+      const yawDeg = quaternionToYawDeg(q);
+      robotPose = { x: p.x, y: p.y, yawDeg };
+      window.__amrPose = { x: p.x, y: p.y, yawDeg };
+      window.dispatchEvent(new CustomEvent('amr-pose', { detail: window.__amrPose }));
+      scheduleRedraw();
     });
 
     // tfClient.subscribe('base_footprint', (tf) => {
@@ -337,6 +557,10 @@
   }
   
   /** Fit toàn bộ map vào canvas, giữ tỉ lệ */
+  function mapSizeKey(info) {
+    return `${info.width},${info.height},${info.resolution}`;
+  }
+
   function computeView(msg, canvas) {
     const w = msg.info.width;
     const h = msg.info.height;
@@ -350,6 +574,7 @@
       mapW: w,
       mapH: h,
     };
+    baseView = { ...view };
   }
   
   /** Tọa độ ROS map (mét) → pixel trên canvas */
@@ -414,11 +639,13 @@
     /** Vẽ map tĩnh 1 lần vào offscreen canvas */
     function rebuildMapCache() {
       if (!mapMsg || !view) return;
+      const canvas = canvasRef || document.getElementById('map-canvas');
+      if (!canvas) return;
       if (!mapCacheCanvas) {
         mapCacheCanvas = document.createElement('canvas');
       }
-      mapCacheCanvas.width = canvasRef.width;
-      mapCacheCanvas.height = canvasRef.height;
+      mapCacheCanvas.width = canvas.width;
+      mapCacheCanvas.height = canvas.height;
       const c = mapCacheCanvas.getContext('2d');
       const info = mapMsg.info;
       const w = info.width, h = info.height, data = mapMsg.data;
