@@ -170,6 +170,7 @@ def generate_launch_description():
                 'web_support.launch.py',
             )
         ]),
+        launch_arguments={'use_sim_time': 'false'}.items(),
     )
 
     ps2_teleop = IncludeLaunchDescription(

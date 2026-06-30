@@ -11,9 +11,12 @@
 
   <depend>rclpy</depend>
   <depend>std_srvs</depend>
+  <depend>amr_web_interfaces</depend>
   <exec_depend>nav2_map_server</exec_depend>
 
   <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>std_msgs</depend>
   <depend>nav2_msgs</depend>
   <depend>tf2_ros</depend>
   <exec_depend>rclpy_action</exec_depend>

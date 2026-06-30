@@ -1,0 +1,15 @@
+# Goal — bốc/dỡ hàng trên băng tải qua STM32
+int32 belt_id          # 1 hoặc 2
+string command         # "load" hoặc "unload"
+string side            # "LEFT" hoặc "RIGHT" — chỉ dùng khi unload; mặc định LEFT
+float32 timeout_sec    # timeout chờ hoàn thành (giây)
+---
+# Result
+bool success
+string message
+string final_state     # IDLE | ESTOP
+---
+# Feedback
+string stm32_state     # RUNNING | IDLE | ESTOP
+float32 progress       # 0.0 .. 1.0
+string status_message  # ví dụ: "Hàng đang vào"

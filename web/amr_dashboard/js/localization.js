@@ -241,6 +241,10 @@
 
 const MAPS_DIR = '/home/duo/maps';
 
+function mapYamlPath(name) {
+  return `${MAPS_DIR}/${name}.yaml`;
+}
+
 const mapSelect   = document.getElementById('map-select');
 const loadStatus  = document.getElementById('load-map-status');
 const btnRefresh  = document.getElementById('btn-refresh-maps');
@@ -249,6 +253,72 @@ const btnPoseMode = document.getElementById('btn-pose-mode');
 
 let listMapsClient = null;
 let loadMapClient  = null;
+
+function formatActiveMapStatus(status) {
+  if (!status || !status.loaded) {
+    return 'No active map on robot — load map or run localization';
+  }
+  const name = status.map_name ? status.map_name : '(localization)';
+  return `Active map: ${name} — ${status.width}×${status.height} @ ${Number(status.resolution).toFixed(3)} m/cell`;
+}
+
+function refreshActiveMapStatus() {
+  if (!window.AmrMapSync?.getMapStatus) return;
+  window.AmrMapSync.getMapStatus()
+    .then((status) => {
+      if (status.loaded && !mapSelect.value && status.map_name) {
+        const opt = Array.from(mapSelect.options).find((o) => o.value === status.map_name);
+        if (opt) mapSelect.value = status.map_name;
+      }
+      if (status.loaded) {
+        loadStatus.textContent = formatActiveMapStatus(status);
+        loadStatus.style.color = '#4ade80';
+      }
+    })
+    .catch(() => { /* bridge chưa sẵn sàng */ });
+}
+
+function notifyMapLoaded(name) {
+  if (!window.AmrMapSync?.getMapStatus) return;
+
+  const waitMs = 200;
+  const maxAttempts = 30;
+
+  function waitForMapReady(attempt) {
+    return window.AmrMapSync.getMapStatus().then((status) => {
+      if (status.loaded) return status;
+      if (attempt >= maxAttempts) {
+        throw new Error('Map server chưa publish /map sau khi load');
+      }
+      return new Promise((resolve) => {
+        setTimeout(resolve, waitMs);
+      }).then(() => waitForMapReady(attempt + 1));
+    });
+  }
+
+  waitForMapReady(0)
+    .then(() => window.AmrMapSync.requestMapSync())
+    .then(() => (window.AmrMapData?.syncForMap
+      ? window.AmrMapData.syncForMap(name)
+      : (window.AmrMapSync.setActiveMapName
+        ? window.AmrMapSync.setActiveMapName(name)
+        : Promise.resolve())))
+    .then(() => {
+      refreshActiveMapStatus();
+      window.dispatchEvent(new CustomEvent('amr-map-loaded', { detail: { name } }));
+      // Ép sync thêm lần nữa — rosbridge đôi khi trễ 1 nhịp
+      setTimeout(() => {
+        if (window.AmrMapSync?.forceMapResync) {
+          window.AmrMapSync.forceMapResync().catch(() => {});
+        }
+      }, 500);
+    })
+    .catch((err) => {
+      console.warn('notify map loaded:', err);
+      loadStatus.textContent = `Loaded: ${name} — đợi /map (thử refresh nếu chưa thấy)`;
+      loadStatus.style.color = '#facc15';
+    });
+}
 
 // Đổi tên: KHÔNG dùng "poseMode" — map.js đã dùng biến đó
 let poseUiOn = false;
@@ -308,11 +378,12 @@ btnLoad.addEventListener('click', () => {
   loadStatus.textContent = 'Đang nạp map...';
   loadStatus.style.color = '#888';
   loadMapClient.callService(
-    new ROSLIB.ServiceRequest({ map_url: `${MAPS_DIR}/${name}.yaml` }),
+    new ROSLIB.ServiceRequest({ map_url: mapYamlPath(name) }),
     (result) => {
       if (result.result === 0) {
-        loadStatus.textContent = `Đã nạp: ${name}`;
+        loadStatus.textContent = `Loaded: ${name} — syncing to all clients...`;
         loadStatus.style.color = '#4ade80';
+        notifyMapLoaded(name);
       } else {
         loadStatus.textContent = result.error_msg || 'Nạp map thất bại';
         loadStatus.style.color = '#f87171';
@@ -337,6 +408,9 @@ window.addEventListener('amr-ros-connected', () => {
   listMapsClient = new ROSLIB.Service({ ros, name: '/list_maps', serviceType: 'std_srvs/srv/Trigger' });
   loadMapClient  = new ROSLIB.Service({ ros, name: '/map_server/load_map', serviceType: 'nav2_msgs/srv/LoadMap' });
   refreshMapList();
+  setTimeout(refreshActiveMapStatus, 800);
 });
+
+window.addEventListener('amr-map-ready', refreshActiveMapStatus);
 
 window.AmrLocalization = { refreshMapList, setPoseUiOn };

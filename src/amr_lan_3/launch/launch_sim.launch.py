@@ -113,6 +113,7 @@ def generate_launch_description():
                 'web_support.launch.py',
             )
         ]),
+        launch_arguments={'use_sim_time': 'true'}.items(),
     )
 
     ps2_teleop = IncludeLaunchDescription(
@@ -134,5 +135,5 @@ def generate_launch_description():
         joint_broad_spawner,
         robot_localization_node,
         web_support, # twist_mux + bridge + rosbridge
-        ps2_teleop,
+        # ps2_teleop,
     ])

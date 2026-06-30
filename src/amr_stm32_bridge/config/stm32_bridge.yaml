@@ -1,0 +1,11 @@
+# Tham số stm32_conveyor_bridge_node
+stm32_conveyor_bridge_node:
+  ros__parameters:
+    port: "/dev/ttyUSB0"
+    baudrate: 256000
+    simulate: false          # true = test không cần STM32; false = dùng UART thật
+    hello_client_name: "ChuongDuong"
+    ping_interval_sec: 1.0
+    pong_timeout_sec: 3.0
+    belt_action_timeout_sec: 60.0
+    

@@ -169,10 +169,18 @@ body {
     background: #0f766e;
   }
 
-  #conn-status {
-    margin-left: auto;
+  #conn-status,
+  #stm32-status {
     font-size: 0.85rem;
     white-space: nowrap;
+  }
+
+  #conn-status {
+    margin-left: auto;
+  }
+
+  #stm32-status {
+    flex-shrink: 0;
   }
   
   .layout {
@@ -229,7 +237,69 @@ body {
     padding: 10px 12px !important;
   }
 
-  .workflow-steps {
+  .workflow-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-bottom: 1px solid #115e59;
+    background: #042f2e;
+  }
+
+  .workflow-save-btn,
+  .workflow-tool-btn {
+    flex: 1;
+    margin: 0 !important;
+    padding: 7px 8px !important;
+    font-size: 0.72rem !important;
+    white-space: nowrap;
+  }
+
+  .workflow-add-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid #115e59;
+    border-radius: 6px;
+    background: #0f766e;
+    color: #ecfdf5;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .workflow-add-btn:hover {
+    background: #14b8a6;
+    border-color: #2dd4bf;
+  }
+
+  .workflow-add-btn:active {
+    transform: scale(0.95);
+  }
+
+
+  .process-add-bar.hidden {
+    display: none;
+  }
+
+  .process-add-bar {
+    margin-bottom: 8px;
+  }
+
+  .process-add-bar select {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #115e59;
+    border-radius: 4px;
+    background: #2a2a2a;
+    color: #f1f5f9;
+    font-size: 0.82rem;
+    box-sizing: border-box;
+  }
+
+  .process-steps {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -238,58 +308,103 @@ body {
     gap: 6px;
   }
 
-  .workflow-step {
+  .process-step {
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 8px 10px;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 8px;
     border-radius: 6px;
     border: 1px solid #334155;
     background: #141414;
     font-size: 0.82rem;
-    color: #94a3b8;
-    transition: border-color 0.15s, background 0.15s, color 0.15s;
+    color: #e2e8f0;
+    cursor: grab;
+    user-select: none;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, opacity 0.15s;
   }
 
-  .workflow-step.active {
-    border-color: #2dd4bf;
-    background: rgba(45, 212, 191, 0.1);
-    color: #5eead4;
-    font-weight: 600;
+  .process-step:active {
+    cursor: grabbing;
   }
 
-  .workflow-step.done {
-    border-color: #115e59;
-    color: #64748b;
+  .process-step.dragging {
+    opacity: 0.45;
+    cursor: grabbing;
   }
 
-  .workflow-step.done .step-num {
-    background: #0f766e;
+  .process-step.running {
+    border-color: #facc15;
+    background: rgba(250, 204, 21, 0.14);
+    box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.45);
   }
 
-  .workflow-step.active .step-num {
-    background: #2dd4bf;
-    color: #042f2e;
+  .process-step.completed {
+    border-color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
   }
 
-  .step-num {
+  .process-step.running .process-step-num {
+    background: #facc15;
+    color: #422006;
+  }
+
+  .process-step.completed .process-step-num {
+    background: #166534;
+    color: #dcfce7;
+  }
+
+  .process-step.drop-before {
+    box-shadow: inset 0 2px 0 #2dd4bf;
+  }
+
+  .process-step.drop-after {
+    box-shadow: inset 0 -2px 0 #2dd4bf;
+  }
+
+  .process-step-num {
     flex-shrink: 0;
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     background: #334155;
     color: #e2e8f0;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
+  .process-step-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .process-step-remove {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .process-step-remove:hover {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.12);
+  }
+
   .workflow-detail {
-    margin-top: 12px !important;
-    padding-top: 10px;
-    border-top: 1px solid #334155;
+    margin-top: 0 !important;
     line-height: 1.4;
   }
 
@@ -324,6 +439,36 @@ body {
     background: #2a2a2a;
     color: #f1f5f9;
     box-sizing: border-box;
+  }
+
+  .station-picker-row {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+    margin-bottom: 10px;
+  }
+
+  .station-picker-row select {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 8px 10px;
+    border: 1px solid #115e59;
+    border-radius: 6px;
+    background: #2a2a2a;
+    color: #f1f5f9;
+    font-size: 0.88rem;
+    box-sizing: border-box;
+  }
+
+  .station-edit-btn {
+    flex-shrink: 0;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 8px 10px !important;
+    font-size: 0.85rem !important;
+    border-radius: 6px;
+    align-self: stretch;
   }
 
   .station-btn-grid {
@@ -381,6 +526,12 @@ body {
     background: rgba(239, 68, 68, 0.18);
     color: #f87171;
     border: 1px solid rgba(239, 68, 68, 0.45);
+  }
+
+  .status-badge.status-delivering {
+    background: rgba(245, 158, 11, 0.18);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.45);
   }
 
   .setpoints-table-wrap {
@@ -479,6 +630,12 @@ body {
     background: rgba(245, 158, 11, 0.18);
     color: #fbbf24;
     border: 1px solid rgba(245, 158, 11, 0.45);
+  }
+
+  .belt-cmd-tag.belt-cmd-none {
+    background: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.35);
   }
 
   .setpoints-table .col-status {
@@ -1041,15 +1198,6 @@ body {
     order: 3;
   }
 
-  .workflow-steps {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
-  .workflow-step {
-    flex: 1 1 140px;
-  }
-
   .map-column {
     width: 100%;
     max-height: none;
@@ -1152,30 +1300,58 @@ html[data-theme="light"] .modal-body label input {
   color: #0f172a;
 }
 
-html[data-theme="light"] .workflow-step {
+html[data-theme="light"] .workflow-add-btn {
+  background: #0d9488;
+  border-color: #0f766e;
+  color: #fff;
+}
+
+html[data-theme="light"] .workflow-add-btn:hover {
+  background: #14b8a6;
+}
+
+html[data-theme="light"] .process-add-bar select {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+html[data-theme="light"] .process-step {
   background: #f8fafc;
   border-color: #cbd5e1;
-  color: #64748b;
+  color: #334155;
 }
 
-html[data-theme="light"] .workflow-step.active {
-  border-color: #0d9488;
+html[data-theme="light"] .process-step.running {
+  border-color: #ca8a04;
+  background: #fef9c3;
+  box-shadow: 0 0 0 1px rgba(202, 138, 4, 0.3);
+}
+
+html[data-theme="light"] .process-step.completed {
+  border-color: #16a34a;
   background: #ecfdf5;
-  color: #0f766e;
 }
 
-html[data-theme="light"] .workflow-step.done {
-  color: #94a3b8;
+html[data-theme="light"] .process-step.running .process-step-num {
+  background: #eab308;
+  color: #fff;
 }
 
-html[data-theme="light"] .step-num {
+html[data-theme="light"] .process-step.completed .process-step-num {
+  background: #16a34a;
+  color: #fff;
+}
+
+html[data-theme="light"] .process-step-num {
   background: #cbd5e1;
   color: #475569;
 }
 
-html[data-theme="light"] .workflow-step.active .step-num {
-  background: #14b8a6;
-  color: #fff;
+html[data-theme="light"] .station-picker-row select {
+  background: #fff;
+  border-color: #94a3b8;
+  color: #0f172a;
 }
 
 html[data-theme="light"] .conveyor-status-bar {
@@ -1199,6 +1375,12 @@ html[data-theme="light"] .status-badge.status-occupied {
   border-color: rgba(220, 38, 38, 0.35);
 }
 
+html[data-theme="light"] .status-badge.status-delivering {
+  background: rgba(217, 119, 6, 0.12);
+  color: #b45309;
+  border-color: rgba(217, 119, 6, 0.35);
+}
+
 html[data-theme="light"] .setpoints-table thead .col-cmd-belt {
   color: #0f766e;
 }
@@ -1217,6 +1399,12 @@ html[data-theme="light"] .belt-cmd-tag.belt-cmd-unload {
   background: rgba(217, 119, 6, 0.12);
   color: #b45309;
   border-color: rgba(217, 119, 6, 0.35);
+}
+
+html[data-theme="light"] .belt-cmd-tag.belt-cmd-none {
+  background: rgba(100, 116, 139, 0.1);
+  color: #64748b;
+  border-color: rgba(100, 116, 139, 0.3);
 }
 
 html[data-theme="light"] .setpoints-table thead th {

@@ -1,7 +1,7 @@
 /**
  * status.js — Đọc odom và pose, hiển thị lên panel
  *
- * Init khi rosbridge connected (auto-connect hoặc bấm Kết nối).
+ * Pose: nhận từ amr-pose (map.js /robot_pose_map) — tránh subscribe trùng /amcl_pose.
  */
 
 let statusReady = false;
@@ -13,6 +13,17 @@ function fmtNum(value, decimals) {
   if (Math.abs(n) < threshold) return (0).toFixed(decimals);
   return n.toFixed(decimals);
 }
+
+function updatePosePanel(pose) {
+  if (!pose || pose.x == null) return;
+  document.getElementById('val-x').textContent = Number(pose.x).toFixed(2);
+  document.getElementById('val-y').textContent = Number(pose.y).toFixed(2);
+  document.getElementById('val-yaw').textContent = Number(pose.yawDeg).toFixed(1);
+}
+
+window.addEventListener('amr-pose', (e) => {
+  updatePosePanel(e.detail);
+});
 
 window.addEventListener('amr-ros-connected', () => {
   setTimeout(startSubscriptions, 200);
@@ -48,30 +59,7 @@ function startSubscriptions() {
     }));
   });
 
-  const poseTopic = new ROSLIB.Topic({
-    ros,
-    name: '/amcl_pose',
-    messageType: 'geometry_msgs/msg/PoseWithCovarianceStamped',
-  });
-
-  poseTopic.subscribe((msg) => {
-    const p = msg.pose.pose.position;
-    const q = msg.pose.pose.orientation;
-    const yawDeg = quaternionToYaw(q);
-
-    document.getElementById('val-x').textContent = p.x.toFixed(2);
-    document.getElementById('val-y').textContent = p.y.toFixed(2);
-    document.getElementById('val-yaw').textContent = yawDeg.toFixed(1);
-
-    window.__amrPose = { x: p.x, y: p.y, yawDeg };
-    window.dispatchEvent(new CustomEvent('amr-pose', {
-      detail: window.__amrPose,
-    }));
-  });
-}
-
-function quaternionToYaw(q) {
-  const siny = 2 * (q.w * q.z + q.x * q.y);
-  const cosy = 1 - 2 * (q.y * q.y + q.z * q.z);
-  return (Math.atan2(siny, cosy) * 180) / Math.PI;
+  if (window.__amrPose) {
+    updatePosePanel(window.__amrPose);
+  }
 }

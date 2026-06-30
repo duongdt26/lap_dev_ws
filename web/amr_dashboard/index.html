@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>AMR Dashboard</title>
@@ -34,7 +34,7 @@
           <path d="M16 11l2 2 4-4"/>
         </svg>
       </span>
-      <span class="role-tab-label">Người vận hành</span>
+      <span class="role-tab-label">Operator</span>
     </button>
     <button type="button" class="role-tab" data-role="setup" aria-selected="false">
       <span class="role-tab-icon" aria-hidden="true">
@@ -42,7 +42,7 @@
           <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
         </svg>
       </span>
-      <span class="role-tab-label">Người thiết lập</span>
+      <span class="role-tab-label">Setter</span>
     </button>
   </nav>
 
@@ -57,8 +57,9 @@
               <span class="ip-label">IP</span>
               <input id="ros-host" type="text" placeholder="192.168.x.x hoặc xxxx.ngrok-free.app" />
             </label>
-            <button id="btn-connect" type="button">Kết nối</button>
-            <span id="conn-status" class="disconnected">Chưa kết nối</span>
+            <button id="btn-connect" type="button">Connect</button>
+            <span id="conn-status" class="disconnected">disconnected</span>
+            <span id="stm32-status" class="disconnected">STM32: disconnected</span>
           </div>
         </div>
       </section>
@@ -66,7 +67,7 @@
       <section class="panel-section" data-role="operator setup">
         <h2 class="section-title">Teleop control</h2>
         <div class="section-body">
-          <p class="speed-row">Tốc độ: <span id="speed-label">0.20</span> m/s
+          <p class="speed-row">Velocity: <span id="speed-label">0.20</span> m/s
             <input id="speed-slider" type="range" min="0.05" max="0.8" step="0.05" value="0.2" />
           </p>
           <div class="teleop-grid">
@@ -80,7 +81,7 @@
       </section>
 
       <section class="panel-section" data-role="operator setup">
-        <h2 class="section-title">Trạng thái robot</h2>
+        <h2 class="section-title">Robot Status</h2>
         <div class="section-body status-grid">
           <div class="status-col status-col-left">
             <p>Vx: <span id="val-vx">--</span> m/s</p>
@@ -98,6 +99,12 @@
       <section class="panel-section" data-role="operator setup">
         <h2 class="section-title">Station control</h2>
         <div class="section-body">
+          <div class="station-picker-row">
+            <select id="station-setpoint-select" aria-label="Chọn setpoint">
+              <option value="">-- Chưa có setpoint --</option>
+            </select>
+            <button type="button" id="btn-edit-setpoint" class="btn-action btn-secondary station-edit-btn" disabled>Edit</button>
+          </div>
           <div class="station-btn-grid">
             <button type="button" id="btn-setpoint" class="btn-action btn-secondary">Setpoint</button>
             <button type="button" id="btn-auto-route" class="btn-action btn-secondary">Auto Route</button>
@@ -144,34 +151,37 @@
       </section>
 
       <section class="panel-section" data-role="operator">
-        <h2 class="section-title">Điều hướng (Nav2)</h2>
+        <h2 class="section-title">Navigation</h2>
         <div class="section-body">
-          <p class="hint">Cần navigation_launch đang chạy</p>
+          <p class="hint">Requires navigation_launch</p>
           <button id="btn-nav-mode" type="button" class="btn-action btn-secondary">
-            Nav mode: TẮT
+            Nav mode: OFF
           </button>
           <button id="btn-nav-cancel" type="button" class="btn-action btn-danger">
-            Huỷ điều hướng
+            Cancel navigation
           </button>
-          <p id="nav-status" class="hint">Chưa có goal</p>
+          <p id="nav-status" class="hint">No goal</p>
         </div>
       </section>
 
     </aside>
 
     <aside class="workflow-panel panel-section" data-role="operator setup">
-      <h2 class="section-title">Quy trình chạy robot</h2>
+      <h2 class="section-title workflow-heading">Process</h2>
+      <div class="workflow-toolbar">
+        <button type="button" id="btn-process-add" class="workflow-add-btn" title="Thêm bước" aria-label="Thêm bước">+</button>
+        <button type="button" id="btn-process-open" class="btn-action btn-secondary workflow-tool-btn">List</button>
+        <button type="button" id="btn-process-save" class="btn-action btn-secondary workflow-save-btn">Save</button>
+      </div>
       <div class="section-body workflow-body">
-        <ol id="workflow-steps" class="workflow-steps">
-          <li class="workflow-step" data-step="connect"><span class="step-num">1</span><span class="step-text">Kết nối rosbridge</span></li>
-          <li class="workflow-step" data-step="map"><span class="step-num">2</span><span class="step-text">Nạp map / SLAM</span></li>
-          <li class="workflow-step" data-step="localize"><span class="step-num">3</span><span class="step-text">Định vị robot</span></li>
-          <li class="workflow-step" data-step="setpoint"><span class="step-num">4</span><span class="step-text">Lưu setpoint / station</span></li>
-          <li class="workflow-step" data-step="route"><span class="step-num">5</span><span class="step-text">Auto Route</span></li>
-          <li class="workflow-step" data-step="goto"><span class="step-num">6</span><span class="step-text">Go to Station</span></li>
-          <li class="workflow-step" data-step="done"><span class="step-num">7</span><span class="step-text">Hoàn thành nhiệm vụ</span></li>
-        </ol>
-        <p id="workflow-detail" class="hint workflow-detail">Chưa kết nối — bấm Kết nối trong Config</p>
+        <div id="process-add-bar" class="process-add-bar hidden">
+          <select id="process-add-select" aria-label="Chọn setpoint để thêm">
+            <option value="">-- Chọn setpoint --</option>
+          </select>
+        </div>
+        <ol id="process-steps" class="process-steps"></ol>
+        <p id="process-empty" class="hint">Chưa có bước — bấm + để thêm</p>
+        <p id="workflow-detail" class="hint workflow-detail">disconnected — press Connect in Config</p>
       </div>
     </aside>
 
@@ -196,7 +206,7 @@
       </section>
 
       <section class="panel-section setpoints-card" data-role="operator setup">
-        <h2 class="section-title">Danh sách Setpoint</h2>
+        <h2 class="section-title">Setpoint list</h2>
         <div class="section-body setpoints-body">
           <div class="conveyor-status-bar">
             <div class="conveyor-item">
@@ -261,6 +271,7 @@
             <label>
               Lệnh băng tải 1
               <select id="setpoint-belt1-cmd" class="modal-select">
+                <option value="none">None</option>
                 <option value="load">Load</option>
                 <option value="unload">Unload</option>
               </select>
@@ -268,6 +279,7 @@
             <label>
               Lệnh băng tải 2
               <select id="setpoint-belt2-cmd" class="modal-select">
+                <option value="none">None</option>
                 <option value="load">Load</option>
                 <option value="unload">Unload</option>
               </select>
@@ -279,6 +291,44 @@
         <button type="button" id="btn-use-current" class="btn-action btn-secondary">Sử dụng vị trí hiện tại</button>
         <button type="button" id="btn-save-point" class="btn-action">Save point</button>
         <button type="button" id="btn-cancel-setpoint" class="btn-action btn-danger">Huỷ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lưu / mở Process -->
+  <div id="save-process-modal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal-card modal-card-sm" role="dialog" aria-labelledby="save-process-title">
+      <h2 id="save-process-title" class="modal-title">Lưu Process</h2>
+      <div class="modal-body">
+        <label>
+          Tên process:
+          <input id="process-save-name" type="text" list="process-name-list" placeholder="Nhập hoặc chọn tên..." />
+          <datalist id="process-name-list"></datalist>
+        </label>
+        <p id="save-process-hint" class="hint">Chọn tên có sẵn hoặc nhập tên mới rồi bấm Save</p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="btn-process-save-cancel" class="btn-action btn-secondary">Huỷ</button>
+        <button type="button" id="btn-process-save-confirm" class="btn-action">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="open-process-modal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal-card modal-card-sm" role="dialog" aria-labelledby="open-process-title">
+      <h2 id="open-process-title" class="modal-title">Mở Process</h2>
+      <div class="modal-body">
+        <label>
+          Chọn process:
+          <select id="process-open-select" class="modal-select">
+            <option value="">-- Chưa có process đã lưu --</option>
+          </select>
+        </label>
+        <p id="open-process-detail" class="hint"></p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="btn-process-open-cancel" class="btn-action btn-secondary">Huỷ</button>
+        <button type="button" id="btn-process-open-confirm" class="btn-action">Mở</button>
       </div>
     </div>
   </div>
@@ -299,13 +349,16 @@
 
   <script src="js/role-tabs.js"></script>
   <script src="js/theme.js"></script>
-  <script src="js/ros.js"></script>
-  <script src="js/status.js?v=2"></script>
+  <script src="js/ros.js?v=2"></script>
+  <script src="js/status.js?v=3"></script>
   <script src="js/teleop.js"></script>
-  <script src="js/map.js"></script>
-  <script src="js/slam.js"></script>
-  <script src="js/localization.js"></script>
-  <script src="js/navigation.js"></script>
-  <script src="js/stations.js"></script>
+  <script src="js/map.js?v=10"></script>
+  <script src="js/slam.js?v=2"></script>
+  <script src="js/localization.js?v=6"></script>
+  <script src="js/navigation.js?v=8"></script>
+  <script src="js/stm32.js?v=3"></script>
+  <script src="js/map-data.js?v=3"></script>
+  <script src="js/stations.js?v=3"></script>
+  <script src="js/process.js?v=7"></script>
 </body>
 </html>

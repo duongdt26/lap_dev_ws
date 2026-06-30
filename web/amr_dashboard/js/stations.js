@@ -1,20 +1,22 @@
 /**
- * stations.js — Setpoint, station control, workflow timeline
+ * stations.js — Setpoint, station control, workflow status
  */
 
 (function () {
-  const STORAGE_KEY = 'amr-setpoints-v1';
-
   let setpoints = [];
   let selectedId = null;
-  let workflowStep = 'connect';
   let pendingDeleteId = null;
+  let editingId = null;
 
   const modal = document.getElementById('setpoint-modal');
   const deleteModal = document.getElementById('delete-setpoint-modal');
   const listEl = document.getElementById('setpoints-list');
   const emptyEl = document.getElementById('setpoints-empty');
   const stationStatus = document.getElementById('station-status');
+  const stationSelect = document.getElementById('station-setpoint-select');
+  const btnEditSetpoint = document.getElementById('btn-edit-setpoint');
+  const modalTitle = document.getElementById('setpoint-modal-title');
+  const btnSavePoint = document.getElementById('btn-save-point');
   const workflowDetail = document.getElementById('workflow-detail');
   const conveyor1El = document.getElementById('conveyor-1-status');
   const conveyor2El = document.getElementById('conveyor-2-status');
@@ -22,6 +24,7 @@
   const conveyorState = { belt1: 'Free', belt2: 'Free' };
 
   const BELT_CMD_OPTIONS = [
+    { value: 'none', label: 'None' },
     { value: 'load', label: 'Load' },
     { value: 'unload', label: 'Unload' },
   ];
@@ -38,30 +41,63 @@
   }
 
   function normalizeBeltCmd(value) {
-    return value === 'unload' ? 'unload' : 'load';
+    const v = String(value || '').toLowerCase();
+    if (v === 'unload') return 'unload';
+    if (v === 'none') return 'none';
+    return 'load';
   }
 
-  function loadSetpoints() {
+  function normalizeSetpoint(pt) {
+    return {
+      ...pt,
+      status: pt.status === 'Occupied' ? 'Occupied' : 'Free',
+      belt1Cmd: normalizeBeltCmd(pt.belt1Cmd),
+      belt2Cmd: normalizeBeltCmd(pt.belt2Cmd),
+    };
+  }
+
+  async function reloadSetpointsFromServer(mapName) {
+    if (!window.AmrMapData?.loadSetpoints) return;
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      setpoints = raw ? JSON.parse(raw) : [];
-      setpoints = setpoints.map((pt) => ({
-        ...pt,
-        status: pt.status === 'Occupied' ? 'Occupied' : 'Free',
-        belt1Cmd: normalizeBeltCmd(pt.belt1Cmd),
-        belt2Cmd: normalizeBeltCmd(pt.belt2Cmd),
-      }));
-    } catch {
-      setpoints = [];
+      const name = await window.AmrMapData.resolveMapName(mapName);
+      if (!name) {
+        setpoints = [];
+        selectedId = null;
+        renderSetpointsList();
+        renderStationPicker();
+        updateStationStatus('Nạp map để xem setpoint');
+        return;
+      }
+      const data = await window.AmrMapData.loadSetpoints(name);
+      setpoints = (data || []).map(normalizeSetpoint);
+      selectedId = null;
+      renderSetpointsList();
+      renderStationPicker();
+      updateStationStatus();
+      window.dispatchEvent(new CustomEvent('amr-setpoints-changed'));
+    } catch (err) {
+      console.warn('load setpoints:', err);
+      stationStatus.textContent = `Lỗi tải setpoint: ${err.message}`;
     }
   }
 
   function saveSetpoints() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(setpoints));
     renderSetpointsList();
+    renderStationPicker();
+    window.dispatchEvent(new CustomEvent('amr-setpoints-changed'));
     setWorkflowStep('setpoint', setpoints.length
       ? `Đã lưu ${setpoints.length} setpoint`
       : 'Chưa có setpoint — bấm Setpoint để thêm');
+
+    if (!window.AmrMapData?.saveSetpoints) return;
+    const mapName = window.AmrMapData.getCurrentMapName();
+    if (!mapName) {
+      stationStatus.textContent = 'Nạp map trước khi lưu setpoint';
+      return;
+    }
+    window.AmrMapData.saveSetpoints(setpoints, mapName).catch((err) => {
+      stationStatus.textContent = `Lỗi lưu setpoint: ${err.message}`;
+    });
   }
 
   function getRobotPose() {
@@ -89,16 +125,69 @@
 
   function renderConveyorStatus() {
     if (!conveyor1El || !conveyor2El) return;
-    conveyor1El.className = `status-badge ${conveyorState.belt1 === 'Occupied' ? 'status-occupied' : 'status-free'}`;
+    const cls1 = conveyorBadgeClass(conveyorState.belt1);
+    const cls2 = conveyorBadgeClass(conveyorState.belt2);
+    conveyor1El.className = `status-badge ${cls1}`;
     conveyor1El.textContent = conveyorState.belt1;
-    conveyor2El.className = `status-badge ${conveyorState.belt2 === 'Occupied' ? 'status-occupied' : 'status-free'}`;
+    conveyor2El.className = `status-badge ${cls2}`;
     conveyor2El.textContent = conveyorState.belt2;
+  }
+
+  function conveyorBadgeClass(status) {
+    if (status === 'Delivering') return 'status-delivering';
+    if (status === 'Occupied') return 'status-occupied';
+    return 'status-free';
+  }
+
+  function normalizeConveyorStatus(status) {
+    const s = String(status || 'Free');
+    if (s === 'Delivering' || s === 'Occupied') return s;
+    return 'Free';
   }
 
   function setConveyorStatus(belt, status) {
     const key = belt === 1 ? 'belt1' : 'belt2';
-    conveyorState[key] = status === 'Occupied' ? 'Occupied' : 'Free';
+    conveyorState[key] = normalizeConveyorStatus(status);
     renderConveyorStatus();
+  }
+
+  function getConveyorStatus(belt) {
+    return belt === 1 ? conveyorState.belt1 : conveyorState.belt2;
+  }
+
+  function renderStationPicker() {
+    if (!stationSelect) return;
+
+    stationSelect.innerHTML = '';
+    if (!setpoints.length) {
+      stationSelect.innerHTML = '<option value="">-- Chưa có setpoint --</option>';
+      stationSelect.disabled = true;
+      if (btnEditSetpoint) btnEditSetpoint.disabled = true;
+      return;
+    }
+
+    stationSelect.disabled = false;
+    const emptyOpt = document.createElement('option');
+    emptyOpt.value = '';
+    emptyOpt.textContent = '-- Chọn setpoint --';
+    stationSelect.appendChild(emptyOpt);
+
+    setpoints.forEach((pt) => {
+      const opt = document.createElement('option');
+      opt.value = pt.id;
+      opt.textContent = pt.name;
+      stationSelect.appendChild(opt);
+    });
+
+    stationSelect.value = selectedId || '';
+    if (btnEditSetpoint) btnEditSetpoint.disabled = !selectedId;
+  }
+
+  function selectSetpoint(id) {
+    selectedId = id || null;
+    renderSetpointsList();
+    renderStationPicker();
+    updateStationStatus();
   }
 
   function renderSetpointsList() {
@@ -125,9 +214,7 @@
       });
 
       tr.addEventListener('click', () => {
-        selectedId = pt.id;
-        renderSetpointsList();
-        updateStationStatus();
+        selectSetpoint(pt.id);
       });
 
       listEl.appendChild(tr);
@@ -174,7 +261,7 @@
     }
     if (!selectedId) {
       stationStatus.textContent = setpoints.length
-        ? 'Chọn setpoint trong danh sách bên phải'
+        ? 'Chọn setpoint trong dropdown hoặc danh sách bên phải'
         : 'Chưa có setpoint — bấm Setpoint để thêm';
       return;
     }
@@ -184,18 +271,8 @@
       : 'Chưa có station nào được chọn';
   }
 
-  function setWorkflowStep(step, detail) {
-    workflowStep = step;
-    document.querySelectorAll('.workflow-step').forEach((el) => {
-      const s = el.dataset.step;
-      el.classList.remove('active', 'done');
-      const order = ['connect', 'map', 'localize', 'setpoint', 'route', 'goto', 'done'];
-      const curIdx = order.indexOf(step);
-      const elIdx = order.indexOf(s);
-      if (elIdx < curIdx) el.classList.add('done');
-      else if (elIdx === curIdx) el.classList.add('active');
-    });
-    if (detail) workflowDetail.textContent = detail;
+  function setWorkflowStep(_step, detail) {
+    if (detail && workflowDetail) workflowDetail.textContent = detail;
   }
 
   function refreshModalPose() {
@@ -208,19 +285,56 @@
       p.yawDeg != null ? Number(p.yawDeg).toFixed(2) : '--';
   }
 
-  function openSetpointModal() {
-    refreshModalPose();
+  function resetModalForm() {
     document.getElementById('setpoint-name').value = '';
     document.getElementById('setpoint-x').value = '';
     document.getElementById('setpoint-y').value = '';
     document.getElementById('setpoint-yaw').value = '';
     document.getElementById('setpoint-belt1-cmd').value = 'load';
     document.getElementById('setpoint-belt2-cmd').value = 'load';
+  }
+
+  function setModalMode(mode) {
+    const isEdit = mode === 'edit';
+    if (modalTitle) modalTitle.textContent = isEdit ? 'Sửa Setpoint' : 'Cấu hình Setpoint';
+    if (btnSavePoint) btnSavePoint.textContent = isEdit ? 'Lưu thay đổi' : 'Save point';
+  }
+
+  function openSetpointModal() {
+    editingId = null;
+    setModalMode('create');
+    refreshModalPose();
+    resetModalForm();
+    modal.classList.remove('hidden');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+
+  function openEditSetpointModal() {
+    if (!selectedId) {
+      stationStatus.textContent = 'Chọn setpoint trước khi sửa';
+      return;
+    }
+    const pt = setpoints.find((p) => p.id === selectedId);
+    if (!pt) {
+      stationStatus.textContent = 'Setpoint không tồn tại';
+      return;
+    }
+
+    editingId = selectedId;
+    setModalMode('edit');
+    refreshModalPose();
+    document.getElementById('setpoint-name').value = pt.name;
+    document.getElementById('setpoint-x').value = Number(pt.x).toFixed(2);
+    document.getElementById('setpoint-y').value = Number(pt.y).toFixed(2);
+    document.getElementById('setpoint-yaw').value = Number(pt.yawDeg).toFixed(1);
+    document.getElementById('setpoint-belt1-cmd').value = normalizeBeltCmd(pt.belt1Cmd);
+    document.getElementById('setpoint-belt2-cmd').value = normalizeBeltCmd(pt.belt2Cmd);
     modal.classList.remove('hidden');
     modal.setAttribute('aria-hidden', 'false');
   }
 
   function closeSetpointModal() {
+    editingId = null;
     modal.classList.add('hidden');
     modal.setAttribute('aria-hidden', 'true');
   }
@@ -253,6 +367,27 @@
       return;
     }
 
+    if (editingId) {
+      const pt = setpoints.find((p) => p.id === editingId);
+      if (!pt) {
+        stationStatus.textContent = 'Setpoint không tồn tại';
+        return;
+      }
+      pt.name = name;
+      pt.x = x;
+      pt.y = y;
+      pt.yawDeg = yawDeg;
+      pt.belt1Cmd = belt1Cmd;
+      pt.belt2Cmd = belt2Cmd;
+      selectedId = editingId;
+      saveSetpoints();
+      closeSetpointModal();
+      renderStationPicker();
+      updateStationStatus(`Đã cập nhật setpoint "${name}"`);
+      setWorkflowStep('setpoint', `Đã sửa: ${name}`);
+      return;
+    }
+
     const pt = {
       id: `sp_${Date.now()}`,
       name,
@@ -272,35 +407,51 @@
     setWorkflowStep('setpoint', `Đã lưu: ${name}`);
   }
 
-  function goToSelectedStation() {
+  function onNavArrived(e) {
+    const { message, name } = e.detail || {};
+    if (!message) return;
+    setWorkflowStep('goto', message);
+    if (stationStatus) stationStatus.textContent = message;
+  }
+
+  async function goToSelectedStation() {
     const pt = setpoints.find((p) => p.id === selectedId);
     if (!pt) {
       stationStatus.textContent = 'Chọn setpoint trong danh sách trước';
       return;
     }
-    if (!window.AmrNavigation || !window.AmrNavigation.sendNavGoal) {
+    if (!window.AmrNavigation?.navigateAndWait) {
       stationStatus.textContent = 'Chưa kết nối Nav2';
       return;
     }
     const yawRad = (pt.yawDeg * Math.PI) / 180;
-    window.AmrNavigation.sendNavGoal(pt.x, pt.y, yawRad);
+    if (window.AmrMap?.resetViewAfterNavGoal) {
+      window.AmrMap.resetViewAfterNavGoal();
+    }
     setWorkflowStep('goto', `Đang đi tới ${pt.name}...`);
-    stationStatus.textContent = `Go to Station: ${pt.name}`;
+    stationStatus.textContent = `Đang đi tới: ${pt.name}`;
+
+    try {
+      await window.AmrNavigation.navigateAndWait(pt.x, pt.y, yawRad, {
+        destinationName: pt.name,
+      });
+    } catch (err) {
+      const msg = err?.message || 'Lỗi navigation';
+      stationStatus.textContent = `Nav thất bại tới ${pt.name}: ${msg}`;
+      setWorkflowStep('goto', `Nav thất bại: ${pt.name}`);
+    }
   }
 
   function autoRoute() {
-    if (setpoints.length < 2) {
-      stationStatus.textContent = 'Cần ít nhất 2 setpoint cho Auto Route';
+    if (window.AmrProcess && window.AmrProcess.runAutoRoute) {
+      window.AmrProcess.runAutoRoute();
       return;
     }
-    setWorkflowStep('route', `Auto Route: ${setpoints.length} điểm (chưa triển khai Nav2 waypoint)`);
-    stationStatus.textContent =
-      `Auto Route: ${setpoints.map((p) => p.name).join(' → ')} — sẽ gắn FollowWaypoints sau`;
+    stationStatus.textContent = 'Chưa có quy trình — thêm bước trong panel Quy trình';
   }
 
   function resetStation() {
-    selectedId = null;
-    renderSetpointsList();
+    selectSetpoint(null);
     updateStationStatus('Đã reset lựa chọn station');
     setWorkflowStep('setpoint', setpoints.length
       ? `${setpoints.length} setpoint — chọn hoặc thêm mới`
@@ -311,6 +462,14 @@
   document.getElementById('btn-auto-route').addEventListener('click', autoRoute);
   document.getElementById('btn-go-station').addEventListener('click', goToSelectedStation);
   document.getElementById('btn-station-reset').addEventListener('click', resetStation);
+  if (stationSelect) {
+    stationSelect.addEventListener('change', () => {
+      selectSetpoint(stationSelect.value || null);
+    });
+  }
+  if (btnEditSetpoint) {
+    btnEditSetpoint.addEventListener('click', openEditSetpointModal);
+  }
   document.getElementById('btn-use-current').addEventListener('click', useCurrentPosition);
   document.getElementById('btn-save-point').addEventListener('click', savePoint);
   document.getElementById('btn-cancel-setpoint').addEventListener('click', closeSetpointModal);
@@ -329,28 +488,42 @@
     if (!modal.classList.contains('hidden')) refreshModalPose();
   });
 
+  window.addEventListener('amr-nav-arrived', onNavArrived);
+
   window.addEventListener('amr-ros-connected', () => {
-    setWorkflowStep('connect', 'Đã kết nối — nạp map hoặc chạy SLAM');
+    setWorkflowStep('connect', 'connected — load map or run SLAM');
+  });
+
+  window.addEventListener('amr-map-data-sync', (e) => {
+    reloadSetpointsFromServer(e.detail?.name);
   });
 
   window.addEventListener('amr-ros-disconnected', () => {
-    setWorkflowStep('connect', 'Chưa kết nối — bấm Kết nối trong Config');
+    setWorkflowStep('connect', 'disconnected — press Connect in Config');
   });
 
   window.addEventListener('amr-map-ready', () => {
     setWorkflowStep('map', 'Map đã sẵn sàng — đặt vị trí ban đầu nếu cần');
   });
 
-  loadSetpoints();
+  window.addEventListener('amr-data-updated', (e) => {
+    if (e.detail === 'setpoints') {
+      reloadSetpointsFromServer(window.AmrMapData?.getCurrentMapName());
+    }
+  });
+
   renderConveyorStatus();
   renderSetpointsList();
+  renderStationPicker();
   updateStationStatus();
-  setWorkflowStep('connect', 'Chưa kết nối — bấm Kết nối trong Config');
+  setWorkflowStep('connect', 'disconnected — press Connect in Config');
 
   window.AmrStations = {
     getSetpoints: () => [...setpoints],
+    reloadFromServer: reloadSetpointsFromServer,
     setWorkflowStep,
     setConveyorStatus,
+    getConveyorStatus,
     setSetpointStatus(id, status) {
       const pt = setpoints.find((p) => p.id === id);
       if (!pt) return;

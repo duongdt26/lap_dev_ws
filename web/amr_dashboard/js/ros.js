@@ -78,13 +78,13 @@ window.AmrRos = (function () {
 
   function setStatus(state) {
     if (state === 'connected') {
-      statusEl.textContent = 'Đã kết nối';
+      statusEl.textContent = 'connected';
       statusEl.className = 'connected';
     } else if (state === 'connecting') {
-      statusEl.textContent = 'Đang kết nối...';
+      statusEl.textContent = 'connecting...';
       statusEl.className = 'connecting';
     } else {
-      statusEl.textContent = 'Chưa kết nối';
+      statusEl.textContent = 'disconnected';
       statusEl.className = 'disconnected';
     }
   }

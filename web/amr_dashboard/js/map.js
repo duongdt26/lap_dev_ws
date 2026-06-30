@@ -23,6 +23,7 @@
 
     window.addEventListener('amr-ros-disconnected', () => {
       mapInitialized = false;
+      lastMapFingerprint = '';
       currentVx = 0;
       odomReceived = false;
       lastOdomTime = 0;
@@ -68,6 +69,111 @@
   let teleopMoving = false;
   let mapLiveMode = true;
   let mapStatusBase = '';
+
+  const MAP_TOPIC_QOS = {
+    durability: 'volatile',
+    reliability: 'reliable',
+    history: 'keep_last',
+    depth: 1,
+  };
+
+  let getMapStatusClient = null;
+  let requestMapSyncClient = null;
+  let setActiveMapClient = null;
+
+  function initMapSyncClients(ros) {
+    getMapStatusClient = new ROSLIB.Service({
+      ros,
+      name: '/get_map_status',
+      serviceType: 'amr_web_interfaces/srv/GetMapStatus',
+    });
+    requestMapSyncClient = new ROSLIB.Service({
+      ros,
+      name: '/request_map_sync',
+      serviceType: 'std_srvs/srv/Trigger',
+    });
+    setActiveMapClient = new ROSLIB.Service({
+      ros,
+      name: '/set_active_map',
+      serviceType: 'amr_web_interfaces/srv/SetActiveMap',
+    });
+  }
+
+  function requestMapSync() {
+    return new Promise((resolve, reject) => {
+      if (!requestMapSyncClient) {
+        reject(new Error('not connected'));
+        return;
+      }
+      requestMapSyncClient.callService(
+        new ROSLIB.ServiceRequest({}),
+        (res) => (res.success ? resolve(res) : reject(new Error(res.message || 'sync failed'))),
+        reject
+      );
+    });
+  }
+
+  function getMapStatus() {
+    return new Promise((resolve, reject) => {
+      if (!getMapStatusClient) {
+        reject(new Error('not connected'));
+        return;
+      }
+      getMapStatusClient.callService(
+        new ROSLIB.ServiceRequest({}),
+        resolve,
+        reject
+      );
+    });
+  }
+
+  function setActiveMapName(name) {
+    return new Promise((resolve, reject) => {
+      if (!setActiveMapClient) {
+        reject(new Error('not connected'));
+        return;
+      }
+      setActiveMapClient.callService(
+        new ROSLIB.ServiceRequest({ map_name: name }),
+        (res) => (res.success ? resolve(res) : reject(new Error(res.message || 'set active map failed'))),
+        reject
+      );
+    });
+  }
+
+  function syncMapFromBridge() {
+    return getMapStatus()
+      .then((status) => {
+        if (status.loaded) {
+          return requestMapSync().then(() => status);
+        }
+        return status;
+      })
+      .catch((err) => {
+        console.warn('map sync:', err);
+        return null;
+      });
+  }
+
+  window.AmrMapSync = {
+    requestMapSync,
+    getMapStatus,
+    setActiveMapName,
+    syncMapFromBridge,
+    forceMapResync: requestMapSync,
+  };
+
+  let lastMapFingerprint = '';
+
+  function mapFingerprint(msg) {
+    if (!msg || !msg.info) return '';
+    return [
+      msg.info.width,
+      msg.info.height,
+      msg.info.resolution,
+      msg.data ? msg.data.length : 0,
+    ].join(',');
+  }
 
   function computeMapLiveMode() {
     if (navMode || teleopMoving) return true;
@@ -115,6 +221,8 @@
   function applyMapMessage(msg) {
     if (!canvasRef) return;
     const isFirstMap = mapMsg === null;
+    const fp = mapFingerprint(msg);
+    if (fp) lastMapFingerprint = fp;
     mapMsg = msg;
     mapStatusBase = `Map: ${msg.info.width}×${msg.info.height} @ ${msg.info.resolution}m/cell`;
     const sizeKey = mapSizeKey(msg.info);
@@ -170,6 +278,7 @@
       scheduleRedraw();
     },
     resetView() { resetMapView(); },
+    resetViewAfterNavGoal() { resetMapViewAfterNavGoal(); },
   };
 
   function applyViewChange() {
@@ -210,11 +319,16 @@
     applyViewChange();
   }
 
-  function resetMapView() {
-    if (mapLiveMode || !baseView) return;
-    view = { ...baseView };
+  function resetMapView(force = false) {
+    if (!mapMsg || !canvasRef) return;
+    if (!force && mapLiveMode) return;
+    computeView(mapMsg, canvasRef);
     userViewLocked = false;
     applyViewChange();
+  }
+
+  function resetMapViewAfterNavGoal() {
+    requestAnimationFrame(() => resetMapView(true));
   }
 
   let viewControlsAttached = false;
@@ -282,18 +396,25 @@
     ctxRef = ctx;
     canvasRef = canvas;
 
-    // ── Subscribe /map (bản đồ tĩnh từ map_server hoặc SLAM) ──
+    // ── Subscribe /web/map (map_bridge đồng bộ từ /map cho nhiều client) ──
+    initMapSyncClients(ros);
+
     const mapTopic = new ROSLIB.Topic({
       ros,
-      name: '/map',
+      name: '/web/map',
       messageType: 'nav_msgs/msg/OccupancyGrid',
-      // map_server dùng transient local — rosbridge tự xử lý khi subscribe
+      qos: MAP_TOPIC_QOS,
     });
   
     mapTopic.subscribe((msg) => {
-      if (!mapLiveMode && mapMsg) return;
+      const fp = mapFingerprint(msg);
+      const mapChanged = fp && fp !== lastMapFingerprint;
+      if (!mapLiveMode && mapMsg && !mapChanged) return;
+      if (mapChanged) lastMapFingerprint = fp;
       applyMapMessage(msg);
     });
+
+    setTimeout(() => syncMapFromBridge(), 400);
 
     const odomTopic = new ROSLIB.Topic({
       ros,
@@ -306,24 +427,6 @@
 
     updateMapInteractionMode();
   
-    // ── Subscribe /amcl_pose (vị trí robot trên map) ──
-    const poseTopic = new ROSLIB.Topic({
-      ros,
-      name: '/amcl_pose',
-      messageType: 'geometry_msgs/msg/PoseWithCovarianceStamped',
-    });
-  
-    poseTopic.subscribe((msg) => {
-      const p = msg.pose.pose.position;
-      const q = msg.pose.pose.orientation;
-      robotPose = {
-        x: p.x,
-        y: p.y,
-        yawDeg: quaternionToYawDeg(q),
-      };
-      if (mapMsg) scheduleRedraw();
-    });
-
     // ── Subscribe /plan (đường đi Nav2) ──
     const planTopic = new ROSLIB.Topic({
       ros,
@@ -384,13 +487,27 @@
     //   transThres: 0.01,
     // });
 
-    // Pose từ TF (SLAM + Nav) — do nav_pose_bridge_node publish
+    // Pose từ TF (SLAM / AMCL / Nav) — nav_pose_bridge_node publish /robot_pose_map
     const robotPoseMapTopic = new ROSLIB.Topic({
       ros,
       name: '/robot_pose_map',
       messageType: 'geometry_msgs/msg/PoseWithCovarianceStamped',
     });
     robotPoseMapTopic.subscribe((msg) => {
+      applyRobotPoseMsg(msg);
+    });
+
+    const amclPoseTopic = new ROSLIB.Topic({
+      ros,
+      name: '/amcl_pose',
+      messageType: 'geometry_msgs/msg/PoseWithCovarianceStamped',
+    });
+    amclPoseTopic.subscribe((msg) => {
+      if (msg.header.frame_id && msg.header.frame_id !== 'map') return;
+      applyRobotPoseMsg(msg);
+    });
+
+    function applyRobotPoseMsg(msg) {
       const p = msg.pose.pose.position;
       const q = msg.pose.pose.orientation;
       const yawDeg = quaternionToYawDeg(q);
@@ -398,7 +515,7 @@
       window.__amrPose = { x: p.x, y: p.y, yawDeg };
       window.dispatchEvent(new CustomEvent('amr-pose', { detail: window.__amrPose }));
       scheduleRedraw();
-    });
+    }
 
     // tfClient.subscribe('base_footprint', (tf) => {
     //   robotPose = {
@@ -470,6 +587,7 @@
           // publishInitialPose(startWorld.wx, startWorld.wy, yaw);
           if (navMode && navGoalCallback) {
             navGoalCallback(startWorld.wx, startWorld.wy, yaw);
+            resetMapViewAfterNavGoal();
           } else {
             publishInitialPose(startWorld.wx, startWorld.wy, yaw);
           }
@@ -523,6 +641,7 @@
           if (dragDist < 5) yaw = 0;
           if (navMode && navGoalCallback) {
             navGoalCallback(startWorld.wx, startWorld.wy, yaw);
+            resetMapViewAfterNavGoal();
           } else {
             publishInitialPose(startWorld.wx, startWorld.wy, yaw);
           }

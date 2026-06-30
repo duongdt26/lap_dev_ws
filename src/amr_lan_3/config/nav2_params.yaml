@@ -208,7 +208,8 @@ controller_server:
     min_x_velocity_threshold: 0.001  # Nguong loc van toc X tu odom; duoi nguong nay gan bang 0 (m/s)
     min_y_velocity_threshold: 0.5  # Nguong loc van toc Y tu odom; duoi nguong nay gan bang 0 (m/s)
     min_theta_velocity_threshold: 0.001  # Nguong loc van toc goc tu odom; duoi nguong nay gan bang 0 (rad/s)
-    failure_tolerance: 0.3  # Thoi gian toi da (s) plugin controller loi truoc khi FollowPath that bai; -1 vo han, 0 tat
+    # failure_tolerance: 0.3  # Thoi gian toi da (s) plugin controller loi truoc khi FollowPath that bai; -1 vo han, 0 tat
+    failure_tolerance: 5.0  # Thoi gian toi da (s) plugin controller loi truoc khi FollowPath that bai; -1 vo han, 0 tat
     progress_checker_plugin: "progress_checker"  # Ten plugin kiem tra tien trinh (Humble: progress_checker_plugin)
     goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker" --- Danh sach plugin kiem tra dat goal
     controller_plugins: ["FollowPath"]  # Danh sach plugin controller local planner
@@ -229,31 +230,33 @@ controller_server:
       plugin: "nav2_controller::SimpleGoalChecker"  # Plugin kiem tra robot da den goal chua
       # xy_goal_tolerance: 0.25
       xy_goal_tolerance: 0.15  # Sai so vi tri goal cho phep (m)
-      # yaw_goal_tolerance: 0.25
-      yaw_goal_tolerance: 0.15  # Sai so goc goal cho phep (rad)
+      yaw_goal_tolerance: 0.25
+      # yaw_goal_tolerance: 0.15  # Sai so goc goal cho phep (rad)
     # DWB parameters
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"  # Plugin local planner DWB (Dynamic Window Approach)
       debug_trajectory_details: True  # Publish thong tin debug ve quy dao duoc danh gia
-      # min_vel_x: 0.0  # Van toc X toi thieu (m/s)
-      min_vel_x: 0.06  # Van toc X toi thieu (m/s)
+      min_vel_x: 0.0  # Van toc X toi thieu (m/s)
+      # min_vel_x: 0.06  # Van toc X toi thieu (m/s)
       # min_vel_x: -0.25
       # min_vel_y: 0.0  # Van toc Y toi thieu (m/s)
       max_vel_x: 0.4  # Van toc X toi da (m/s)
       max_vel_y: 0.0  # Van toc Y toi da (m/s)
-      max_vel_theta: 0.5  # Van toc goc toi da (rad/s)
+      # max_vel_theta: 0.5  # Van toc goc toi da (rad/s)
+      max_vel_theta: 0.35  # Van toc goc toi da (rad/s)
       # min_speed_xy: 0.00  # Toc do dich chuyen ngang toi thieu (m/s)
       min_speed_xy: 0.06  # Toc do dich chuyen ngang toi thieu (m/s)
       max_speed_xy: 0.3  # Toc do dich chuyen ngang toi da (m/s)
       # min_speed_theta: 0.0  # Toc do goc toi thieu (rad/s)
-      min_speed_theta: 0.2  # Toc do goc toi thieu (rad/s)
+      min_speed_theta: 0.21  # Toc do goc toi thieu (rad/s)
       # Add high threshold velocity for turtlebot 3 issue.
       # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
       # acc_lim_x: 2.5
       acc_lim_x: 0.35  # Gia toc X toi da (m/s^2)
       acc_lim_y: 0.0  # Gia toc Y toi da (m/s^2)
       # acc_lim_theta: 3.2
-      acc_lim_theta: 0.4  # Gia toc goc toi da (rad/s^2)
+      # acc_lim_theta: 0.4  # Gia toc goc toi da (rad/s^2)
+      acc_lim_theta: 0.22  # Gia toc goc toi da (rad/s^2)
       # decel_lim_x: -2.5
       decel_lim_x: -0.35  # Gia toc giam X toi da (m/s^2)
       decel_lim_y: 0.0  # Gia toc giam Y toi da (m/s^2)
@@ -275,6 +278,7 @@ controller_server:
       short_circuit_trajectory_evaluation: True  # Dung danh gia sau khi tim duoc diem so tot nhat
       stateful: True  # Kiem tra sai so XY sau khi xoay ve huong goal
       critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]  # Danh sach critic danh gia quy dao
+      # critics: ["Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]  # Danh sach critic danh gia quy dao
       # BaseObstacle.scale: 0.02  # Trong so critic: cham diem quy dao theo costmap (tranh vat can)
       BaseObstacle.scale: 0.08 # 26_06_2026 Chuong xui bay
       PathAlign.scale: 32.0  # Trong so critic: can chinh huong robot theo path global
@@ -288,6 +292,13 @@ controller_server:
       # RotateToGoal.slowing_factor: 5.0  # He so giam van toc goc khi xoay ve goal
       RotateToGoal.slowing_factor: 2.0 # 28_06_2026
       RotateToGoal.lookahead_time: -1.0  # Neu > 0: thoi gian (s) nhin truoc de kiem tra va cham; -1 de tat
+
+      # rotate_to_goal_heading: true
+      # rotate_to_heading_angular_vel: 0.20   # ≈ ω_min thực (2×0.06/0.572)
+      # angular_dist_threshold: 0.50          # >29° mới xoay (đầu path / lệch lớn)
+      # angular_disengage_threshold: 0.30     # còn ~17° thì shim nhường DWB
+      # forward_sampling_distance: 0.5
+      # max_angular_accel: 0.4                # khớp acc_lim_theta / driver
 
 local_costmap:
   local_costmap:
@@ -436,9 +447,12 @@ behavior_server:
     transform_tolerance: 0.1  # Dung sai TF (s)
     use_sim_time: true  # Dung thoi gian mo phong (/clock) thay vi thoi gian thuc
     simulate_ahead_time: 2.0  # Thoi gian (s) mo phong phia truoc de kiem tra va cham
-    max_rotational_vel: 0.5  # Van toc goc toi da (rad/s) cho spin
-    min_rotational_vel: -0.5  # Van toc goc toi thieu (rad/s) cho spin
-    rotational_acc_lim: 0.4  # Gia toc goc toi da (rad/s^2) cho spin
+    # max_rotational_vel: 0.5  # Van toc goc toi da (rad/s) cho spin
+    max_rotational_vel: 0.35  # Van toc goc toi da (rad/s) cho spin
+    # min_rotational_vel: -0.5  # Van toc goc toi thieu (rad/s) cho spin
+    min_rotational_vel: 0.21  # Van toc goc toi thieu (rad/s) cho spin
+    # rotational_acc_lim: 0.4  # Gia toc goc toi da (rad/s^2) cho spin
+    rotational_acc_lim: 0.22  # Gia toc goc toi da (rad/s^2) cho spin
 
 robot_state_publisher:
   ros__parameters:

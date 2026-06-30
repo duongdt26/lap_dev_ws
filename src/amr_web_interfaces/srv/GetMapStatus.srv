@@ -1,0 +1,7 @@
+# Trạng thái map đang active trên robot (đồng bộ client web muộn)
+---
+bool loaded
+string map_name
+uint32 width
+uint32 height
+float64 resolution

@@ -1,5 +1,5 @@
 /**
- * role-tabs.js — Chuyển Người vận hành / Người thiết lập (ẩn hiện panel)
+ * role-tabs.js — Switch Operator / Setter role panels
  */
 
 (function () {
