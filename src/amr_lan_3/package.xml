@@ -23,6 +23,7 @@
 
   <exec_depend>twist_mux</exec_depend>
   <exec_depend>amr_web_bridge</exec_depend>
+  <exec_depend>amr_stm32_bridge</exec_depend>
   <exec_depend>rosbridge_server</exec_depend>
   <exec_depend>custom_laser_filter</exec_depend>
   

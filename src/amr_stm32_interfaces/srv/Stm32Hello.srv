@@ -1,0 +1,6 @@
+# Gửi lệnh HELLO xuống STM32, nhận HELLO_ACK
+string client_name     # ví dụ: "ChuongDuong"
+---
+bool success
+string message         # ví dụ: "good job"
+string stm32_state

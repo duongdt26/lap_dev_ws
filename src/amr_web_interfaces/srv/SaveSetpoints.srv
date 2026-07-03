@@ -1,0 +1,6 @@
+# Lưu setpoint của map (json_data = mảng setpoint)
+string map_name
+string json_data
+---
+bool success
+string message

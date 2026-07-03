@@ -1,0 +1,11 @@
+version: "2"
+# Authtoken: chạy MỘT LẦN trên máy (không cần sửa file này):
+#   ngrok config add-authtoken YOUR_TOKEN
+# Token lưu tại ~/.config/ngrok/ngrok.yml — start_ngrok.sh tự đọc.
+#
+# Ngrok FREE: chỉ 1 tunnel — web + rosbridge gộp qua amr_web_server.py (:8080)
+
+tunnels:
+  amr:
+    addr: 8080
+    proto: http

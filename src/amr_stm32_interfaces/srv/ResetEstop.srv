@@ -1,0 +1,5 @@
+# Reset E-Stop sau khi operator xác nhận an toàn
+---
+bool success
+string message
+string stm32_state

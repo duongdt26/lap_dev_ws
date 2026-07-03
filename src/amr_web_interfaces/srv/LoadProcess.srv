@@ -1,0 +1,7 @@
+# Tải 1 process — map_name rỗng = map active
+string map_name
+string name
+---
+bool success
+string json_data
+string message
