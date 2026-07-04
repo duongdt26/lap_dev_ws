@@ -140,6 +140,11 @@ class Stm32ConveyorBridgeNode(Node):
             return
         try:
             self._ser = serial.Serial(self._port, self._baud, timeout=0.05)
+            try:
+                self._ser.setDTR(False)
+                self._ser.setRTS(False)
+            except Exception:
+                pass
             self.get_logger().info(f'Đã mở serial {self._port} baud={self._baud}')
         except Exception as exc:
             self.get_logger().error(f'Không mở được serial {self._port}: {exc}')
@@ -158,7 +163,7 @@ class Stm32ConveyorBridgeNode(Node):
             return
 
         with self._lock:
-            self._ser.write(frame.encode('utf-8'))
+            self._ser.write((frame + '\r\n').encode('utf-8'))
 
     def _read_serial_cb(self) -> None:
         if self._simulate:
@@ -197,6 +202,7 @@ class Stm32ConveyorBridgeNode(Node):
             if seq is not None:
                 self._last_pong_time = time.monotonic()
                 self._alive = True
+                self.get_logger().info(f'STM32 PONG: seq={seq}')
 
         elif parsed.msg_type == 'TELEMETRY':
             telem = parse_telemetry(parsed)
@@ -571,7 +577,8 @@ def main():
         pass
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 
 if __name__ == '__main__':

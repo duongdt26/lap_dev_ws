@@ -45,12 +45,13 @@ def generate_launch_description():
 
     stm32_pkg = get_package_share_directory('amr_stm32_bridge')
     stm32_config = os.path.join(stm32_pkg, 'config', 'stm32_bridge.yaml')
+    hardware_ports = os.path.join(get_package_share_directory('amr_lan_3'), 'config', 'hardware_ports.yaml')
     stm32_bridge_node = Node(
         package='amr_stm32_bridge',
         executable='stm32_conveyor_bridge_node',
         name='stm32_conveyor_bridge_node',
         output='screen',
-        parameters=[stm32_config],
+        parameters=[hardware_ports, stm32_config], # Load config from config/hardware_ports.yaml and config/stm32_bridge.yaml
     )
 
     rosbridge = IncludeLaunchDescription(

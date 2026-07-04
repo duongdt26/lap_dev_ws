@@ -110,8 +110,11 @@
             <button type="button" id="btn-auto-route" class="btn-action btn-secondary">Auto Route</button>
             <button type="button" id="btn-go-station" class="btn-action">Go to Station</button>
             <button type="button" id="btn-station-reset" class="btn-action btn-danger">Reset</button>
+            <button type="button" id="btn-nav-mode" class="btn-action btn-secondary">Nav mode: OFF</button>
+            <button type="button" id="btn-nav-cancel" class="btn-action btn-danger">Cancel navigation</button>
           </div>
           <p id="station-status" class="hint">Chưa có station nào được chọn</p>
+          <p id="nav-status" class="hint">No goal</p>
         </div>
       </section>
 
@@ -147,20 +150,6 @@
             Đặt vị trí ban đầu: TẮT
           </button>
           <p class="hint">Bật → click + kéo trên map (hướng mũi tên)</p>
-        </div>
-      </section>
-
-      <section class="panel-section" data-role="operator">
-        <h2 class="section-title">Navigation</h2>
-        <div class="section-body">
-          <p class="hint">Requires navigation_launch</p>
-          <button id="btn-nav-mode" type="button" class="btn-action btn-secondary">
-            Nav mode: OFF
-          </button>
-          <button id="btn-nav-cancel" type="button" class="btn-action btn-danger">
-            Cancel navigation
-          </button>
-          <p id="nav-status" class="hint">No goal</p>
         </div>
       </section>
 
@@ -358,7 +347,7 @@
   <script src="js/navigation.js?v=8"></script>
   <script src="js/stm32.js?v=3"></script>
   <script src="js/map-data.js?v=3"></script>
-  <script src="js/stations.js?v=3"></script>
+  <script src="js/stations.js?v=4"></script>
   <script src="js/process.js?v=7"></script>
 </body>
 </html>

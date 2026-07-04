@@ -146,11 +146,12 @@ def generate_launch_description():
         ],
     )
 )
-
+    hardware_ports = os.path.join(get_package_share_directory(package_name), 'config', 'hardware_ports.yaml')
     # Node đọc IMU UART 
     imu_node = Node(
         package='amr_imu_driver', # Tên package chứa file imu_uart_node.py
         executable='imu_uart_node', # Tên executable cậu khai báo trong setup.py
+        parameters=[hardware_ports], # Load config from config/hardware_ports.yaml
         output='screen'
     )
 

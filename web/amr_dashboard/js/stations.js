@@ -42,9 +42,9 @@
 
   function normalizeBeltCmd(value) {
     const v = String(value || '').toLowerCase();
+    if (v === 'load') return 'load';
     if (v === 'unload') return 'unload';
-    if (v === 'none') return 'none';
-    return 'load';
+    return 'none';
   }
 
   function normalizeSetpoint(pt) {
@@ -451,11 +451,14 @@
   }
 
   function resetStation() {
-    selectSetpoint(null);
-    updateStationStatus('Đã reset lựa chọn station');
-    setWorkflowStep('setpoint', setpoints.length
-      ? `${setpoints.length} setpoint — chọn hoặc thêm mới`
-      : 'Chưa có setpoint');
+    // Reset tiến trình Auto Route về ban đầu (giữ nguyên setpoint đang chọn).
+    const ok = window.AmrProcess?.resetRoute?.();
+    if (ok === false) {
+      updateStationStatus('Auto Route đang chạy — nhấn Cancel trước khi Reset');
+      return;
+    }
+    updateStationStatus('Đã reset quy trình — Auto Route sẽ chạy lại từ bước 1');
+    setWorkflowStep('setpoint', 'Đã reset quy trình chạy — sẵn sàng chạy lại từ đầu');
   }
 
   document.getElementById('btn-setpoint').addEventListener('click', openSetpointModal);

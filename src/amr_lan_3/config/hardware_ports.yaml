@@ -1,0 +1,14 @@
+# ===== NGUỒN DUY NHẤT quản lý cổng serial của các thiết bị =====
+# Đổi port ở đây, KHÔNG sửa rải rác trong code/launch nữa.
+
+rplidar_node:
+  ros__parameters:
+    serial_port: /dev/serial/by-path/pci-0000:05:00.4-usb-0:2:1.0-port0
+
+imu_uart_node:
+  ros__parameters:
+    port: /dev/serial/by-path/pci-0000:05:00.3-usb-0:3:1.0-port0
+
+stm32_conveyor_bridge_node:
+  ros__parameters:
+    port: /dev/serial/by-path/pci-0000:05:00.3-usb-0:2.3:1.0-port0
