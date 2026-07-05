@@ -83,12 +83,14 @@ class Stm32ConveyorBridgeNode(Node):
         self._belt_timeout = float(self.get_parameter('belt_action_timeout_sec').value)
 
         self._ser = None
+        self._serial_open = False
         self._lock = threading.Lock()
         self._estop_latched = False
         self._stm32_state = STATE_IDLE
         self._last_telemetry: Optional[TelemetryFrame] = None
         self._last_hello_msg = ''
         self._alive = False
+        self._last_rx_time = 0.0
         self._last_pong_time = 0.0
         self._ping_seq = 0
         self._pending_lines: list[str] = []
@@ -134,6 +136,7 @@ class Stm32ConveyorBridgeNode(Node):
     def _open_serial(self) -> None:
         if self._simulate:
             self.get_logger().warn('simulate=true — không mở cổng serial thật')
+            self._serial_open = True
             return
         if serial is None:
             self.get_logger().error('Thiếu pyserial — pip install pyserial')
@@ -146,20 +149,25 @@ class Stm32ConveyorBridgeNode(Node):
             except Exception:
                 pass
             self.get_logger().info(f'Đã mở serial {self._port} baud={self._baud}')
+            self._serial_open = True
         except Exception as exc:
             self.get_logger().error(f'Không mở được serial {self._port}: {exc}')
             self._ser = None
+            self._serial_open = False
 
     def _send_uart(self, frame: str) -> None:
         cmd_preview = frame.strip()
-        self.get_logger().info(f'UART TX → {cmd_preview}')
+        is_ping = cmd_preview.startswith('$PING,') or cmd_preview == '$PING'
+        if not is_ping:
+            self.get_logger().info(f'UART TX → {cmd_preview}')
 
         if self._simulate:
             self._simulate_response(frame)
             return
 
         if self._ser is None or not self._ser.is_open:
-            self.get_logger().warn(f'UART TX bỏ qua (chưa kết nối): {cmd_preview}')
+            if not is_ping:
+                self.get_logger().warn(f'UART TX bỏ qua (chưa kết nối): {cmd_preview}')
             return
 
         with self._lock:
@@ -182,11 +190,14 @@ class Stm32ConveyorBridgeNode(Node):
             self.get_logger().error(f'UART read lỗi: {exc}')
 
     def _handle_uart_line(self, line: str) -> None:
-        self.get_logger().debug(f'UART RX ← {line}')
+        self.get_logger().info(f'UART RX ← {line}')
         parsed = parse_line(line)
         if parsed is None:
+            self.get_logger().warn(f'UART RX bỏ qua frame không hợp lệ: {line}')
             return
 
+        self._alive = True
+        self._last_rx_time = time.monotonic()
         self._pending_lines.append(line)
         self._line_event.set()
 
@@ -201,7 +212,6 @@ class Stm32ConveyorBridgeNode(Node):
             seq = parse_pong_seq(parsed)
             if seq is not None:
                 self._last_pong_time = time.monotonic()
-                self._alive = True
                 self.get_logger().info(f'STM32 PONG: seq={seq}')
 
         elif parsed.msg_type == 'TELEMETRY':
@@ -368,11 +378,21 @@ class Stm32ConveyorBridgeNode(Node):
             if age > self._pong_timeout:
                 self._alive = False
                 self.get_logger().warn(f'STM32 mất heartbeat ({age:.1f}s)')
+        elif self._last_rx_time > 0:
+            age = time.monotonic() - self._last_rx_time
+            if age > self._pong_timeout:
+                self._alive = False
+                self.get_logger().warn(f'STM32 không có RX mới ({age:.1f}s)')
 
     def _publish_status_cb(self) -> None:
         health = Stm32Health()
         health.alive = self._alive
-        health.message = self._last_hello_msg if self._alive else 'offline'
+        if self._alive:
+            health.message = self._last_hello_msg or 'heartbeat ok'
+        elif self._serial_open:
+            health.message = 'serial open, waiting heartbeat'
+        else:
+            health.message = 'offline'
         health.stm32_state = self._stm32_state
         health.last_pong = self.get_clock().now().to_msg()
         self._health_pub.publish(health)

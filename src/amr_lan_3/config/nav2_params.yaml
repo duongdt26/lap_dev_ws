@@ -137,182 +137,129 @@ amcl:
 #     update_min_d: 0.1   # 10 cm di chuyển là cập nhật
 #     scan_topic: /scan_filtered
 
+# controller_server:
+#  ros__parameters:
+#    use_sim_time: True
+#    # controller_frequency: 20.0
+#    controller_frequency: 15.0  # Tan so (Hz) chay controller
+#    min_x_velocity_threshold: 0.001  # Nguong loc van toc X tu odom; duoi nguong nay gan bang 0 (m/s)
+#    min_y_velocity_threshold: 0.5  # Nguong loc van toc Y tu odom; duoi nguong nay gan bang 0 (m/s)
+#    min_theta_velocity_threshold: 0.001  # Nguong loc van toc goc tu odom; duoi nguong nay gan bang 0 (rad/s)
+#    # failure_tolerance: 0.3  # Thoi gian toi da (s) plugin controller loi truoc khi FollowPath that bai; -1 vo han, 0 tat
+#    failure_tolerance: 5.0  # Thoi gian toi da (s) plugin controller loi truoc khi FollowPath that bai; -1 vo han, 0 tat
+#    progress_checker_plugin: "progress_checker"  # Ten plugin kiem tra tien trinh (Humble: progress_checker_plugin)
+#    goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker" --- Danh sach plugin kiem tra dat goal
+#    controller_plugins: ["FollowPath"]  # Danh sach plugin controller local planner
 
 
-
-bt_navigator:
- ros__parameters:
-   use_sim_time: True  # Dung thoi gian mo phong (/clock) thay vi thoi gian thuc
-   global_frame: map  # Khung toa do tham chieu (map)
-   # robot_base_frame: base_link
-   robot_base_frame: base_footprint  # Khung goc robot
-   # odom_topic: /odom
-   odom_topic: /odometry/filtered # dung vi minh dung bo loc odom --- Topic publish odometry
-   bt_loop_duration: 10  # Thoi gian (ms) moi vong lap thuc thi behavior tree
-   default_server_timeout: 20  # Timeout mac dinh (ms) cho BT action node cho den khi server xac nhan
-   wait_for_service_timeout: 1000  # Timeout mac dinh (ms) khi BT node cho service/action san sang luc khoi tao
-   # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
-   # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
-   # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
-   # They can be set here or via a RewrittenYaml remap from a parent launch file to Nav2.
-   plugin_lib_names:  # Danh sach thu vien node behavior tree can load (gom ca plugin tuy chinh)
-     - nav2_compute_path_to_pose_action_bt_node
-     - nav2_compute_path_through_poses_action_bt_node
-     - nav2_smooth_path_action_bt_node
-     - nav2_follow_path_action_bt_node
-     - nav2_spin_action_bt_node
-     - nav2_wait_action_bt_node
-     - nav2_assisted_teleop_action_bt_node
-     - nav2_back_up_action_bt_node
-     - nav2_drive_on_heading_bt_node
-     - nav2_clear_costmap_service_bt_node
-     - nav2_is_stuck_condition_bt_node
-     - nav2_goal_reached_condition_bt_node
-     - nav2_goal_updated_condition_bt_node
-     - nav2_globally_updated_goal_condition_bt_node
-     - nav2_is_path_valid_condition_bt_node
-     - nav2_initial_pose_received_condition_bt_node
-     - nav2_reinitialize_global_localization_service_bt_node
-     - nav2_rate_controller_bt_node
-     - nav2_distance_controller_bt_node
-     - nav2_speed_controller_bt_node
-     - nav2_truncate_path_action_bt_node
-     - nav2_truncate_path_local_action_bt_node
-     - nav2_goal_updater_node_bt_node
-     - nav2_recovery_node_bt_node
-     - nav2_pipeline_sequence_bt_node
-     - nav2_round_robin_node_bt_node
-     - nav2_transform_available_condition_bt_node
-     - nav2_time_expired_condition_bt_node
-     - nav2_path_expiring_timer_condition
-     - nav2_distance_traveled_condition_bt_node
-     - nav2_single_trigger_bt_node
-     - nav2_goal_updated_controller_bt_node
-     - nav2_is_battery_low_condition_bt_node
-     - nav2_navigate_through_poses_action_bt_node
-     - nav2_navigate_to_pose_action_bt_node
-     - nav2_remove_passed_goals_action_bt_node
-     - nav2_planner_selector_bt_node
-     - nav2_controller_selector_bt_node
-     - nav2_goal_checker_selector_bt_node
-     - nav2_controller_cancel_bt_node
-     - nav2_path_longer_on_approach_bt_node
-     - nav2_wait_cancel_bt_node
-     - nav2_spin_cancel_bt_node
-     - nav2_back_up_cancel_bt_node
-     - nav2_assisted_teleop_cancel_bt_node
-     - nav2_drive_on_heading_cancel_bt_node
-     - nav2_is_battery_charging_condition_bt_node
-
-
-bt_navigator_navigate_through_poses_rclcpp_node:
- ros__parameters:
-   use_sim_time: True
-
-
-bt_navigator_navigate_to_pose_rclcpp_node:
- ros__parameters:
-   use_sim_time: True
-
-
-controller_server:
- ros__parameters:
-   use_sim_time: True
-   # controller_frequency: 20.0
-   controller_frequency: 15.0  # Tan so (Hz) chay controller
-   min_x_velocity_threshold: 0.001  # Nguong loc van toc X tu odom; duoi nguong nay gan bang 0 (m/s)
-   min_y_velocity_threshold: 0.5  # Nguong loc van toc Y tu odom; duoi nguong nay gan bang 0 (m/s)
-   min_theta_velocity_threshold: 0.001  # Nguong loc van toc goc tu odom; duoi nguong nay gan bang 0 (rad/s)
-   # failure_tolerance: 0.3  # Thoi gian toi da (s) plugin controller loi truoc khi FollowPath that bai; -1 vo han, 0 tat
-   failure_tolerance: 5.0  # Thoi gian toi da (s) plugin controller loi truoc khi FollowPath that bai; -1 vo han, 0 tat
-   progress_checker_plugin: "progress_checker"  # Ten plugin kiem tra tien trinh (Humble: progress_checker_plugin)
-   goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker" --- Danh sach plugin kiem tra dat goal
-   controller_plugins: ["FollowPath"]  # Danh sach plugin controller local planner
-
-
-   # Progress checker parameters
-   progress_checker:
-     plugin: "nav2_controller::SimpleProgressChecker"  # Plugin kiem tra robot co tien trien ve goal khong
-     required_movement_radius: 0.5  # Khoang cach toi thieu (m) robot phai di duoc de duoc coi la co tien trien
-     movement_time_allowance: 10.0  # Thoi gian toi da (s) de di duoc required_movement_radius
-   # Goal checker parameters
-   #precise_goal_checker:
-   #  plugin: "nav2_controller::SimpleGoalChecker"
-   #  xy_goal_tolerance: 0.25
-   #  yaw_goal_tolerance: 0.25
-   #  stateful: True
-   general_goal_checker:
-     stateful: True  # Kiem tra sai so XY sau khi xoay ve huong goal (chong lech localization nho)
-     plugin: "nav2_controller::SimpleGoalChecker"  # Plugin kiem tra robot da den goal chua
-     # xy_goal_tolerance: 0.25
-     xy_goal_tolerance: 0.15  # Sai so vi tri goal cho phep (m)
-     # yaw_goal_tolerance: 0.25
-    #  yaw_goal_tolerance: 0.1 # 03_07_2026 Duong sua
-     yaw_goal_tolerance: 0.14  # Sai so goc goal cho phep (rad)
-   # DWB parameters
-   FollowPath:
-     plugin: "dwb_core::DWBLocalPlanner"  # Plugin local planner DWB (Dynamic Window Approach)
-    #  plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController" # 03_07_2026 Duong sua
-     debug_trajectory_details: True  # Publish thong tin debug ve quy dao duoc danh gia
-     min_vel_x: 0.0  # Van toc X toi thieu (m/s)
-     # min_vel_x: 0.06  # Van toc X toi thieu (m/s)   
-     # min_vel_x: -0.25
-     # min_vel_y: 0.0  # Van toc Y toi thieu (m/s)
-     max_vel_x: 0.4  # Van toc X toi da (m/s)
-     max_vel_y: 0.0  # Van toc Y toi da (m/s)
-     # max_vel_theta: 0.5  # Van toc goc toi da (rad/s)
-     max_vel_theta: 0.45  # Van toc goc toi da (rad/s)
-     # min_speed_xy: 0.00  # Toc do dich chuyen ngang toi thieu (m/s)
-     min_speed_xy: 0.06  # Toc do dich chuyen ngang toi thieu (m/s)
-     max_speed_xy: 0.3  # Toc do dich chuyen ngang toi da (m/s)
-     # min_speed_theta: 0.21  # Toc do goc toi thieu (rad/s)
-     min_speed_theta: 0.1  # Toc do goc toi thieu (rad/s)
-    #  min_speed_theta: 0.07 # 03_07_2026 Duong sua
-     # Add high threshold velocity for turtlebot 3 issue.
-     # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
-     # acc_lim_x: 2.5
-     acc_lim_x: 0.35  # Gia toc X toi da (m/s^2)
-     acc_lim_y: 0.0  # Gia toc Y toi da (m/s^2)
-     # acc_lim_theta: 3.2
-     # acc_lim_theta: 0.4  # Gia toc goc toi da (rad/s^2)
-     acc_lim_theta: 0.22  # Gia toc goc toi da (rad/s^2)
-     # decel_lim_x: -2.5
-     decel_lim_x: -0.35  # Gia toc giam X toi da (m/s^2)
-     decel_lim_y: 0.0  # Gia toc giam Y toi da (m/s^2)
-     # decel_lim_theta: -3.2
-     decel_lim_theta: -0.4  # Gia toc giam goc toi da (rad/s^2)
-     vx_samples: 20  # So mau van toc theo truc X khi tim quy dao
-     vy_samples: 5  # So mau van toc theo truc Y khi tim quy dao
-     vtheta_samples: 20  # So mau van toc goc khi tim quy dao
-    #  sim_time: 1.7  # Thoi gian (s) mo phong quy dao phia truoc
-    #  sim_time: 1.0 # 03_07_2026 Duong sua
-     sim_time: 2.5 # 26_06_2026 Chuong xui bay
-     linear_granularity: 0.05  # Buoc dich chuyen tuyen tinh khi mo phong quy dao (m)
-     angular_granularity: 0.025  # Buoc goc khi mo phong quy dao (rad)
-     # transform_tolerance: 0.2
-     transform_tolerance: 0.3  # Dung sai TF (s) khi controller lay transform
-     # xy_goal_tolerance: 0.25
-     xy_goal_tolerance: 0.15  # Sai so vi tri goal (m) dung boi RotateToGoal critic
-     # trans_stopped_velocity: 0.25
-     trans_stopped_velocity: 0.03  # Van toc dich chuyen duoi nguong nay duoc coi la robot da dung
-     short_circuit_trajectory_evaluation: True  # Dung danh gia sau khi tim duoc diem so tot nhat
-     stateful: True  # Kiem tra sai so XY sau khi xoay ve huong goal
-     critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]  # Danh sach critic danh gia quy dao
-     # critics: ["Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]  # Danh sach critic danh gia quy dao
-     # BaseObstacle.scale: 0.02  # Trong so critic: cham diem quy dao theo costmap (tranh vat can)
-     BaseObstacle.scale: 0.08 # 26_06_2026 Chuong xui bay
-     PathAlign.scale: 32.0  # Trong so critic: can chinh huong robot theo path global
-     PathAlign.forward_point_distance: 0.1  # Diem phia truoc robot (m) de tinh sai so goc voi path
-     GoalAlign.scale: 24.0  # Trong so critic: can chinh huong robot theo huong goal
-     GoalAlign.forward_point_distance: 0.1  # Diem phia truoc robot (m) de tinh sai so goc voi goal
-     PathDist.scale: 32.0  # Trong so critic: giu quy dao gan path global
-     GoalDist.scale: 24.0  # Trong so critic: keo quy dao ve phia goal
-     # RotateToGoal.scale: 32.0  # Trong so critic: chi cho xoay ve goal khi da gan vi tri goal
-     RotateToGoal.scale: 16.0 # 26_06_2026 Chuong xui bay
-     # RotateToGoal.slowing_factor: 5.0  # He so giam van toc goc khi xoay ve goal
-     RotateToGoal.slowing_factor: 2.0 # 28_06_2026
-     # RotateToGoal.slowing_factor: 4.0 # 28_06_2026
-     RotateToGoal.lookahead_time: -1.0  # Neu > 0: thoi gian (s) nhin truoc de kiem tra va cham; -1 de tat
+#    # Progress checker parameters
+#    progress_checker:
+#      plugin: "nav2_controller::SimpleProgressChecker"  # Plugin kiem tra robot co tien trien ve goal khong
+#      required_movement_radius: 0.5  # Khoang cach toi thieu (m) robot phai di duoc de duoc coi la co tien trien
+#      movement_time_allowance: 10.0  # Thoi gian toi da (s) de di duoc required_movement_radius
+#    # Goal checker parameters
+#    #precise_goal_checker:
+#    #  plugin: "nav2_controller::SimpleGoalChecker"
+#    #  xy_goal_tolerance: 0.25
+#    #  yaw_goal_tolerance: 0.25
+#    #  stateful: True
+#    general_goal_checker:
+#      stateful: True  # Kiem tra sai so XY sau khi xoay ve huong goal (chong lech localization nho)
+#      plugin: "nav2_controller::SimpleGoalChecker"  # Plugin kiem tra robot da den goal chua
+#      # xy_goal_tolerance: 0.25 
+#      # yaw_goal_tolerance: 0.25
+#      xy_goal_tolerance: 0.2  # Sai so vi tri goal cho phep (m)     
+#      yaw_goal_tolerance: 0.2  # Sai so goc goal cho phep (rad)
+#     #  yaw_goal_tolerance: 0.1 # 03_07_2026 Duong sua
+#    FollowPath:
+#      plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController" 
+#      desired_linear_vel: 0.25 # Van toc tuyen tinh mong muon (m/s)
+#      lookahead_dist: 0.45 # Khoang cach lookahead (m)
+#      min_lookahead_dist: 0.25 # Khoang cach lookahead toi thieu (m)
+#      max_lookahead_dist: 0.8  # Khoang cach lookahead toi da (m)
+#      use_velocity_scaled_lookahead_dist: true # true = lookahead_dist tang theo van toc; false = dung lookahead_dist co dinh
+#      lookahead_time: 1.5  # Thoi gian lookahead (s)
+#      rotate_to_heading_angular_vel: 0.22  # Van toc goc khi xoay ve huong goal (rad/s)
+#      transform_tolerance: 0.3 # Dung sai TF (s) khi controller lay transform 
+#      use_collision_detection: true  # true = dung collision detection; false = tat collision detection
+#      max_allowed_time_to_collision_up_to_carrot: 1.0  # Thoi gian toi da (s) de robot cham vao carrot (diem lookahead) truoc khi dung collision detection
+#      use_regulated_linear_velocity_scaling: true  # true = dung van toc tuyen tinh dieu chinh theo costmap; false = dung van toc tuyen tinh co dinh
+#      use_cost_regulated_linear_velocity_scaling: true  # true = dung van toc tuyen tinh dieu chinh theo costmap; false = dung van toc tuyen tinh co dinh#
+#      regulated_linear_scaling_min_radius: 0.75  # Ban kinh toi thieu (m) cua quy dao de dieu chinh van toc tuyen tinh theo costmap
+#      regulated_linear_scaling_min_speed: 0.08 # Van toc tuyen tinh toi thieu (m/s) khi dieu chinh theo costmap
+#      cost_scaling_dist: 0.7   # Khoang cach de dieu chinh chi phi (m)
+#     #  cost_scaling_gain: 1.0 # He so chinh (gain) cho chi phi
+#      cost_scaling_gain: 0.8 # He so chinh (gain) cho chi phi
+#      inflation_cost_scaling_factor: 3.0  # He so chinh (gain) cho chi phi inflation
+#      approach_velocity_scaling_dist: 0.7  # Khoang cach toi da (m) de dieu chinh van toc tuyen tinh khi gan goal
+#      min_approach_linear_velocity: 0.06 # Van toc tuyen tinh toi thieu (m/s) khi dieu chinh theo costmap
+#      use_rotate_to_heading: true
+#      allow_reversing: false
+#      max_angular_accel: 0.3  # Gia toc goc toi da (rad/s^2)
+   # Old DWB parameters kept below as comments for tuning reference.
+  #  FollowPath:
+  #    plugin: "dwb_core::DWBLocalPlanner"  # Plugin local planner DWB (Dynamic Window Approach)
+  #   #  plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController" # 03_07_2026 Duong sua
+  #    debug_trajectory_details: True  # Publish thong tin debug ve quy dao duoc danh gia
+  #    min_vel_x: 0.0  # Van toc X toi thieu (m/s)
+  #    # min_vel_x: 0.06  # Van toc X toi thieu (m/s)   
+  #    # min_vel_x: -0.25
+  #    # min_vel_y: 0.0  # Van toc Y toi thieu (m/s)
+  #    max_vel_x: 0.4  # Van toc X toi da (m/s)
+  #    max_vel_y: 0.0  # Van toc Y toi da (m/s)
+  #    # max_vel_theta: 0.5  # Van toc goc toi da (rad/s)
+  #    max_vel_theta: 0.45  # Van toc goc toi da (rad/s)
+  #    # min_speed_xy: 0.00  # Toc do dich chuyen ngang toi thieu (m/s)
+  #    min_speed_xy: 0.06  # Toc do dich chuyen ngang toi thieu (m/s)
+  #    max_speed_xy: 0.3  # Toc do dich chuyen ngang toi da (m/s)
+  #    # min_speed_theta: 0.21  # Toc do goc toi thieu (rad/s)
+  #    min_speed_theta: 0.1  # Toc do goc toi thieu (rad/s)
+  #   #  min_speed_theta: 0.07 # 03_07_2026 Duong sua
+  #    # Add high threshold velocity for turtlebot 3 issue.
+  #    # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
+  #    # acc_lim_x: 2.5
+  #    acc_lim_x: 0.35  # Gia toc X toi da (m/s^2)
+  #    acc_lim_y: 0.0  # Gia toc Y toi da (m/s^2)
+  #    # acc_lim_theta: 3.2
+  #    # acc_lim_theta: 0.4  # Gia toc goc toi da (rad/s^2)
+  #    acc_lim_theta: 0.22  # Gia toc goc toi da (rad/s^2)
+  #    # decel_lim_x: -2.5
+  #    decel_lim_x: -0.35  # Gia toc giam X toi da (m/s^2)
+  #    decel_lim_y: 0.0  # Gia toc giam Y toi da (m/s^2)
+  #    # decel_lim_theta: -3.2
+  #    decel_lim_theta: -0.4  # Gia toc giam goc toi da (rad/s^2)
+  #    vx_samples: 20  # So mau van toc theo truc X khi tim quy dao
+  #    vy_samples: 5  # So mau van toc theo truc Y khi tim quy dao
+  #    vtheta_samples: 20  # So mau van toc goc khi tim quy dao
+  #   #  sim_time: 1.7  # Thoi gian (s) mo phong quy dao phia truoc
+  #   #  sim_time: 1.0 # 03_07_2026 Duong sua
+  #    sim_time: 2.5 # 26_06_2026 Chuong xui bay
+  #    linear_granularity: 0.05  # Buoc dich chuyen tuyen tinh khi mo phong quy dao (m)
+  #    angular_granularity: 0.025  # Buoc goc khi mo phong quy dao (rad)
+  #    # transform_tolerance: 0.2
+  #    transform_tolerance: 0.3  # Dung sai TF (s) khi controller lay transform
+  #    # xy_goal_tolerance: 0.25
+  #    xy_goal_tolerance: 0.15  # Sai so vi tri goal (m) dung boi RotateToGoal critic
+  #    # trans_stopped_velocity: 0.25
+  #    trans_stopped_velocity: 0.03  # Van toc dich chuyen duoi nguong nay duoc coi la robot da dung
+  #    short_circuit_trajectory_evaluation: True  # Dung danh gia sau khi tim duoc diem so tot nhat
+  #    stateful: True  # Kiem tra sai so XY sau khi xoay ve huong goal
+  #    critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]  # Danh sach critic danh gia quy dao
+  #    # critics: ["Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]  # Danh sach critic danh gia quy dao
+  #    # BaseObstacle.scale: 0.02  # Trong so critic: cham diem quy dao theo costmap (tranh vat can)
+  #    BaseObstacle.scale: 0.08 # 26_06_2026 Chuong xui bay
+  #    PathAlign.scale: 32.0  # Trong so critic: can chinh huong robot theo path global
+  #    PathAlign.forward_point_distance: 0.1  # Diem phia truoc robot (m) de tinh sai so goc voi path
+  #    GoalAlign.scale: 24.0  # Trong so critic: can chinh huong robot theo huong goal
+  #    GoalAlign.forward_point_distance: 0.1  # Diem phia truoc robot (m) de tinh sai so goc voi goal
+  #    PathDist.scale: 32.0  # Trong so critic: giu quy dao gan path global
+  #    GoalDist.scale: 24.0  # Trong so critic: keo quy dao ve phia goal
+  #    # RotateToGoal.scale: 32.0  # Trong so critic: chi cho xoay ve goal khi da gan vi tri goal
+  #    RotateToGoal.scale: 16.0 # 26_06_2026 Chuong xui bay
+  #    # RotateToGoal.slowing_factor: 5.0  # He so giam van toc goc khi xoay ve goal
+  #    RotateToGoal.slowing_factor: 2.0 # 28_06_2026
+  #    # RotateToGoal.slowing_factor: 4.0 # 28_06_2026
+  #    RotateToGoal.lookahead_time: -1.0  # Neu > 0: thoi gian (s) nhin truoc de kiem tra va cham; -1 de tat
 
 #     z_max: 0.05
 #     z_rand: 0.10
@@ -416,7 +363,7 @@ controller_server:
    failure_tolerance: 5.0  # Thoi gian toi da (s) plugin controller loi truoc khi FollowPath that bai; -1 vo han, 0 tat
    progress_checker_plugin: "progress_checker"  # Ten plugin kiem tra tien trinh (Humble: progress_checker_plugin)
    goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker" --- Danh sach plugin kiem tra dat goal
-   controller_plugins: ["FollowPath"]  # Danh sach plugin controller local planner
+   controller_plugins: ["FollowPath", "DockDWB"]  # FollowPath: chạy thường, DockDWB: chạy docking bằng DWB
 
 
    # Progress checker parameters
@@ -424,20 +371,91 @@ controller_server:
      plugin: "nav2_controller::SimpleProgressChecker"  # Plugin kiem tra robot co tien trien ve goal khong
      required_movement_radius: 0.5  # Khoang cach toi thieu (m) robot phai di duoc de duoc coi la co tien trien
      movement_time_allowance: 10.0  # Thoi gian toi da (s) de di duoc required_movement_radius
-   # Goal checker parameters
-   #precise_goal_checker:
-   #  plugin: "nav2_controller::SimpleGoalChecker"
-   #  xy_goal_tolerance: 0.25
-   #  yaw_goal_tolerance: 0.25
-   #  stateful: True
    general_goal_checker:
      stateful: True  # Kiem tra sai so XY sau khi xoay ve huong goal (chong lech localization nho)
      plugin: "nav2_controller::SimpleGoalChecker"  # Plugin kiem tra robot da den goal chua
      # xy_goal_tolerance: 0.25
-     xy_goal_tolerance: 0.15  # Sai so vi tri goal cho phep (m)
+     xy_goal_tolerance: 0.11  # Sai so vi tri goal cho phep (m)
      # yaw_goal_tolerance: 0.25
     #  yaw_goal_tolerance: 0.1 # 03_07_2026 Duong sua
-     yaw_goal_tolerance: 0.14  # Sai so goc goal cho phep (rad)
+     yaw_goal_tolerance: 0.07 # Sai so goc goal cho phep (rad)
+   FollowPath:
+    plugin: "nav2_rotation_shim_controller::RotationShimController"
+
+    angular_dist_threshold: 0.50
+    forward_sampling_distance: 0.50
+    rotate_to_heading_angular_vel: 0.15
+    max_angular_accel: 2.5
+    simulate_ahead_time: 1.0
+    max_cost_threshold: 254.0
+    rotate_to_goal_heading: true
+
+    primary_controller: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
+
+    desired_linear_vel: 0.3
+    lookahead_dist: 1.0
+    min_lookahead_dist: 0.8
+    max_lookahead_dist: 1.2
+    use_velocity_scaled_lookahead_dist: true
+    lookahead_time: 2.0
+
+    use_collision_detection: true
+    max_allowed_time_to_collision_up_to_carrot: 1.0
+
+    use_regulated_linear_velocity_scaling: true
+    regulated_linear_scaling_min_radius: 0.75
+    regulated_linear_scaling_min_speed: 0.2
+
+    use_cost_regulated_linear_velocity_scaling: true
+    cost_scaling_dist: 0.5
+    cost_scaling_gain: 0.8
+    inflation_cost_scaling_factor: 3.0
+
+    approach_velocity_scaling_dist: 1.5
+    min_approach_linear_velocity: 0.12
+
+    allow_reversing: false
+
+   DockDWB:
+    plugin: "dwb_core::DWBLocalPlanner"
+    debug_trajectory_details: false
+    min_vel_x: -0.08
+    max_vel_x: 0.12
+    min_vel_y: 0.0
+    max_vel_y: 0.0
+    max_vel_theta: 0.18
+    min_speed_xy: 0.0
+    max_speed_xy: 0.12
+    min_speed_theta: 0.0
+    acc_lim_x: 0.12
+    acc_lim_y: 0.0
+    acc_lim_theta: 0.20
+    decel_lim_x: -0.12
+    decel_lim_y: 0.0
+    decel_lim_theta: -0.20
+    vx_samples: 18
+    vy_samples: 1
+    vtheta_samples: 24
+    sim_time: 2.0
+    linear_granularity: 0.025
+    angular_granularity: 0.025
+    transform_tolerance: 0.3
+    xy_goal_tolerance: 0.11
+    trans_stopped_velocity: 0.02
+    short_circuit_trajectory_evaluation: true
+    stateful: true
+    critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+    BaseObstacle.scale: 0.12
+    PathAlign.scale: 20.0
+    PathAlign.forward_point_distance: 0.15
+    GoalAlign.scale: 18.0
+    GoalAlign.forward_point_distance: 0.15
+    PathDist.scale: 24.0
+    GoalDist.scale: 20.0
+    RotateToGoal.scale: 12.0
+    RotateToGoal.slowing_factor: 3.0
+    RotateToGoal.lookahead_time: 0.5
+
    # DWB parameters
   #  FollowPath:
   #   #  plugin: "dwb_core::DWBLocalPlanner"  # Plugin local planner DWB (Dynamic Window Approach)
@@ -638,42 +656,25 @@ planner_server:
     use_sim_time: True
     planner_plugins: ["GridBased"]
     GridBased:
-      plugin: "nav2_smac_planner/SmacPlannerHybrid"
-      downsample_costmap: false
-      downsampling_factor: 1
-      tolerance: 0.05 # 03_07_2026 giam len de tang do chinh xac path
-      allow_unknown: true
-      max_iterations: 1000000
-      max_on_approach_iterations: 1000
-      max_planning_time: 2.0
-      motion_model_for_search: "DUBIN"
-      # motion_model_for_search: "REEDS_SHEPP" # 03_07_2026 Duong sua
-      angle_quantization_bins: 72
-      analytic_expansion_ratio: 2.5
-      analytic_expansion_max_length: 2.0 # laasy gia 4*minimum_turning_radius vaf 5 *minimum_turning_radius
-      # analytic_expansion_max_cost: 200.0/
-      analytic_expansion_max_cost: 215.0 # 03_07_2026 tang len de tang do chinh xac path
-      analytic_expansion_max_cost_override: true
-      # minimum_turning_radius: 1.2
-      # minimum_turning_radius: 0.45
-      minimum_turning_radius: 0.4 # 03_07_2026 Duong sua
-      reverse_penalty: 2.1
-      change_penalty: 0.2
-      non_straight_penalty: 0.8
-      cost_penalty: 0.5
-      retrospective_penalty: 0.025
-      rotation_penalty: 5.0
-      lookup_table_size: 20.0
-      cache_obstacle_heuristic: false
-      smooth_path: true
-      smoother:
-        max_iterations: 1000
-        w_smooth: 0.3
-        w_data: 0.2
-        tolerance: 1.0e-10
-
-
-
+      plugin: "nav2_smac_planner/SmacPlanner2D"
+      downsample_costmap: false # true: giam do phan giai costmap de tang toc do planner; false: giu nguyen do phan giai costmap
+      downsampling_factor: 1 # He so giam do phan giai costmap khi downsample_costmap = true
+      tolerance: 0.07  # Sai so (m) giua goal yeu cau va diem cuoi path
+      allow_unknown: true  # Cho phep plan qua vung unknown tren costmap
+      max_iterations: 1000000 # So vong lap toi da khi tim duong di
+      max_on_approach_iterations: 1000  # So vong lap toi da khi tiep can goal
+      max_planning_time: 3.0  # Thoi gian toi da (s) cho moi lan plan
+      cost_travel_multiplier: 1.0 # He so nhan chi phi di chuyen (diem costmap) khi tinh duong di
+      use_final_approach_orientation: false # true: tinh huong cuoi path theo goal; false: giu huong cuoi path theo duong di
+      cache_obstacle_heuristic: false # true: luu tru heuristic obstacle de tang toc do planner; false: tinh lai heuristic moi lan plan
+      allow_partial_paths: true # true: cho phep plan duong di khong ho
+      smooth_path: true # true: lam muot duong di; false: giu duong di goc
+      smoother: 
+        max_iterations: 1000  # So vong lap toi da truoc khi dung lam muot
+        w_smooth: 0.25  # Trong so critic: lam muot duong di
+        w_data: 0.25 # Trong so critic: giu duong di goc
+        tolerance: 1.0e-10 # Nguong thay doi tham so duong di de dung lam muot
+        do_refinement: true # Lam muot lap lai duong di da muot de tang chat luong
 
 smoother_server:
  ros__parameters:
@@ -711,7 +712,7 @@ behavior_server:
    # max_rotational_vel: 0.5  # Van toc goc toi da (rad/s) cho spin
    max_rotational_vel: 0.35  # Van toc goc toi da (rad/s) cho spin
    # min_rotational_vel: -0.5  # Van toc goc toi thieu (rad/s) cho spin
-   min_rotational_vel: 0.21  # Van toc goc toi thieu (rad/s) cho spin
+   min_rotational_vel: 0.22  # Van toc goc toi thieu (rad/s) cho spin
    # rotational_acc_lim: 0.4  # Gia toc goc toi da (rad/s^2) cho spin
    rotational_acc_lim: 0.22  # Gia toc goc toi da (rad/s^2) cho spin
 
@@ -732,7 +733,6 @@ waypoint_follower:
      enabled: True  # Bat/tat plugin wait_at_waypoint
      waypoint_pause_duration: 200  # Thoi gian cho (ms) sau khi den waypoint; 0 thi di tiep ngay
 
-
 velocity_smoother:
  ros__parameters:
    use_sim_time: True
@@ -742,12 +742,11 @@ velocity_smoother:
    feedback: "OPEN_LOOP"  # OPEN_LOOP: dung lenh van toc cuoi; CLOSED_LOOP: dung odom
    max_velocity: [0.4, 0.0, 0.45]  # Van toc toi da [x, y, theta] (m/s, m/s, rad/s)
    min_velocity: [-0.3, 0.0, -0.45]  # Van toc toi thieu [x, y, theta] (m/s, m/s, rad/s)
-   max_accel: [0.35, 0.0, 0.2]  # Gia toc toi da [x, y, theta]
-   max_decel: [-0.35, 0.0, -0.2]  # Gia toc giam toi da [x, y, theta] (gia tri am)
+   max_accel: [0.35, 0.0, 0.3]  # Gia toc toi da [x, y, theta]
+   max_decel: [-0.35, 0.0, -0.3]  # Gia toc giam toi da [x, y, theta] (gia tri am)
    # odom_topic: "odom"
    odom_topic: /odometry/filtered # dung vi minh dung bo loc odom --- Topic odom (chi dung khi feedback CLOSED_LOOP)
-   odom_duration: 0.1  # Thoi gian (s) buffer odom de uoc luong toc do (chi dung khi CLOSED_LOOP)
+   odom_duration: 0.1  # Thoi gian (s) buffer odom de uoc luong toc do (chi dung khi CLOSEDLoop)
    # deadband_velocity: [0.0, 0.0, 0.0]  # Van toc toi thieu gui xuong driver [x, y, theta] de tranh stall
-   deadband_velocity: [0.06, 0.0, 0.1]  # Van toc toi thieu gui xuong driver [x, y, theta] de tranh stall
+   deadband_velocity: [0.0, 0.0, 0.0]  # Van toc toi thieu gui xuong driver [x, y, theta] de tranh stall
    velocity_timeout: 1.0  # Timeout (s) khong nhan lenh moi thi gui Twist zero va dung publish
-

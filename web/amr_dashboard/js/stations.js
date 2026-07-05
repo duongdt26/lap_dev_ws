@@ -7,6 +7,16 @@
   let selectedId = null;
   let pendingDeleteId = null;
   let editingId = null;
+  let missionRequestTopic = null;
+  let cargoDoneTopic = null;
+  let missionStatusTopic = null;
+  let dockRequestTopic = null;
+  let dockResponseTopic = null;
+  let costmapRequestTopic = null;
+  let costmapResponseTopic = null;
+  let missionWaiters = [];
+  let dockWaiters = [];
+  let costmapWaiters = [];
 
   const modal = document.getElementById('setpoint-modal');
   const deleteModal = document.getElementById('delete-setpoint-modal');
@@ -28,6 +38,30 @@
     { value: 'load', label: 'Load' },
     { value: 'unload', label: 'Unload' },
   ];
+
+  const POINT_TYPE_OPTIONS = [
+    { value: 'normal', label: 'Normal' },
+    { value: 'start_load', label: 'Start Load' },
+    { value: 'load', label: 'Load' },
+    { value: 'start_unload', label: 'Start Unload' },
+    { value: 'unload', label: 'Unload' },
+  ];
+
+  function normalizePointType(value) {
+    const v = String(value || '').toLowerCase();
+    if (['start_load', 'load', 'start_unload', 'unload'].includes(v)) return v;
+    return 'normal';
+  }
+
+  function pointTypeLabel(value) {
+    const opt = POINT_TYPE_OPTIONS.find((o) => o.value === normalizePointType(value));
+    return opt ? opt.label : 'Normal';
+  }
+
+  function pointTypeHtml(value) {
+    const t = normalizePointType(value);
+    return `<span class="belt-cmd-tag belt-cmd-${t}">${pointTypeLabel(t)}</span>`;
+  }
 
   function beltCmdLabel(value) {
     const opt = BELT_CMD_OPTIONS.find((o) => o.value === value);
@@ -51,9 +85,269 @@
     return {
       ...pt,
       status: pt.status === 'Occupied' ? 'Occupied' : 'Free',
+      pointType: normalizePointType(pt.pointType),
       belt1Cmd: normalizeBeltCmd(pt.belt1Cmd),
       belt2Cmd: normalizeBeltCmd(pt.belt2Cmd),
     };
+  }
+
+  function stationKey(pt) {
+    const raw = String(pt?.stationId || pt?.name || '').trim();
+    const trailingNumber = raw.match(/(\d+)\s*$/);
+    if (trailingNumber) return trailingNumber[1];
+
+    return raw
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd')
+      .replace(/Đ/g, 'D')
+      .toLowerCase()
+      .trim()
+      .replace(/^start\s+(load|unload)\s+/i, '')
+      .replace(/^(load|unload)\s+/i, '')
+      .replace(/^tram\s+tra\s+hang\s+/i, '')
+      .replace(/^tram\s+hang\s+/i, '')
+      .replace(/^nhan\s+hang\s+/i, '')
+      .replace(/^tra\s+hang\s+/i, '')
+      .replace(/[_-]+/g, ' ')
+      .trim()
+  }
+
+  function isStartPoint(pt) {
+    const t = normalizePointType(pt?.pointType);
+    return t === 'start_load' || t === 'start_unload';
+  }
+
+  function isDockFinalPoint(pt) {
+    const t = normalizePointType(pt?.pointType);
+    return t === 'load' || t === 'unload';
+  }
+
+  function finalTypeForStart(pt) {
+    return normalizePointType(pt?.pointType) === 'start_unload' ? 'unload' : 'load';
+  }
+
+  function startTypeForFinal(pt) {
+    return normalizePointType(pt?.pointType) === 'unload' ? 'start_unload' : 'start_load';
+  }
+
+  function findDockFinalForStart(startPt) {
+    const key = stationKey(startPt);
+    const finalType = finalTypeForStart(startPt);
+    return setpoints.find((pt) => (
+      normalizePointType(pt.pointType) === finalType && stationKey(pt) === key
+    ));
+  }
+
+  function findDockStartForFinal(finalPt) {
+    const key = stationKey(finalPt);
+    const startType = startTypeForFinal(finalPt);
+    return setpoints.find((pt) => (
+      normalizePointType(pt.pointType) === startType && stationKey(pt) === key
+    ));
+  }
+
+  function poseJson(pt) {
+    return {
+      frame_id: 'map',
+      x: Number(pt.x),
+      y: Number(pt.y),
+      yaw: (Number(pt.yawDeg) * Math.PI) / 180,
+    };
+  }
+
+  function missionStateFromData(data) {
+    const parts = String(data || '').split('|');
+    return { state: parts[0] || '', detail: parts.slice(1).join('|') };
+  }
+
+  function waitForMission(taskId, states, timeoutMs) {
+    return new Promise((resolve, reject) => {
+      const wanted = new Set(states);
+      const deadline = window.setTimeout(() => {
+        missionWaiters = missionWaiters.filter((w) => w !== waiter);
+        reject(new Error(`Timeout mission ${taskId}`));
+      }, timeoutMs);
+
+      const waiter = {
+        taskId,
+        onStatus(status) {
+          if (status.state === 'FAILED') {
+            window.clearTimeout(deadline);
+            missionWaiters = missionWaiters.filter((w) => w !== waiter);
+            reject(new Error(status.detail || 'Mission failed'));
+            return;
+          }
+          if (wanted.has(status.state)) {
+            window.clearTimeout(deadline);
+            missionWaiters = missionWaiters.filter((w) => w !== waiter);
+            resolve(status);
+          }
+        },
+      };
+      missionWaiters.push(waiter);
+    });
+  }
+
+  function waitForDock(taskId, mode, timeoutMs = 180000) {
+    return new Promise((resolve, reject) => {
+      const deadline = window.setTimeout(() => {
+        dockWaiters = dockWaiters.filter((w) => w !== waiter);
+        reject(new Error(`Timeout docking ${mode}`));
+      }, timeoutMs);
+
+      const waiter = {
+        taskId,
+        mode,
+        onStatus(status) {
+          if (status.task_id !== taskId || status.mode !== mode) return;
+          if (status.status === 'failed' || status.status === 'error' || status.status === 'rejected') {
+            window.clearTimeout(deadline);
+            dockWaiters = dockWaiters.filter((w) => w !== waiter);
+            reject(new Error(status.detail || `Dock ${mode} failed`));
+            return;
+          }
+          if (status.status === 'succeeded') {
+            window.clearTimeout(deadline);
+            dockWaiters = dockWaiters.filter((w) => w !== waiter);
+            resolve(status);
+          }
+        },
+      };
+      dockWaiters.push(waiter);
+    });
+  }
+
+  function waitForCostmap(requestId, timeoutMs = 15000) {
+    return new Promise((resolve, reject) => {
+      const deadline = window.setTimeout(() => {
+        costmapWaiters = costmapWaiters.filter((w) => w !== waiter);
+        reject(new Error(`Timeout costmap request ${requestId}`));
+      }, timeoutMs);
+
+      const waiter = {
+        requestId,
+        onStatus(status) {
+          if (status.request_id !== requestId) return;
+          if (status.status === 'error' || status.status === 'failed') {
+            window.clearTimeout(deadline);
+            costmapWaiters = costmapWaiters.filter((w) => w !== waiter);
+            reject(new Error(status.detail || 'Costmap tuning failed'));
+            return;
+          }
+          if (status.status === 'succeeded') {
+            window.clearTimeout(deadline);
+            costmapWaiters = costmapWaiters.filter((w) => w !== waiter);
+            resolve(status);
+          }
+        },
+      };
+      costmapWaiters.push(waiter);
+    });
+  }
+
+  async function setDockCostmapMode(mode, radius = 0.35) {
+    if (!costmapRequestTopic) throw new Error('Chưa kết nối costmap tuning bridge');
+    const requestId = `WEB_COSTMAP_${mode}_${Date.now()}`;
+    const resultPromise = waitForCostmap(requestId);
+    costmapRequestTopic.publish(new ROSLIB.Message({
+      data: JSON.stringify({
+        request_id: requestId,
+        mode,
+        radius,
+      }),
+    }));
+    return resultPromise;
+  }
+
+  async function runDockAction(mode, targetPt, taskId, stationId) {
+    if (!dockRequestTopic) throw new Error('Chưa kết nối Docking Server');
+    const resultPromise = waitForDock(taskId, mode);
+    const payload = {
+      task_id: taskId,
+      station_id: stationId,
+      mode,
+      target_pose: poseJson(targetPt),
+      max_speed: 0.04,
+    };
+    dockRequestTopic.publish(new ROSLIB.Message({ data: JSON.stringify(payload) }));
+    return resultPromise;
+  }
+
+  function publishCargoDone(mode) {
+    if (!cargoDoneTopic) throw new Error('Chưa kết nối mission cargo topic');
+    cargoDoneTopic.publish(new ROSLIB.Message({ data: mode === 'UNLOAD' ? 'DROP' : 'PICK' }));
+  }
+
+  async function runDockMission(startPt, finalPt) {
+    if (!missionRequestTopic) throw new Error('Chưa kết nối Mission Supervisor');
+    if (!startPt || !finalPt) throw new Error('Thiếu cặp Start/Load-Unload cho docking');
+
+    const mode = finalTypeForStart(startPt).toUpperCase();
+    const stationId = stationKey(startPt).replace(/\s+/g, '_').toUpperCase() || startPt.id;
+    const taskId = `WEB_${stationId}_${Date.now()}`;
+    const payload = {
+      task_id: taskId,
+      station_id: stationId,
+      cargo_mode: mode === 'UNLOAD' ? 'DROP' : 'PICK',
+      use_dynamic_poses: true,
+      pre_dock_pose: poseJson(startPt),
+      dock_final_pose: poseJson(finalPt),
+      has_next_goal: false,
+    };
+
+    setWorkflowStep('mission', `Mission ${taskId}: Nav2 tới ${startPt.name}, docking vào ${finalPt.name}`);
+    missionRequestTopic.publish(new ROSLIB.Message({ data: JSON.stringify(payload) }));
+
+    await waitForMission(taskId, ['WAITING_CARGO', 'DOCKED'], 300000);
+    setWorkflowStep('mission', `Đã dock tại ${finalPt.name} — chạy ${pointTypeLabel(finalPt.pointType)}`);
+    if (window.AmrStm32?.setpointNeedsBelt?.(finalPt)) {
+      await window.AmrStm32.runSetpointBelts(finalPt);
+    }
+    publishCargoDone(mode);
+    await waitForMission(taskId, ['MISSION_DONE'], 300000);
+    setWorkflowStep('mission', `Hoàn tất docking ${startPt.name} → ${finalPt.name} → ra lại A`);
+  }
+
+  async function runDockingCycle(startPt, finalPt) {
+    if (!startPt || !finalPt) throw new Error('Thiếu cặp Start/Load-Unload cho docking');
+    if (!isStartPoint(startPt) || !isDockFinalPoint(finalPt)) {
+      throw new Error('Sai kiểu setpoint docking: cần Start Load/Unload và Load/Unload');
+    }
+
+    const finalType = normalizePointType(finalPt.pointType);
+    const modeLabel = finalType === 'unload' ? 'Unload' : 'Load';
+    const finalYawRad = (Number(finalPt.yawDeg) * Math.PI) / 180;
+    const startYawRad = (Number(startPt.yawDeg) * Math.PI) / 180;
+
+    setWorkflowStep('dock', `Dock Nav2: giảm costmap về 0.35 trước khi vào ${finalPt.name}`);
+    await setDockCostmapMode('dock', 0.35);
+
+    try {
+      setWorkflowStep('dock', `Nav2 docking: ${startPt.name} → ${finalPt.name}`);
+      await window.AmrNavigation.navigateAndWait(finalPt.x, finalPt.y, finalYawRad, {
+        destinationName: finalPt.name,
+        controllerId: 'DockDWB',
+      });
+
+      setWorkflowStep('dock', `Đã vào ${finalPt.name} — chạy băng tải ${modeLabel}`);
+      if (window.AmrStm32?.setpointNeedsBelt?.(finalPt)) {
+        await window.AmrStm32.runSetpointBelts(finalPt);
+      }
+
+      setWorkflowStep('dock', `Băng tải xong — Nav2 quay về ${startPt.name}`);
+      await window.AmrNavigation.navigateAndWait(startPt.x, startPt.y, startYawRad, {
+        destinationName: startPt.name,
+        controllerId: 'DockDWB',
+      });
+      setWorkflowStep('dock', `Hoàn tất Nav2 docking ${startPt.name} → ${finalPt.name} → ${startPt.name}`);
+    } finally {
+      try {
+        await setDockCostmapMode('restore', 0.35);
+      } catch (err) {
+        console.warn('restore costmap:', err);
+      }
+    }
   }
 
   async function reloadSetpointsFromServer(mapName) {
@@ -202,6 +496,7 @@
       tr.innerHTML =
         `<td class="col-order">${index + 1}</td>` +
         `<td class="col-name">${escapeHtml(pt.name)}</td>` +
+        `<td class="col-type">${pointTypeHtml(pt.pointType)}</td>` +
         `<td class="col-position">${formatPositionCol(pt)}</td>` +
         `<td class="col-cmd-belt">${beltCmdHtml(pt.belt1Cmd)}</td>` +
         `<td class="col-cmd-belt">${beltCmdHtml(pt.belt2Cmd)}</td>` +
@@ -290,6 +585,7 @@
     document.getElementById('setpoint-x').value = '';
     document.getElementById('setpoint-y').value = '';
     document.getElementById('setpoint-yaw').value = '';
+    document.getElementById('setpoint-point-type').value = 'normal';
     document.getElementById('setpoint-belt1-cmd').value = 'load';
     document.getElementById('setpoint-belt2-cmd').value = 'load';
   }
@@ -327,6 +623,7 @@
     document.getElementById('setpoint-x').value = Number(pt.x).toFixed(2);
     document.getElementById('setpoint-y').value = Number(pt.y).toFixed(2);
     document.getElementById('setpoint-yaw').value = Number(pt.yawDeg).toFixed(1);
+    document.getElementById('setpoint-point-type').value = normalizePointType(pt.pointType);
     document.getElementById('setpoint-belt1-cmd').value = normalizeBeltCmd(pt.belt1Cmd);
     document.getElementById('setpoint-belt2-cmd').value = normalizeBeltCmd(pt.belt2Cmd);
     modal.classList.remove('hidden');
@@ -337,6 +634,20 @@
     editingId = null;
     modal.classList.add('hidden');
     modal.setAttribute('aria-hidden', 'true');
+  }
+
+  function applyPointTypeDefaults() {
+    const type = normalizePointType(document.getElementById('setpoint-point-type').value);
+    const belt1 = document.getElementById('setpoint-belt1-cmd');
+    const belt2 = document.getElementById('setpoint-belt2-cmd');
+    if (type === 'start_load' || type === 'start_unload') {
+      belt1.value = 'none';
+      belt2.value = 'none';
+    } else if (type === 'load') {
+      if (belt1.value === 'none' && belt2.value === 'none') belt1.value = 'load';
+    } else if (type === 'unload') {
+      if (belt1.value === 'none' && belt2.value === 'none') belt1.value = 'unload';
+    }
   }
 
   function useCurrentPosition() {
@@ -355,8 +666,13 @@
     const x = parseFloat(document.getElementById('setpoint-x').value);
     const y = parseFloat(document.getElementById('setpoint-y').value);
     const yawDeg = parseFloat(document.getElementById('setpoint-yaw').value);
-    const belt1Cmd = normalizeBeltCmd(document.getElementById('setpoint-belt1-cmd').value);
-    const belt2Cmd = normalizeBeltCmd(document.getElementById('setpoint-belt2-cmd').value);
+    const pointType = normalizePointType(document.getElementById('setpoint-point-type').value);
+    let belt1Cmd = normalizeBeltCmd(document.getElementById('setpoint-belt1-cmd').value);
+    let belt2Cmd = normalizeBeltCmd(document.getElementById('setpoint-belt2-cmd').value);
+    if (pointType === 'start_load' || pointType === 'start_unload') {
+      belt1Cmd = 'none';
+      belt2Cmd = 'none';
+    }
 
     if (!name) {
       stationStatus.textContent = 'Nhập tên vị trí trước khi lưu';
@@ -377,6 +693,7 @@
       pt.x = x;
       pt.y = y;
       pt.yawDeg = yawDeg;
+      pt.pointType = pointType;
       pt.belt1Cmd = belt1Cmd;
       pt.belt2Cmd = belt2Cmd;
       selectedId = editingId;
@@ -395,6 +712,7 @@
       y,
       yawDeg,
       status: 'Free',
+      pointType,
       belt1Cmd,
       belt2Cmd,
       createdAt: new Date().toISOString(),
@@ -432,9 +750,21 @@
     stationStatus.textContent = `Đang đi tới: ${pt.name}`;
 
     try {
-      await window.AmrNavigation.navigateAndWait(pt.x, pt.y, yawRad, {
-        destinationName: pt.name,
-      });
+      if (isStartPoint(pt)) {
+        await window.AmrNavigation.navigateAndWait(pt.x, pt.y, yawRad, {
+          destinationName: pt.name,
+        });
+      } else if (isDockFinalPoint(pt)) {
+        const startPt = findDockStartForFinal(pt);
+        if (!startPt) {
+          throw new Error(`Không tìm thấy điểm ${pointTypeLabel(startTypeForFinal(pt))} cùng trạm với ${pt.name}`);
+        }
+        await runDockingCycle(startPt, pt);
+      } else {
+        await window.AmrNavigation.navigateAndWait(pt.x, pt.y, yawRad, {
+          destinationName: pt.name,
+        });
+      }
     } catch (err) {
       const msg = err?.message || 'Lỗi navigation';
       stationStatus.textContent = `Nav thất bại tới ${pt.name}: ${msg}`;
@@ -476,6 +806,7 @@
   document.getElementById('btn-use-current').addEventListener('click', useCurrentPosition);
   document.getElementById('btn-save-point').addEventListener('click', savePoint);
   document.getElementById('btn-cancel-setpoint').addEventListener('click', closeSetpointModal);
+  document.getElementById('setpoint-point-type').addEventListener('change', applyPointTypeDefaults);
   document.getElementById('btn-delete-cancel').addEventListener('click', closeDeleteConfirm);
   document.getElementById('btn-delete-confirm').addEventListener('click', confirmDeleteSetpoint);
 
@@ -494,7 +825,92 @@
   window.addEventListener('amr-nav-arrived', onNavArrived);
 
   window.addEventListener('amr-ros-connected', () => {
+    const ros = window.AmrRos?.getRos?.();
+    if (ros) {
+      missionRequestTopic = new ROSLIB.Topic({
+        ros,
+        name: '/web_mission_request',
+        messageType: 'std_msgs/msg/String',
+      });
+      cargoDoneTopic = new ROSLIB.Topic({
+        ros,
+        name: '/web_cargo_done',
+        messageType: 'std_msgs/msg/String',
+      });
+      missionStatusTopic = new ROSLIB.Topic({
+        ros,
+        name: '/mission/status',
+        messageType: 'std_msgs/msg/String',
+      });
+      missionStatusTopic.subscribe((msg) => {
+        const status = missionStateFromData(msg.data);
+        missionWaiters.slice().forEach((w) => w.onStatus(status));
+      });
+      dockRequestTopic = new ROSLIB.Topic({
+        ros,
+        name: '/web_dock_request',
+        messageType: 'std_msgs/msg/String',
+      });
+      dockResponseTopic = new ROSLIB.Topic({
+        ros,
+        name: '/web_dock_response',
+        messageType: 'std_msgs/msg/String',
+      });
+      dockResponseTopic.subscribe((msg) => {
+        let status = null;
+        try {
+          status = JSON.parse(msg.data);
+        } catch (err) {
+          console.warn('dock response JSON:', err);
+          return;
+        }
+        if (status.status === 'feedback') {
+          const dist = Number(status.distance_remaining || 0).toFixed(2);
+          setWorkflowStep('dock', `${status.mode}: ${status.detail} còn ${dist}m`);
+        }
+        dockWaiters.slice().forEach((w) => w.onStatus(status));
+      });
+      costmapRequestTopic = new ROSLIB.Topic({
+        ros,
+        name: '/web_costmap_request',
+        messageType: 'std_msgs/msg/String',
+      });
+      costmapResponseTopic = new ROSLIB.Topic({
+        ros,
+        name: '/web_costmap_response',
+        messageType: 'std_msgs/msg/String',
+      });
+      costmapResponseTopic.subscribe((msg) => {
+        let status = null;
+        try {
+          status = JSON.parse(msg.data);
+        } catch (err) {
+          console.warn('costmap response JSON:', err);
+          return;
+        }
+        if (status.status === 'succeeded') {
+          setWorkflowStep('costmap', status.detail || 'Costmap updated');
+        }
+        costmapWaiters.slice().forEach((w) => w.onStatus(status));
+      });
+    }
     setWorkflowStep('connect', 'connected — load map or run SLAM');
+  });
+
+  window.addEventListener('amr-ros-disconnected', () => {
+    if (missionStatusTopic) missionStatusTopic.unsubscribe();
+    if (dockResponseTopic) dockResponseTopic.unsubscribe();
+    if (costmapResponseTopic) costmapResponseTopic.unsubscribe();
+    missionRequestTopic = null;
+    cargoDoneTopic = null;
+    missionStatusTopic = null;
+    dockRequestTopic = null;
+    dockResponseTopic = null;
+    costmapRequestTopic = null;
+    costmapResponseTopic = null;
+    missionWaiters = [];
+    dockWaiters = [];
+    costmapWaiters = [];
   });
 
   window.addEventListener('amr-map-data-sync', (e) => {
@@ -525,6 +941,13 @@
     getSetpoints: () => [...setpoints],
     reloadFromServer: reloadSetpointsFromServer,
     setWorkflowStep,
+    isStartPoint,
+    isDockFinalPoint,
+    findDockFinalForStart,
+    findDockStartForFinal,
+    runDockMission,
+    runDockingCycle,
+    pointTypeLabel,
     setConveyorStatus,
     getConveyorStatus,
     setSetpointStatus(id, status) {

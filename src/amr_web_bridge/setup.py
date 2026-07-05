@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             'map_bridge_node = amr_web_bridge.map_bridge_node:main',
             'nav_pose_bridge_node = amr_web_bridge.nav_pose_bridge_node:main',
+            'mission_client_node = amr_web_bridge.mission_client_node:main',
         ],
     },
 )

@@ -27,8 +27,8 @@ from amr_web_interfaces.srv import (
     SetActiveMap,
 )
 
-MAPS_ROOT = '/home/duo/maps'
-MAP_DATA_ROOT = '/home/duo/MAP_DATA'
+DEFAULT_MAPS_ROOT = os.path.expanduser('~/maps')
+DEFAULT_MAP_DATA_ROOT = os.path.expanduser('~/MAP_DATA')
 SETPOINTS_FILE = 'setpoints.json'
 SAFE_NAME_RE = re.compile(r'^[a-zA-Z0-9_\-]+$')
 
@@ -72,11 +72,17 @@ class MapBridgeNode(Node):
     def __init__(self):
         super().__init__('map_bridge_node')
 
-        os.makedirs(MAPS_ROOT, exist_ok=True)
-        os.makedirs(MAP_DATA_ROOT, exist_ok=True)
-
         self.declare_parameter('map_name', '')
         self.declare_parameter('active_map_name', '')
+        self.declare_parameter('maps_root', DEFAULT_MAPS_ROOT)
+        self.declare_parameter('map_data_root', DEFAULT_MAP_DATA_ROOT)
+
+        self._maps_root = os.path.expanduser(
+            str(self.get_parameter('maps_root').value))
+        self._map_data_root = os.path.expanduser(
+            str(self.get_parameter('map_data_root').value))
+        os.makedirs(self._maps_root, exist_ok=True)
+        os.makedirs(self._map_data_root, exist_ok=True)
 
         self._latest_map = None
         self._map_sub = self.create_subscription(
@@ -100,7 +106,8 @@ class MapBridgeNode(Node):
 
         self.create_timer(1.0, self._republish_timer_cb)
 
-        self.get_logger().info(f'Maps: {MAPS_ROOT} | Setpoint/process: {MAP_DATA_ROOT}')
+        self.get_logger().info(
+            f'Maps: {self._maps_root} | Setpoint/process: {self._map_data_root}')
         self.get_logger().info(
             'Services: /save_map, /list_maps, /save_setpoints, /load_setpoints,'
         )
@@ -123,7 +130,7 @@ class MapBridgeNode(Node):
         return sanitize_map_name(name)
 
     def _data_dir(self, map_name: str) -> str:
-        return os.path.join(MAP_DATA_ROOT, sanitize_map_name(map_name))
+        return os.path.join(self._map_data_root, sanitize_map_name(map_name))
 
     def _init_map_data_folder(self, map_name: str) -> str:
         """Tạo MAP_DATA/{map_name}/setpoint + process và file setpoints.json rỗng."""
@@ -246,7 +253,7 @@ class MapBridgeNode(Node):
     def _save_map_files(self, name: str) -> str:
         name = sanitize_map_name(name)
         data_root = self._init_map_data_folder(name)
-        out_path = os.path.join(MAPS_ROOT, name)
+        out_path = os.path.join(self._maps_root, name)
         cmd = [
             'ros2', 'run', 'nav2_map_server', 'map_saver_cli',
             '-f', out_path,
@@ -302,8 +309,8 @@ class MapBridgeNode(Node):
     def list_maps_callback(self, request, response):
         del request
         names = []
-        if os.path.isdir(MAPS_ROOT):
-            for path in sorted(glob.glob(os.path.join(MAPS_ROOT, '*.yaml'))):
+        if os.path.isdir(self._maps_root):
+            for path in sorted(glob.glob(os.path.join(self._maps_root, '*.yaml'))):
                 names.append(os.path.splitext(os.path.basename(path))[0])
         response.success = True
         response.message = ','.join(names) if names else '(chưa có map trong ~/maps)'
@@ -440,9 +447,14 @@ class MapBridgeNode(Node):
 def main():
     rclpy.init()
     node = MapBridgeNode()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 
 if __name__ == '__main__':

@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+from amr_mission_supervisor_py.mission_supervisor import main
+
+if __name__ == '__main__':
+    main()

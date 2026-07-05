@@ -174,6 +174,28 @@ def generate_launch_description():
         launch_arguments={'use_sim_time': 'false'}.items(),
     )
 
+    docking_server = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(
+                get_package_share_directory('amr_docking_server'),
+                'launch',
+                'docking_server.launch.py',
+            )
+        ]),
+        launch_arguments={'use_sim_time': 'false'}.items(),
+    )
+
+    mission_supervisor = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(
+                get_package_share_directory('amr_mission_supervisor'),
+                'launch',
+                'mission_supervisor.launch.py',
+            )
+        ]),
+        launch_arguments={'use_sim_time': 'false'}.items(),
+    )
+
     ps2_teleop = IncludeLaunchDescription(
     PythonLaunchDescriptionSource([
         os.path.join(
@@ -195,5 +217,7 @@ def generate_launch_description():
         imu_node,                 # Chạy IMU node
         laser_filter_node,
         web_support, # twist_mux + bridge + rosbridge
+        docking_server,
+        mission_supervisor,
         # ps2_teleop,
     ])

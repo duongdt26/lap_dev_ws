@@ -1,0 +1,11 @@
+string task_id
+string station_id
+string cargo_mode
+geometry_msgs/PoseStamped next_goal
+bool has_next_goal
+bool use_dynamic_poses
+geometry_msgs/PoseStamped pre_dock_pose
+geometry_msgs/PoseStamped dock_final_pose
+---
+bool success
+string message

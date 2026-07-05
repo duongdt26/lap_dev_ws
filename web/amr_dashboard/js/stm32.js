@@ -26,6 +26,9 @@
       const detail = state ? ` (${state})` : '';
       stm32StatusEl.textContent = `STM32: connected${detail}`;
       stm32StatusEl.className = 'connected';
+    } else if (String(message || '').includes('serial open')) {
+      stm32StatusEl.textContent = 'STM32: serial open — waiting heartbeat';
+      stm32StatusEl.className = 'connecting';
     } else {
       stm32StatusEl.textContent = 'STM32: disconnected';
       stm32StatusEl.className = 'disconnected';

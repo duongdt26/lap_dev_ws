@@ -382,6 +382,7 @@
     }
 
     const byName = Object.fromEntries(getSetpoints().map((sp) => [sp.name, sp]));
+    let lastDockStart = null;
 
     // Resume: nếu đang pause thì đi lại từ đầu bước bị cancel (redo_step).
     const resuming = routeState.paused && routeState.pausedIndex >= 0;
@@ -422,18 +423,44 @@
       setStationStatus(`Auto Route: đang đi tới ${label}`);
 
       try {
-        const yawRad = (sp.yawDeg * Math.PI) / 180;
-        await window.AmrNavigation.navigateAndWait(sp.x, sp.y, yawRad, {
-          postArrivalDelayMs: 2000,
-          destinationName: sp.name,
-        });
+        if (window.AmrStations?.isStartPoint?.(sp)) {
+          const yawRad = (sp.yawDeg * Math.PI) / 180;
+          setDetail(`Auto Route: tới điểm chuẩn bị ${label}`);
+          setStationStatus(`Start docking: đang đi tới ${label}`);
+          await window.AmrNavigation.navigateAndWait(sp.x, sp.y, yawRad, {
+            postArrivalDelayMs: 500,
+            destinationName: sp.name,
+          });
+          lastDockStart = sp;
+
+          const arrivedMsg = `Đã đến ${sp.name} ✓ — chuyển sang bước docking tiếp theo`;
+          setDetail(`Auto Route: ${arrivedMsg}`);
+          setStationStatus(arrivedMsg);
+        } else if (window.AmrStations?.isDockFinalPoint?.(sp)) {
+          const startPt = lastDockStart || window.AmrStations.findDockStartForFinal?.(sp);
+          if (!startPt) {
+            throw new Error(`${sp.name} là điểm ${sp.pointType}; cần đặt Start Load/Unload ngay trước nó trong process`);
+          }
+          setDetail(`Auto Route: docking ${startPt.name} → ${sp.name}`);
+          setStationStatus(`Docking: ${startPt.name} → ${sp.name}`);
+          await window.AmrStations.runDockingCycle(startPt, sp);
+          lastDockStart = null;
+        } else {
+          const yawRad = (sp.yawDeg * Math.PI) / 180;
+          await window.AmrNavigation.navigateAndWait(sp.x, sp.y, yawRad, {
+            postArrivalDelayMs: 2000,
+            destinationName: sp.name,
+          });
+
+          if (!routeState.running) break;
+
+          const arrivedMsg = `Đã đến ${sp.name} ✓ — goal success`;
+          setDetail(`Auto Route: ${arrivedMsg}`);
+          setStationStatus(arrivedMsg);
+          await runBeltStep(sp);
+        }
 
         if (!routeState.running) break;
-
-        const arrivedMsg = `Đã đến ${sp.name} ✓ — goal success`;
-        setDetail(`Auto Route: ${arrivedMsg}`);
-        setStationStatus(arrivedMsg);
-        await runBeltStep(sp);
 
         if (!routeState.running) break;
 

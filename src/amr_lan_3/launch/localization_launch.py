@@ -36,6 +36,12 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     autostart = LaunchConfiguration('autostart')
     params_file = LaunchConfiguration('params_file')
+    set_initial_pose = LaunchConfiguration('set_initial_pose')
+    initial_pose_x = LaunchConfiguration('initial_pose_x')
+    initial_pose_y = LaunchConfiguration('initial_pose_y')
+    initial_pose_z = LaunchConfiguration('initial_pose_z')
+    initial_pose_yaw = LaunchConfiguration('initial_pose_yaw')
+    always_reset_initial_pose = LaunchConfiguration('always_reset_initial_pose')
     use_composition = LaunchConfiguration('use_composition')
     container_name = LaunchConfiguration('container_name')
     container_name_full = (namespace, '/', container_name)
@@ -89,6 +95,36 @@ def generate_launch_description():
         default_value=os.path.join(bringup_dir, 'config', 'nav2_params.yaml'),
         description='Full path to the ROS2 parameters file to use for all launched nodes')
 
+    declare_set_initial_pose_cmd = DeclareLaunchArgument(
+        'set_initial_pose',
+        default_value='false',
+        description='If true, AMCL starts with initial_pose_x/y/z/yaw and publishes map->odom immediately')
+
+    declare_initial_pose_x_cmd = DeclareLaunchArgument(
+        'initial_pose_x',
+        default_value='0.0',
+        description='AMCL initial pose X in map frame')
+
+    declare_initial_pose_y_cmd = DeclareLaunchArgument(
+        'initial_pose_y',
+        default_value='0.0',
+        description='AMCL initial pose Y in map frame')
+
+    declare_initial_pose_z_cmd = DeclareLaunchArgument(
+        'initial_pose_z',
+        default_value='0.0',
+        description='AMCL initial pose Z in map frame')
+
+    declare_initial_pose_yaw_cmd = DeclareLaunchArgument(
+        'initial_pose_yaw',
+        default_value='0.0',
+        description='AMCL initial pose yaw in radians')
+
+    declare_always_reset_initial_pose_cmd = DeclareLaunchArgument(
+        'always_reset_initial_pose',
+        default_value='true',
+        description='If true, AMCL uses launch initial pose instead of saved previous pose')
+
     declare_autostart_cmd = DeclareLaunchArgument(
         'autostart', default_value='true',
         description='Automatically startup the nav2 stack')
@@ -119,7 +155,17 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[
+                    configured_params,
+                    {
+                        'set_initial_pose': set_initial_pose,
+                        'always_reset_initial_pose': always_reset_initial_pose,
+                        'initial_pose.x': initial_pose_x,
+                        'initial_pose.y': initial_pose_y,
+                        'initial_pose.z': initial_pose_z,
+                        'initial_pose.yaw': initial_pose_yaw,
+                    },
+                ],
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings),
             Node(
@@ -158,7 +204,17 @@ def generate_launch_description():
                 package='nav2_amcl',
                 plugin='nav2_amcl::AmclNode',
                 name='amcl',
-                parameters=[configured_params],
+                parameters=[
+                    configured_params,
+                    {
+                        'set_initial_pose': set_initial_pose,
+                        'always_reset_initial_pose': always_reset_initial_pose,
+                        'initial_pose.x': initial_pose_x,
+                        'initial_pose.y': initial_pose_y,
+                        'initial_pose.z': initial_pose_z,
+                        'initial_pose.yaw': initial_pose_yaw,
+                    },
+                ],
                 remappings=remappings),
             ComposableNode(
                 package='nav2_lifecycle_manager',
@@ -181,6 +237,12 @@ def generate_launch_description():
     ld.add_action(declare_map_yaml_cmd)
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_params_file_cmd)
+    ld.add_action(declare_set_initial_pose_cmd)
+    ld.add_action(declare_initial_pose_x_cmd)
+    ld.add_action(declare_initial_pose_y_cmd)
+    ld.add_action(declare_initial_pose_z_cmd)
+    ld.add_action(declare_initial_pose_yaw_cmd)
+    ld.add_action(declare_always_reset_initial_pose_cmd)
     ld.add_action(declare_autostart_cmd)
     ld.add_action(declare_use_composition_cmd)
     ld.add_action(declare_container_name_cmd)

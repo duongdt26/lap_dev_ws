@@ -15,6 +15,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     use_rosbridge = LaunchConfiguration('use_rosbridge')
     twist_mux_yaml = os.path.join(pkg, 'config', 'twist_mux.yaml')
+    dock_dwb_bt_xml = os.path.join(pkg, 'behavior_trees', 'navigate_to_pose_dock_dwb.xml')
 
     sim_time_param = {'use_sim_time': use_sim_time}
 
@@ -39,6 +40,14 @@ def generate_launch_description():
         package='amr_web_bridge',
         executable='nav_pose_bridge_node',
         name='nav_pose_bridge_node',
+        output='screen',
+        parameters=[sim_time_param, {'dock_dwb_bt_xml': dock_dwb_bt_xml}],
+    )
+
+    mission_client_node = Node(
+        package='amr_web_bridge',
+        executable='mission_client_node',
+        name='mission_client_node',
         output='screen',
         parameters=[sim_time_param],
     )
@@ -82,6 +91,7 @@ def generate_launch_description():
         twist_mux_node,
         map_bridge_node,
         nav_pose_bridge_node,
+        mission_client_node,
         stm32_bridge_node,
         rosbridge,
     ])

@@ -4,6 +4,7 @@
 import math
 
 import rclpy
+from ament_index_python.packages import get_package_share_directory
 from rclpy.action import ActionClient
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from rclpy.duration import Duration
@@ -26,6 +27,10 @@ class NavPoseBridgeNode(Node):
         super().__init__('nav_pose_bridge_node')
 
         self.declare_parameter('nav_wait_timeout_sec', 300.0)
+        self.declare_parameter(
+            'dock_dwb_bt_xml',
+            get_package_share_directory('amr_lan_3') +
+            '/behavior_trees/navigate_to_pose_dock_dwb.xml')
 
         self._nav_cb_group = MutuallyExclusiveCallbackGroup()
         self._action = ActionClient(
@@ -128,6 +133,7 @@ class NavPoseBridgeNode(Node):
         x = float(request.x)
         y = float(request.y)
         yaw = float(request.yaw)
+        controller_id = str(getattr(request, 'controller_id', '') or '').strip()
         label = f'{x:.2f},{y:.2f},{math.degrees(yaw):.1f}'
 
         if not self._action.server_is_ready():
@@ -154,6 +160,8 @@ class NavPoseBridgeNode(Node):
         goal.pose.pose.orientation.y = qy
         goal.pose.pose.orientation.z = qz
         goal.pose.pose.orientation.w = qw
+        if controller_id == 'DockDWB':
+            goal.behavior_tree = self.get_parameter('dock_dwb_bt_xml').value
 
         self._nav_label = label
         self._nav_finished = False
@@ -161,9 +169,8 @@ class NavPoseBridgeNode(Node):
         send_future.add_done_callback(self._on_goal_response)
 
         response.success = True
-        response.message = (
-            f'Goal queued: ({x:.2f}, {y:.2f}) yaw={math.degrees(yaw):.1f}°'
-        )
+        suffix = f' controller={controller_id}' if controller_id else ''
+        response.message = f'Goal queued: ({x:.2f}, {y:.2f}) yaw={math.degrees(yaw):.1f}°{suffix}'
         return response
 
     def _cancel_cb(self, request, response):
@@ -231,9 +238,12 @@ def main():
     executor.add_node(node)
     try:
         executor.spin()
+    except KeyboardInterrupt:
+        pass
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 
 if __name__ == '__main__':
