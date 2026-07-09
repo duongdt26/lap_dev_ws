@@ -999,7 +999,7 @@ body {
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: manipulation;       /* giảm delay chạm trên mobile */
+  touch-action: none;               /* giữ nút không bị mobile phát sinh thao tác phụ */
   -webkit-tap-highlight-color: transparent;
 }
 

@@ -11,7 +11,7 @@ twist_mux:
         priority: 70
       web:
         topic   : cmd_vel_web
-        timeout : 0.5
+        timeout : 1.0
         priority: 80
       keyboard:
         topic   : cmd_vel_key
