@@ -3,7 +3,7 @@ uart_protocol.py — Frame UART giữa ROS2 và STM32 (protocol Version3).
 
 Quy ước:
   - Bắt đầu bằng '$'
-  - ROS2 → STM32: không thêm \\n (gửi raw frame)
+  - ROS2 → STM32: frame kết thúc bằng \\r\\n (thêm ở tầng _send_uart)
   - STM32 → ROS2: có thể kết thúc bằng \\r\\n (readline vẫn đọc được)
   - Phân tách field bằng dấu phẩy ','
 

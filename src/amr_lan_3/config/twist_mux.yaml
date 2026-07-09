@@ -2,15 +2,24 @@ twist_mux:
   ros__parameters:
     topics:
       navigation:
-        topic   : cmd_vel
+        topic   : cmd_vel_nav
         timeout : 0.5
         priority: 10
+      docking:
+        topic   : cmd_vel_dock
+        timeout : 0.5
+        priority: 70
       web:
         topic   : cmd_vel_web
-        timeout : 0.5
+        timeout : 1.0
         priority: 80
       keyboard:
         topic   : cmd_vel_key
         # topic   : diff_cont/cmd_vel_unstamped
         timeout : 0.5
         priority: 100
+    locks:
+      emergency:
+        topic   : emergency/bumper
+        timeout : 0.0
+        priority: 255

@@ -4,10 +4,11 @@
 import math
 
 import rclpy
+from ament_index_python.packages import get_package_share_directory
 from rclpy.action import ActionClient
-from rclpy.callback_groups import ReentrantCallbackGroup
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from rclpy.duration import Duration
-from rclpy.executors import MultiThreadedExecutor
+from rclpy.executors import SingleThreadedExecutor
 from rclpy.node import Node
 from action_msgs.msg import GoalInfo, GoalStatus
 from action_msgs.srv import CancelGoal
@@ -26,12 +27,15 @@ class NavPoseBridgeNode(Node):
         super().__init__('nav_pose_bridge_node')
 
         self.declare_parameter('nav_wait_timeout_sec', 300.0)
+        self.declare_parameter(
+            'dock_dwb_bt_xml',
+            get_package_share_directory('amr_lan_3') +
+            '/behavior_trees/navigate_to_pose_dock_dwb.xml')
 
-        self._executor = None
-        self._cb_group = ReentrantCallbackGroup()
+        self._nav_cb_group = MutuallyExclusiveCallbackGroup()
         self._action = ActionClient(
             self, NavigateToPose, 'navigate_to_pose',
-            callback_group=self._cb_group)
+            callback_group=self._nav_cb_group)
         self._goal_handle = None
         self._result_future = None
         self._nav_label = ''
@@ -39,14 +43,14 @@ class NavPoseBridgeNode(Node):
 
         self.create_service(
             SendNavGoal, '/send_nav_goal', self._send_goal_cb,
-            callback_group=self._cb_group)
+            callback_group=self._nav_cb_group)
         self.create_service(
             Trigger, '/cancel_nav', self._cancel_cb,
-            callback_group=self._cb_group)
+            callback_group=self._nav_cb_group)
 
         self._cancel_goal_cli = self.create_client(
             CancelGoal, '/navigate_to_pose/_action/cancel_goal',
-            callback_group=self._cb_group)
+            callback_group=self._nav_cb_group)
         self._stop_pub = self.create_publisher(Twist, '/cmd_vel', 10)
         self._plan_clear_pub = self.create_publisher(Path, '/web_plan_clear', 10)
         self._nav_status_pub = self.create_publisher(String, '/web_nav_status', 10)
@@ -55,25 +59,13 @@ class NavPoseBridgeNode(Node):
             PoseWithCovarianceStamped, '/robot_pose_map', 10)
         self._tf_buffer = Buffer(cache_time=Duration(seconds=30.0))
         self._tf_listener = TransformListener(self._tf_buffer, self)
-        self.create_timer(0.1, self._publish_pose, callback_group=self._cb_group)
-        self.create_timer(0.15, self._poll_nav_goal, callback_group=self._cb_group)
+        self.create_timer(0.1, self._publish_pose)
 
         use_sim = self.get_parameter('use_sim_time').value
         self.get_logger().info(f'use_sim_time={use_sim}')
         self.get_logger().info(
             'Services: /send_nav_goal | Topics: /robot_pose_map, /web_nav_status'
         )
-
-    def set_executor(self, executor):
-        self._executor = executor
-
-    def _spin_until(self, future, timeout_sec):
-        if self._executor is None:
-            self.get_logger().error('executor chưa gán — dùng spin_until_future_complete không an toàn')
-            return False
-        rclpy.spin_until_future_complete(
-            self, future, executor=self._executor, timeout_sec=timeout_sec)
-        return future.done()
 
     def _publish_nav_status(self, status: str, detail: str = ''):
         msg = String()
@@ -100,6 +92,7 @@ class NavPoseBridgeNode(Node):
     def _on_result_future(self, future):
         if self._nav_finished:
             return
+        label = self._nav_label
         try:
             result = future.result()
             goal_status = result.status
@@ -108,7 +101,6 @@ class NavPoseBridgeNode(Node):
             self._finish_nav('failed', str(exc))
             return
 
-        label = self._nav_label
         if goal_status == GoalStatus.STATUS_SUCCEEDED:
             self._finish_nav('arrived', label)
         elif goal_status == GoalStatus.STATUS_CANCELED:
@@ -116,35 +108,35 @@ class NavPoseBridgeNode(Node):
         else:
             self._finish_nav('failed', f'status_{goal_status}')
 
-    def _poll_nav_goal(self):
-        if self._goal_handle is None or self._nav_finished:
+    def _on_goal_response(self, future):
+        if self._nav_finished:
             return
-
-        status = self._goal_handle.status
         label = self._nav_label
-
-        if status == GoalStatus.STATUS_SUCCEEDED:
-            self._finish_nav('arrived', label)
+        try:
+            goal_handle = future.result()
+        except Exception as exc:
+            self.get_logger().error(f'nav goal response error: {exc}')
+            self._finish_nav('failed', str(exc))
             return
 
-        if status in (
-            GoalStatus.STATUS_CANCELED,
-            GoalStatus.STATUS_ABORTED,
-        ):
-            state = 'cancelled' if status == GoalStatus.STATUS_CANCELED else 'failed'
-            self._finish_nav(state, label)
+        if goal_handle is None or not goal_handle.accepted:
+            self._finish_nav('failed', label)
             return
 
-        if self._result_future is not None and self._result_future.done():
-            self._on_result_future(self._result_future)
+        self._goal_handle = goal_handle
+        self._nav_finished = False
+        self._result_future = goal_handle.get_result_async()
+        self._result_future.add_done_callback(self._on_result_future)
+        self._publish_nav_status('navigating', label)
 
     def _send_goal_cb(self, request, response):
         x = float(request.x)
         y = float(request.y)
         yaw = float(request.yaw)
+        controller_id = str(getattr(request, 'controller_id', '') or '').strip()
         label = f'{x:.2f},{y:.2f},{math.degrees(yaw):.1f}'
 
-        if not self._action.wait_for_server(timeout_sec=2.0):
+        if not self._action.server_is_ready():
             response.success = False
             response.message = 'Nav2 action /navigate_to_pose chưa sẵn sàng'
             self._publish_nav_status('failed', 'nav2_not_ready')
@@ -152,7 +144,10 @@ class NavPoseBridgeNode(Node):
 
         if self._goal_handle is not None:
             self._nav_finished = True
-            self._goal_handle.cancel_goal_async()
+            try:
+                self._goal_handle.cancel_goal_async()
+            except Exception as exc:
+                self.get_logger().warn(f'cancel previous goal: {exc}')
         self._clear_nav_track()
 
         goal = NavigateToPose.Goal()
@@ -165,33 +160,17 @@ class NavPoseBridgeNode(Node):
         goal.pose.pose.orientation.y = qy
         goal.pose.pose.orientation.z = qz
         goal.pose.pose.orientation.w = qw
+        if controller_id == 'DockDWB':
+            goal.behavior_tree = self.get_parameter('dock_dwb_bt_xml').value
 
-        send_future = self._action.send_goal_async(goal)
-        if not self._spin_until(send_future, timeout_sec=5.0):
-            response.success = False
-            response.message = 'Timeout chờ Nav2 chấp nhận goal'
-            self._publish_nav_status('failed', 'accept_timeout')
-            return response
-
-        goal_handle = send_future.result()
-        if goal_handle is None or not goal_handle.accepted:
-            response.success = False
-            response.message = 'Goal bị Nav2 từ chối'
-            self._publish_nav_status('failed', 'rejected')
-            return response
-
-        self._goal_handle = goal_handle
         self._nav_label = label
         self._nav_finished = False
-        self._result_future = goal_handle.get_result_async()
-        self._result_future.add_done_callback(self._on_result_future)
-
-        self._publish_nav_status('navigating', label)
+        send_future = self._action.send_goal_async(goal)
+        send_future.add_done_callback(self._on_goal_response)
 
         response.success = True
-        response.message = (
-            f'Goal accepted: ({x:.2f}, {y:.2f}) yaw={math.degrees(yaw):.1f}°'
-        )
+        suffix = f' controller={controller_id}' if controller_id else ''
+        response.message = f'Goal queued: ({x:.2f}, {y:.2f}) yaw={math.degrees(yaw):.1f}°{suffix}'
         return response
 
     def _cancel_cb(self, request, response):
@@ -199,17 +178,19 @@ class NavPoseBridgeNode(Node):
         self._publish_nav_status('cancelling', '')
 
         if self._goal_handle is not None:
-            cancel_future = self._goal_handle.cancel_goal_async()
-            self._spin_until(cancel_future, timeout_sec=2.0)
+            self._nav_finished = True
+            try:
+                self._goal_handle.cancel_goal_async()
+            except Exception as exc:
+                self.get_logger().warn(f'cancel_goal_async lỗi: {exc}')
 
         self._clear_nav_track()
 
-        if self._cancel_goal_cli.wait_for_service(timeout_sec=1.0):
+        if self._cancel_goal_cli.service_is_ready():
             req = CancelGoal.Request()
             req.goal_info = GoalInfo()
             req.goal_info.goal_id.uuid = [0] * 16
-            future = self._cancel_goal_cli.call_async(req)
-            self._spin_until(future, timeout_sec=2.0)
+            self._cancel_goal_cli.call_async(req)
 
         stop = Twist()
         for _ in range(5):
@@ -220,7 +201,7 @@ class NavPoseBridgeNode(Node):
         self._plan_clear_pub.publish(empty_plan)
 
         response.success = True
-        response.message = 'Đã huỷ navigation'
+        response.message = 'Đã dừng navigation (tạm thời)'
         self._publish_nav_status('cancelled', '')
         return response
 
@@ -253,14 +234,16 @@ class NavPoseBridgeNode(Node):
 def main():
     rclpy.init()
     node = NavPoseBridgeNode()
-    executor = MultiThreadedExecutor(num_threads=4)
-    node.set_executor(executor)
+    executor = SingleThreadedExecutor()
     executor.add_node(node)
     try:
         executor.spin()
+    except KeyboardInterrupt:
+        pass
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 
 if __name__ == '__main__':

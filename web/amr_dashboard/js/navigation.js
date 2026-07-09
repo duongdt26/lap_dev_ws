@@ -221,7 +221,7 @@ function updateNavStatus(msg, color = '#888') {
   navStatus.style.color = color;
 }
 
-function callSendNavGoal(wx, wy, yaw) {
+function callSendNavGoal(wx, wy, yaw, options = {}) {
   return new Promise((resolve, reject) => {
     if (!sendGoalClient) {
       reject(new Error('Not connected to Nav2'));
@@ -229,7 +229,12 @@ function callSendNavGoal(wx, wy, yaw) {
     }
 
     sendGoalClient.callService(
-      new ROSLIB.ServiceRequest({ x: wx, y: wy, yaw }),
+      new ROSLIB.ServiceRequest({
+        x: wx,
+        y: wy,
+        yaw,
+        controller_id: options.controllerId || options.controller_id || '',
+      }),
       (result) => {
         if (result.success) resolve(result);
         else reject(new Error(result.message || 'Navigation goal rejected'));
@@ -350,7 +355,7 @@ async function navigateAndWait(wx, wy, yaw, options = {}) {
     : `Navigating to ${coordLabel}...`;
   updateNavStatus(navigatingMsg, '#facc15');
 
-  const result = await callSendNavGoal(wx, wy, yaw);
+  const result = await callSendNavGoal(wx, wy, yaw, options);
   await waitForNavArrived(statusLabel);
 
   notifyNavArrived(statusLabel, { destinationName: destName });

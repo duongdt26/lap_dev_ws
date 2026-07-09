@@ -32,9 +32,13 @@ from launch_ros.actions import Node
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 
+from ament_index_python.packages import get_package_share_directory
+
 def generate_launch_description():
 
     scan_mode = LaunchConfiguration('scan_mode', default='Boost')
+
+    hardware_ports = os.path.join(get_package_share_directory('amr_lan_3'), 'config', 'hardware_ports.yaml')
 
     return LaunchDescription([
 
@@ -47,10 +51,13 @@ def generate_launch_description():
             package='rplidar_ros',
             executable='rplidar_composition',
             output='screen',
-            parameters=[{
+            parameters=[
+                hardware_ports, # Load config from config/hardware_ports.yaml
+                {
                 # 'serial_port': '/dev/serial/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.2:1.0-port0',
                 # 'serial_port': '/dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_0001-if00-port0',
-                'serial_port': '/dev/serial/by-path/pci-0000:05:00.4-usb-0:2:1.0-port0',
+                # 'serial_port': '/dev/serial/by-path/pci-0000:05:00.4-usb-0:2:1.0-port0',
+
                 'frame_id': 'laser_frame',
                 'angle_compensate': True,
                 # 'scan_mode': 'Standard',

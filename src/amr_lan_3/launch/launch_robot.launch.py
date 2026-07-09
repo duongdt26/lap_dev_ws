@@ -57,17 +57,20 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 import xacro
 
 from launch.substitutions import Command
+from launch.substitutions import LaunchConfiguration
 from launch.actions import RegisterEventHandler
 from launch.event_handlers import OnProcessStart
 
 def generate_launch_description():
     package_name = 'amr_lan_3'
+    enable_docking = LaunchConfiguration('enable_docking')
 
     # 1. Gọi file rsp.launch.py (Lưu ý: use_sim_time = false)
     rsp = IncludeLaunchDescription(
@@ -146,11 +149,12 @@ def generate_launch_description():
         ],
     )
 )
-
+    hardware_ports = os.path.join(get_package_share_directory(package_name), 'config', 'hardware_ports.yaml')
     # Node đọc IMU UART 
     imu_node = Node(
         package='amr_imu_driver', # Tên package chứa file imu_uart_node.py
         executable='imu_uart_node', # Tên executable cậu khai báo trong setup.py
+        parameters=[hardware_ports], # Load config from config/hardware_ports.yaml
         output='screen'
     )
 
@@ -173,6 +177,29 @@ def generate_launch_description():
         launch_arguments={'use_sim_time': 'false'}.items(),
     )
 
+    docking_server = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(
+                get_package_share_directory('amr_docking_server'),
+                'launch',
+                'docking_server.launch.py',
+            )
+        ]),
+        launch_arguments={'use_sim_time': 'false'}.items(),
+        condition=IfCondition(enable_docking),
+    )
+
+    mission_supervisor = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(
+                get_package_share_directory('amr_mission_supervisor'),
+                'launch',
+                'mission_supervisor.launch.py',
+            )
+        ]),
+        launch_arguments={'use_sim_time': 'false'}.items(),
+    )
+
     ps2_teleop = IncludeLaunchDescription(
     PythonLaunchDescriptionSource([
         os.path.join(
@@ -184,6 +211,11 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        DeclareLaunchArgument(
+            'enable_docking',
+            default_value='false',
+            description='Set true to launch the docking action server (/dock).',
+        ),
         rsp,
         delayed_controller_manager,
         # Dùng TimerAction để delay spawner 3 giây, đợi Hardware Interface connect Modbus xong
@@ -194,5 +226,7 @@ def generate_launch_description():
         imu_node,                 # Chạy IMU node
         laser_filter_node,
         web_support, # twist_mux + bridge + rosbridge
+        docking_server,
+        mission_supervisor,
         # ps2_teleop,
     ])

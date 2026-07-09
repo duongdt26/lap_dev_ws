@@ -1,7 +1,9 @@
 # Tham số stm32_conveyor_bridge_node
 stm32_conveyor_bridge_node:
   ros__parameters:
-    port: "/dev/ttyUSB0"
+    # port chuyen sang amr_lan_3/config/hardware_ports.yaml
+    # port: "/dev/ttyUSB0"
+    # port: "/dev/serial/by-path/pci-0000:05:00.3-usb-0:2.3:1.0-port0"
     baudrate: 256000
     simulate: false          # true = test không cần STM32; false = dùng UART thật
     hello_client_name: "ChuongDuong"

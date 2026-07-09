@@ -25,6 +25,7 @@ endif()
 
 # day ne
 install(DIRECTORY
+  behavior_trees
   config
   description
   launch

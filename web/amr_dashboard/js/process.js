@@ -7,7 +7,12 @@
   let currentProcessName = null;
   let processSteps = [];
   let dragFromIndex = null;
-  let routeState = { running: false, activeIndex: -1 };
+  let routeState = {
+    running: false,
+    activeIndex: -1,
+    paused: false,
+    pausedIndex: -1,
+  };
 
   const stepsEl = document.getElementById('process-steps');
   const stationStatus = document.getElementById('station-status');
@@ -301,10 +306,42 @@
   }
 
   function stopAutoRoute() {
-    routeState.running = false;
+    // Cancel = dừng tạm thời (STOP). Nếu Auto Route đang chạy thì nhớ bước
+    // đang dở để lần sau nhấn Auto Route đi lại từ đầu bước đó (resume).
+    if (routeState.running) {
+      routeState.paused = true;
+      routeState.pausedIndex = routeState.activeIndex;
+      routeState.running = false;
+      const stepName = processSteps[routeState.pausedIndex] || '?';
+      setDetail(`Auto Route tạm dừng tại bước ${routeState.pausedIndex + 1} (${stepName}) — nhấn Auto Route để đi tiếp`);
+      setStationStatus(`Tạm dừng: ${stepName} (nhấn Auto Route để tiếp tục)`);
+      renderProcessSteps();
+    }
     if (window.AmrNavigation?.cancelNavigation) {
       window.AmrNavigation.cancelNavigation();
     }
+  }
+
+  // Reset tiến trình Auto Route về ban đầu (chưa chạy). Chỉ khi KHÔNG đang chạy.
+  function resetRoute() {
+    if (routeState.running) {
+      setDetail('Auto Route đang chạy — nhấn Cancel trước khi Reset');
+      setStationStatus('Đang chạy — Cancel trước khi Reset');
+      return false;
+    }
+    const hadProgress = routeState.paused || routeState.activeIndex >= 0;
+    routeState = {
+      running: false,
+      activeIndex: -1,
+      paused: false,
+      pausedIndex: -1,
+    };
+    renderProcessSteps();
+    if (hadProgress) {
+      setDetail('Đã reset quy trình — Auto Route sẽ chạy lại từ bước 1');
+      setStationStatus('Đã reset quy trình — chạy lại từ bước 1');
+    }
+    return true;
   }
 
   async function runBeltStep(setpoint) {
@@ -345,13 +382,29 @@
     }
 
     const byName = Object.fromEntries(getSetpoints().map((sp) => [sp.name, sp]));
-    routeState = { running: true, activeIndex: 0 };
+    let lastDockStart = null;
+
+    // Resume: nếu đang pause thì đi lại từ đầu bước bị cancel (redo_step).
+    const resuming = routeState.paused && routeState.pausedIndex >= 0;
+    const startIndex = resuming
+      ? Math.min(routeState.pausedIndex, processSteps.length - 1)
+      : 0;
+    routeState = {
+      running: true,
+      activeIndex: startIndex,
+      paused: false,
+      pausedIndex: -1,
+    };
     renderProcessSteps();
 
     const names = processSteps.map((n) => n || '?').join(' → ');
-    setStationStatus(`Auto Route: ${names}`);
+    if (resuming) {
+      setStationStatus(`Auto Route tiếp tục từ bước ${startIndex + 1}: ${names}`);
+    } else {
+      setStationStatus(`Auto Route: ${names}`);
+    }
 
-    for (let i = 0; i < processSteps.length; i += 1) {
+    for (let i = startIndex; i < processSteps.length; i += 1) {
       if (!routeState.running) break;
 
       const sp = byName[processSteps[i]];
@@ -370,18 +423,44 @@
       setStationStatus(`Auto Route: đang đi tới ${label}`);
 
       try {
-        const yawRad = (sp.yawDeg * Math.PI) / 180;
-        await window.AmrNavigation.navigateAndWait(sp.x, sp.y, yawRad, {
-          postArrivalDelayMs: 2000,
-          destinationName: sp.name,
-        });
+        if (window.AmrStations?.isStartPoint?.(sp)) {
+          const yawRad = (sp.yawDeg * Math.PI) / 180;
+          setDetail(`Auto Route: tới điểm chuẩn bị ${label}`);
+          setStationStatus(`Start docking: đang đi tới ${label}`);
+          await window.AmrNavigation.navigateAndWait(sp.x, sp.y, yawRad, {
+            postArrivalDelayMs: 500,
+            destinationName: sp.name,
+          });
+          lastDockStart = sp;
+
+          const arrivedMsg = `Đã đến ${sp.name} ✓ — chuyển sang bước docking tiếp theo`;
+          setDetail(`Auto Route: ${arrivedMsg}`);
+          setStationStatus(arrivedMsg);
+        } else if (window.AmrStations?.isDockFinalPoint?.(sp)) {
+          const startPt = lastDockStart || window.AmrStations.findDockStartForFinal?.(sp);
+          if (!startPt) {
+            throw new Error(`${sp.name} là điểm ${sp.pointType}; cần đặt Start Load/Unload ngay trước nó trong process`);
+          }
+          setDetail(`Auto Route: docking ${startPt.name} → ${sp.name}`);
+          setStationStatus(`Docking: ${startPt.name} → ${sp.name}`);
+          await window.AmrStations.runDockingCycle(startPt, sp);
+          lastDockStart = null;
+        } else {
+          const yawRad = (sp.yawDeg * Math.PI) / 180;
+          await window.AmrNavigation.navigateAndWait(sp.x, sp.y, yawRad, {
+            postArrivalDelayMs: 2000,
+            destinationName: sp.name,
+          });
+
+          if (!routeState.running) break;
+
+          const arrivedMsg = `Đã đến ${sp.name} ✓ — goal success`;
+          setDetail(`Auto Route: ${arrivedMsg}`);
+          setStationStatus(arrivedMsg);
+          await runBeltStep(sp);
+        }
 
         if (!routeState.running) break;
-
-        const arrivedMsg = `Đã đến ${sp.name} ✓ — goal success`;
-        setDetail(`Auto Route: ${arrivedMsg}`);
-        setStationStatus(arrivedMsg);
-        await runBeltStep(sp);
 
         if (!routeState.running) break;
 
@@ -390,18 +469,39 @@
           setDetail(`Auto Route: chuyển sang ${nextName} (${i + 2}/${processSteps.length})`);
         }
       } catch (err) {
+        // Người dùng bấm Cancel = tạm dừng, không phải lỗi. stopAutoRoute đã
+        // lưu pausedIndex; giữ nguyên trạng thái để lần sau resume.
+        if (routeState.paused) {
+          renderProcessSteps();
+          return;
+        }
         const msg = err?.message || 'Lỗi navigation';
         setDetail(`Auto Route dừng tại ${sp.name}: ${msg}`);
         setStationStatus(`Auto Route dừng: ${msg}`);
-        routeState.running = false;
-        routeState.activeIndex = -1;
+        routeState = {
+          running: false,
+          activeIndex: -1,
+          paused: false,
+          pausedIndex: -1,
+        };
         renderProcessSteps();
         return;
       }
     }
 
+    // Bị pause giữa chừng (break do running=false + paused): giữ trạng thái.
+    if (routeState.paused) {
+      renderProcessSteps();
+      return;
+    }
+
     const finished = routeState.running;
-    routeState = { running: false, activeIndex: -1 };
+    routeState = {
+      running: false,
+      activeIndex: -1,
+      paused: false,
+      pausedIndex: -1,
+    };
     renderProcessSteps();
 
     if (finished) {
@@ -416,6 +516,11 @@
   }
 
   function applyRouteClasses(li, index) {
+    if (routeState.paused && routeState.pausedIndex >= 0) {
+      if (index === routeState.pausedIndex) li.classList.add('running');
+      else if (index < routeState.pausedIndex) li.classList.add('completed');
+      return;
+    }
     if (!routeState.running) return;
     if (index === routeState.activeIndex) li.classList.add('running');
     else if (index < routeState.activeIndex) li.classList.add('completed');
@@ -608,6 +713,7 @@
     getSavedNames: () => getProcessNames(),
     runAutoRoute,
     stopAutoRoute,
+    resetRoute,
     reload: reloadFromServer,
     reloadFromServer,
     switchToMap,

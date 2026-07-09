@@ -15,6 +15,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     use_rosbridge = LaunchConfiguration('use_rosbridge')
     twist_mux_yaml = os.path.join(pkg, 'config', 'twist_mux.yaml')
+    dock_dwb_bt_xml = os.path.join(pkg, 'behavior_trees', 'navigate_to_pose_dock_dwb.xml')
 
     sim_time_param = {'use_sim_time': use_sim_time}
 
@@ -40,17 +41,26 @@ def generate_launch_description():
         executable='nav_pose_bridge_node',
         name='nav_pose_bridge_node',
         output='screen',
+        parameters=[sim_time_param, {'dock_dwb_bt_xml': dock_dwb_bt_xml}],
+    )
+
+    mission_client_node = Node(
+        package='amr_web_bridge',
+        executable='mission_client_node',
+        name='mission_client_node',
+        output='screen',
         parameters=[sim_time_param],
     )
 
     stm32_pkg = get_package_share_directory('amr_stm32_bridge')
     stm32_config = os.path.join(stm32_pkg, 'config', 'stm32_bridge.yaml')
+    hardware_ports = os.path.join(get_package_share_directory('amr_lan_3'), 'config', 'hardware_ports.yaml')
     stm32_bridge_node = Node(
         package='amr_stm32_bridge',
         executable='stm32_conveyor_bridge_node',
         name='stm32_conveyor_bridge_node',
         output='screen',
-        parameters=[stm32_config],
+        parameters=[hardware_ports, stm32_config], # Load config from config/hardware_ports.yaml and config/stm32_bridge.yaml
     )
 
     rosbridge = IncludeLaunchDescription(
@@ -81,6 +91,7 @@ def generate_launch_description():
         twist_mux_node,
         map_bridge_node,
         nav_pose_bridge_node,
+        mission_client_node,
         stm32_bridge_node,
         rosbridge,
     ])

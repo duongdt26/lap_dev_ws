@@ -1,0 +1,13 @@
+string task_id
+string station_id
+string mode
+geometry_msgs/PoseStamped target_pose
+float32 max_speed
+---
+bool success
+string message
+---
+string state
+float32 distance_remaining
+float32 yaw_error
+float32 lateral_error

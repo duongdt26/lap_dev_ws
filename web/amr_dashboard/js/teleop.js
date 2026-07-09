@@ -44,6 +44,7 @@ function initTeleop() {
   const ANGULAR_SPEED = 0.4;
   const PUBLISH_HZ = 10;
   let publishTimer = null;
+  let activePointerId = null;
 
   function publishVel(linearX, angularZ) {
     cmdVelPub.publish(new ROSLIB.Message({
@@ -51,7 +52,9 @@ function initTeleop() {
       angular: { x: 0, y: 0, z: angularZ },
     }));
     window.dispatchEvent(new CustomEvent('amr-teleop-motion', {
-      detail: { moving: Math.abs(linearX) > 0.001 },
+      detail: {
+        moving: Math.abs(linearX) > 0.001 || Math.abs(angularZ) > 0.001,
+      },
     }));
   }
 
@@ -80,15 +83,32 @@ function initTeleop() {
     const btn = document.getElementById(btnId);
     const onStart = (e) => {
       if (e.cancelable) e.preventDefault();
+      if (e.pointerId !== undefined) {
+        if (activePointerId !== null) return;
+        activePointerId = e.pointerId;
+        btn.setPointerCapture?.(e.pointerId);
+      }
       startHold(getLinear, getAngular);
     };
-    const onEnd = () => stop();
+    const onEnd = (e) => {
+      if (e?.cancelable) e.preventDefault();
+      if (e?.pointerId !== undefined && e.pointerId !== activePointerId) return;
+      if (e?.pointerId !== undefined) {
+        try {
+          btn.releasePointerCapture?.(e.pointerId);
+        } catch (_) {
+          // Pointer capture may already be gone after a mobile cancel/lost event.
+        }
+      }
+      activePointerId = null;
+      stop();
+    };
 
-    btn.addEventListener('mousedown', onStart);
-    btn.addEventListener('mouseup', onEnd);
-    btn.addEventListener('touchstart', onStart, { passive: false });
-    btn.addEventListener('touchend', onEnd);
-    btn.addEventListener('touchcancel', onEnd);
+    btn.addEventListener('pointerdown', onStart);
+    btn.addEventListener('pointerup', onEnd);
+    btn.addEventListener('pointercancel', onEnd);
+    btn.addEventListener('lostpointercapture', onEnd);
+    btn.addEventListener('contextmenu', (e) => e.preventDefault());
   }
 
   bindDirectional('btn-forward', () => speed(), 0);
@@ -98,7 +118,16 @@ function initTeleop() {
 
   document.getElementById('btn-stop').addEventListener('click', stop);
 
-  window.addEventListener('mouseup', () => {
+  window.addEventListener('pointerup', () => {
+    activePointerId = null;
+    if (publishTimer) stop();
+  });
+  window.addEventListener('pointercancel', () => {
+    activePointerId = null;
+    if (publishTimer) stop();
+  });
+  window.addEventListener('blur', () => {
+    activePointerId = null;
     if (publishTimer) stop();
   });
 }
