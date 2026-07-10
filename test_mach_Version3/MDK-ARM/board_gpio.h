@@ -1,31 +1,32 @@
 /**
  * board_gpio.h — GPIO mapping AMR conveyor board
  *
- * PA0-PA5: cam bien INPUT_PULLUP, active LOW
- * PB4-PB9: nut INPUT_PULLUP, active LOW
- * PA11/PA12/PA15/PB3: relay ON=SET, OFF=RESET
- * PB12-PB15: audio bit
+ * PA0-PA5: cargo sensors INPUT_PULLUP, active LOW
+ * PB4-PB9: physical safety/control inputs INPUT_PULLUP, active LOW
+ * PA11/PA12/PA15/PB3: conveyor relay outputs, ON=SET, OFF=RESET
+ * PB12-PB15: audio selector bits
  * PA9/PA10: UART1 @ 256000
  */
 #ifndef BOARD_GPIO_H
 #define BOARD_GPIO_H
 
 #include "stm32f1xx_hal.h"
+#include <stdint.h>
 
 /* Relay */
 #define RELAY_ON   GPIO_PIN_SET
 #define RELAY_OFF  GPIO_PIN_RESET
 
-/* Cam bien PA0-PA5, active LOW = co vat */
+/* Cargo sensors PA0-PA5, active LOW = object present */
 #define SENSOR_PORT       GPIOA
 #define S1_PIN            GPIO_PIN_0   /* PA0 */
 #define S2_PIN            GPIO_PIN_1   /* PA1 */
 #define S3_PIN            GPIO_PIN_2   /* PA2 */
 #define S4_PIN            GPIO_PIN_3   /* PA3 */
-#define S5_PIN            GPIO_PIN_4   /* PA4 du phong */
-#define S6_PIN            GPIO_PIN_5   /* PA5 du phong */
+#define S5_PIN            GPIO_PIN_4   /* PA4 spare/telemetry */
+#define S6_PIN            GPIO_PIN_5   /* PA5 spare/telemetry */
 
-/* Nut PB4-PB9, INPUT_PULLUP, active LOW */
+/* Physical inputs PB4-PB9, INPUT_PULLUP, active LOW */
 #define BTN_EMER_PORT     GPIOB
 #define BTN_EMER_PIN      GPIO_PIN_4
 #define BTN_STOP_PORT     GPIOB
@@ -44,17 +45,17 @@
 #define BUMPER_ACTIVE     GPIO_PIN_RESET
 #define BTN_CTRL_ACTIVE   GPIO_PIN_RESET
 
-/* Relay motor */
+/* Conveyor relay outputs */
 #define M1_R1_PORT        GPIOA
-#define M1_R1_PIN         GPIO_PIN_11  /* Motor 1: S1 -> S3 */
+#define M1_R1_PIN         GPIO_PIN_11  /* Belt 1: S1 -> S3 */
 #define M1_R2_PORT        GPIOA
-#define M1_R2_PIN         GPIO_PIN_12  /* Motor 1: S3 -> S1 */
+#define M1_R2_PIN         GPIO_PIN_12  /* Belt 1: S3 -> S1 */
 #define M2_R3_PORT        GPIOA
-#define M2_R3_PIN         GPIO_PIN_15  /* Motor 2: S4 -> S2 */
+#define M2_R3_PIN         GPIO_PIN_15  /* Belt 2: S4 -> S2 */
 #define M2_R4_PORT        GPIOB
-#define M2_R4_PIN         GPIO_PIN_3   /* Motor 2: S2 -> S4 */
+#define M2_R4_PIN         GPIO_PIN_3   /* Belt 2: S2 -> S4 */
 
-/* Loa PB12-PB15 */
+/* Audio PB12-PB15 */
 #define AUDIO_PORT        GPIOB
 #define AUDIO_B4_PIN      GPIO_PIN_12
 #define AUDIO_B3_PIN      GPIO_PIN_13
@@ -77,8 +78,12 @@ typedef enum {
 typedef enum {
   SYS_BOOT = 0,
   SYS_IDLE,
+  SYS_READY,
   SYS_RUNNING,
-  SYS_ESTOP
+  SYS_STOP_LOCK,
+  SYS_ESTOP,
+  SYS_FAULT,
+  SYS_COMM_LOST
 } SystemState_t;
 
 uint8_t Board_SensorActive(uint16_t pin);

@@ -200,33 +200,17 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
-  * @brief This function handles EXTI line4 interrupt.
+  * @brief This project polls PB4-PB9 with debounce, so EXTI lines are not used.
+  * These handlers are kept only as safe stubs in case old CubeMX/NVIC settings remain.
   */
 void EXTI4_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI4_IRQn 0 */
-
-  /* USER CODE END EXTI4_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(Bumper_S2_Pin);
-  /* USER CODE BEGIN EXTI4_IRQn 1 */
-
-  /* USER CODE END EXTI4_IRQn 1 */
+  __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_4);
 }
 
-/**
-  * @brief This function handles EXTI line[9:5] interrupts.
-  */
 void EXTI9_5_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
-
-  /* USER CODE END EXTI9_5_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(Bumper_S1_Pin);
-  HAL_GPIO_EXTI_IRQHandler(Button_STOP_Pin);
-  HAL_GPIO_EXTI_IRQHandler(Button_EMER_Pin);
-  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
-
-  /* USER CODE END EXTI9_5_IRQn 1 */
+  __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9);
 }
 extern UART_HandleTypeDef huart1;
 

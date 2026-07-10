@@ -3,7 +3,7 @@
 <title>Static Call Graph - [test_mach_Version2\test_mach_Version2.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image test_mach_Version2\test_mach_Version2.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6220000: Last Updated: Mon Jun 29 13:29:28 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6220000: Last Updated: Tue Jun 30 17:00:53 2026
 <BR><P>
 <H3>Maximum Stack Usage =        432 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1011,7 +1011,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;App_Loop
 </UL>
 
-<P><STRONG><a name="[b3]"></a>Belt_CmdStartLoad</STRONG> (Thumb, 122 bytes, Stack size 24 bytes, belt_fsm.o(.text.Belt_CmdStartLoad))
+<P><STRONG><a name="[b3]"></a>Belt_CmdStartLoad</STRONG> (Thumb, 114 bytes, Stack size 24 bytes, belt_fsm.o(.text.Belt_CmdStartLoad))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = Belt_CmdStartLoad &rArr; Board_BeltStop
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Board_BeltStop
@@ -1043,7 +1043,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;App_Loop
 </UL>
 
-<P><STRONG><a name="[e2]"></a>Belt_HasCargo</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, belt_fsm.o(.text.Belt_HasCargo))
+<P><STRONG><a name="[e2]"></a>Belt_HasCargo</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, belt_fsm.o(.text.Belt_HasCargo))
 <BR><BR>[Called By]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_SendTelemetry
 </UL>
 
@@ -1055,7 +1055,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;App_Init
 </UL>
 
-<P><STRONG><a name="[b0]"></a>Belt_OnResetButton</STRONG> (Thumb, 110 bytes, Stack size 16 bytes, belt_fsm.o(.text.Belt_OnResetButton))
+<P><STRONG><a name="[b0]"></a>Belt_OnResetButton</STRONG> (Thumb, 106 bytes, Stack size 16 bytes, belt_fsm.o(.text.Belt_OnResetButton))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = Belt_OnResetButton &rArr; Belt_OnStartButton &rArr; Board_BeltStop
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Board_BeltStop
@@ -1066,7 +1066,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;App_Loop
 </UL>
 
-<P><STRONG><a name="[af]"></a>Belt_OnStartButton</STRONG> (Thumb, 164 bytes, Stack size 16 bytes, belt_fsm.o(.text.Belt_OnStartButton))
+<P><STRONG><a name="[af]"></a>Belt_OnStartButton</STRONG> (Thumb, 176 bytes, Stack size 16 bytes, belt_fsm.o(.text.Belt_OnStartButton))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = Belt_OnStartButton &rArr; Board_BeltStop
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Board_BeltStop
@@ -1075,7 +1075,7 @@ Global Symbols
 <LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;App_Loop
 </UL>
 
-<P><STRONG><a name="[ae]"></a>Belt_OnStopButton</STRONG> (Thumb, 48 bytes, Stack size 8 bytes, belt_fsm.o(.text.Belt_OnStopButton))
+<P><STRONG><a name="[ae]"></a>Belt_OnStopButton</STRONG> (Thumb, 46 bytes, Stack size 8 bytes, belt_fsm.o(.text.Belt_OnStopButton))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = Belt_OnStopButton &rArr; Board_RelayAllOff
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Board_RelayAllOff
@@ -1088,7 +1088,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;App_Loop
 </UL>
 
-<P><STRONG><a name="[a4]"></a>Belt_Tick</STRONG> (Thumb, 1138 bytes, Stack size 40 bytes, belt_fsm.o(.text.Belt_Tick))
+<P><STRONG><a name="[a4]"></a>Belt_Tick</STRONG> (Thumb, 1234 bytes, Stack size 40 bytes, belt_fsm.o(.text.Belt_Tick))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = Belt_Tick &rArr; Board_BeltHold
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Board_BeltHold
@@ -1098,12 +1098,13 @@ Global Symbols
 <LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Board_S3
 <LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Board_S1
 <LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Board_BeltStop
+<LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
 <LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Board_RelayAllOff
 </UL>
 <BR>[Called By]<UL><LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;App_Loop
 </UL>
 
-<P><STRONG><a name="[a2]"></a>Belt_TriggerEstop</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, belt_fsm.o(.text.Belt_TriggerEstop))
+<P><STRONG><a name="[a2]"></a>Belt_TriggerEstop</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, belt_fsm.o(.text.Belt_TriggerEstop))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = Belt_TriggerEstop &rArr; Board_RelayAllOff
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Board_RelayAllOff
@@ -1111,7 +1112,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;App_Loop
 </UL>
 
-<P><STRONG><a name="[bd]"></a>Belt_TryResetEstop</STRONG> (Thumb, 94 bytes, Stack size 16 bytes, belt_fsm.o(.text.Belt_TryResetEstop))
+<P><STRONG><a name="[bd]"></a>Belt_TryResetEstop</STRONG> (Thumb, 92 bytes, Stack size 16 bytes, belt_fsm.o(.text.Belt_TryResetEstop))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = Belt_TryResetEstop &rArr; Board_BeltStop
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Board_BeltStop
@@ -1297,6 +1298,7 @@ Global Symbols
 <P><STRONG><a name="[9d]"></a>HAL_GetTick</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32f1xx_hal.o(.text.HAL_GetTick))
 <BR><BR>[Called By]<UL><LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Transmit
 <LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Audio_Task
+<LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Belt_Tick
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Audio_SendHex
 <LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InputFilter_Update
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InputFilter_Init

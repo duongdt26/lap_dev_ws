@@ -1,15 +1,12 @@
 /**
- * app_main.c — Vong lap ung dung conveyor
+ * app_main.c — Application loop for AMR conveyor board
  *
- * Update moi:
- * - $CMD,START,1 chi cho phep bang tai 1, chi doc S1/S3.
- * - $CMD,START,2 chi cho phep bang tai 2, chi doc S2/S4.
- * - $CMD,STOP,1,LEFT/RIGHT chi chay bang tai 1.
- * - $CMD,STOP,2,LEFT/RIGHT chi chay bang tai 2.
- * - Hai bang tai co the chay doc lap neu ROS2 gui lenh cho tung bang tai.
- * - Nut START/RUN vat ly: bat che do auto lien tuc cho ca 2 bang tai: belt1 S1<->S3, belt2 S2<->S4 den khi STOP.
- * - Cam bien khong phat loa nua.
- * - Telemetry direction de NONE, chi ACK moi xac nhan ket qua lenh ROS2.
+ * Safety policy:
+ * - Emergency/Bumper is checked every loop and forces ESTOP.
+ * - Stop physical creates STOP_LOCK.
+ * - Reset clears STOP_LOCK/ESTOP/FAULT/COMM_LOST only; it never starts any belt.
+ * - Start physical enables READY only; it never starts any belt.
+ * - UART RX interrupt only stores bytes. All command parsing happens in App_Loop().
  */
 
 #include "app_main.h"
@@ -26,10 +23,10 @@ static InputFilter_t s_f_reset;
 static InputFilter_t s_f_b1;
 static InputFilter_t s_f_b2;
 
-static uint32_t s_telem_tick = 0;
-static uint32_t s_emer_audio_tick = 0;
+static uint32_t s_telem_tick = 0U;
+static uint32_t s_emer_audio_tick = 0U;
 
-#define TELEMETRY_PERIOD_MS  1000U
+#define TELEMETRY_PERIOD_MS  500U
 
 static void poll_inputs(void)
 {
@@ -58,64 +55,93 @@ static void poll_inputs(void)
                      BUMPER_ACTIVE);
 }
 
+static void handle_emergency_audio(void)
+{
+  if ((HAL_GetTick() - s_emer_audio_tick) >= EMER_AUDIO_REPEAT_MS) {
+    Audio_SendHex(AUDIO_CODE_BAI_1);
+    s_emer_audio_tick = HAL_GetTick();
+  }
+}
+
 static void handle_buttons(void)
 {
-  /* Emergency: bai 1, lap lai moi 5 giay khi con tin hieu */
+  /* Emergency is level-based, not only edge-based. */
   if (s_f_emer.active_event || InputFilter_IsActive(&s_f_emer, BTN_EMER_ACTIVE)) {
-    if (Belt_GetState() != SYS_ESTOP) {
+    if (Belt_GetState() != SYS_ESTOP || Belt_GetEstopSource() != ESTOP_SRC_EMER) {
       Belt_TriggerEstop(ESTOP_SRC_EMER);
+      UART_SendEventEstop(ESTOP_SRC_EMER);
       Audio_SendHex(AUDIO_CODE_BAI_1);
       s_emer_audio_tick = HAL_GetTick();
-    } else if ((HAL_GetTick() - s_emer_audio_tick) >= EMER_AUDIO_REPEAT_MS) {
-      Audio_SendHex(AUDIO_CODE_BAI_1);
-      s_emer_audio_tick = HAL_GetTick();
+    } else {
+      handle_emergency_audio();
     }
-
     return;
   }
 
-  /* Bumper 1/2: bai 4 */
-  if (s_f_b1.active_event) {
-    Belt_TriggerEstop(ESTOP_SRC_BUMPER1);
-    UART_SendEventBumper(1U);
-    Audio_SendHex(AUDIO_CODE_BAI_4);
+  /* Bumper is also level-based. If powered on while bumper is held, still enter ESTOP. */
+  if (s_f_b1.active_event || InputFilter_IsActive(&s_f_b1, BUMPER_ACTIVE)) {
+    if (Belt_GetState() != SYS_ESTOP || Belt_GetEstopSource() != ESTOP_SRC_BUMPER1) {
+      Belt_TriggerEstop(ESTOP_SRC_BUMPER1);
+      UART_SendEventBumper(1U);
+      UART_SendEventEstop(ESTOP_SRC_BUMPER1);
+      Audio_SendHex(AUDIO_CODE_BAI_4);
+    }
     return;
   }
 
-  if (s_f_b2.active_event) {
-    Belt_TriggerEstop(ESTOP_SRC_BUMPER2);
-    UART_SendEventBumper(2U);
-    Audio_SendHex(AUDIO_CODE_BAI_4);
+  if (s_f_b2.active_event || InputFilter_IsActive(&s_f_b2, BUMPER_ACTIVE)) {
+    if (Belt_GetState() != SYS_ESTOP || Belt_GetEstopSource() != ESTOP_SRC_BUMPER2) {
+      Belt_TriggerEstop(ESTOP_SRC_BUMPER2);
+      UART_SendEventBumper(2U);
+      UART_SendEventEstop(ESTOP_SRC_BUMPER2);
+      Audio_SendHex(AUDIO_CODE_BAI_4);
+    }
     return;
   }
 
-  /* Stop vat ly: bai 2 */
   if (s_f_stop.active_event) {
     Belt_OnStopButton();
+    UART_SendEventStopLock(1U);
     Audio_SendHex(AUDIO_CODE_BAI_2);
     return;
   }
 
-  /* Start/RUN vat ly: bai 3, bat auto lien tuc ca 2 bang tai */
   if (s_f_start.active_event) {
-    Belt_OnStartButton();
+    if (Belt_OnStartButton()) {
+      UART_SendAckReady();
+      UART_SendEventReady();
+    }
     Audio_SendHex(AUDIO_CODE_BAI_3);
     return;
   }
 
-  /* Reset vat ly:
-     - Neu dang ESTOP: reset ESTOP neu emergency da nha.
-     - Neu dang STOP_LOCK do nut STOP: chi mo khoa, KHONG chay bang tai.
-     - Luc moi cap nguon bam RESET khong lam chay bang tai, phai bam START/RUN.
-  */
   if (s_f_reset.active_event) {
     uint8_t reset_result = Belt_OnResetButton();
 
     if (reset_result == 1U) {
       UART_SendAckResetEstop();
+      UART_SendEventReset("ESTOP");
+    } else if (reset_result == 2U) {
+      UART_SendEventStopLock(0U);
+      UART_SendEventReset("STOP_LOCK");
+    } else if (reset_result == 3U) {
+      UART_SendAckResetFault();
+      UART_SendEventReset("FAULT");
+    } else if (reset_result == 4U) {
+      UART_Proto_ClearHeartbeatTimeout();
+      UART_SendEventReset("COMM_LOST");
     }
 
     return;
+  }
+}
+
+static void handle_comm_watchdog(void)
+{
+  if (UART_Proto_LinkTimedOut()) {
+    if (Belt_SetCommLost()) {
+      UART_SendEventCommLost();
+    }
   }
 }
 
@@ -124,12 +150,18 @@ static void handle_belt_events(void)
   BeltEvent_t ev;
 
   while (Belt_PopEvent(&ev)) {
-    if (ev.type == BELT_EVENT_LOAD_STARTED) {
-      UART_SendAckStart(ev.cmd_id);
-    } else if (ev.type == BELT_EVENT_LOAD_STOPPED) {
-      UART_SendAckStop(ev.cmd_id);
+    if (ev.type == BELT_EVENT_LOAD_DETECTED) {
+      UART_SendEventLoadDetected(ev.belt_id, ev.sensor_a, ev.sensor_b, ev.seq);
+    } else if (ev.type == BELT_EVENT_LOAD_DONE) {
+      UART_SendEventLoadDone(ev.belt_id, ev.sensor_a, ev.seq);
     } else if (ev.type == BELT_EVENT_UNLOAD_DONE) {
-      UART_SendAckStopSide(ev.cmd_id, ev.side);
+      UART_SendEventUnloadDone(ev.belt_id, ev.side, ev.sensor_a, ev.seq);
+    } else if (ev.type == BELT_EVENT_MANUAL_RUN) {
+      UART_SendEventManualRun(ev.belt_id, ev.side, ev.seq);
+    } else if (ev.type == BELT_EVENT_MANUAL_STOP) {
+      UART_SendEventManualStop(ev.belt_id, ev.seq);
+    } else if (ev.type == BELT_EVENT_FAULT) {
+      UART_SendEventFault(ev.belt_id, ev.fault, ev.seq);
     }
   }
 }
@@ -144,12 +176,9 @@ static void send_telemetry_if_due(void)
   }
 
   s_telem_tick = HAL_GetTick();
-
   st = Belt_GetState();
-  belt_mask = (st == SYS_RUNNING) ? Belt_GetActiveBelt() : 0U;
-
-  /* Direction trong telemetry da de NONE trong UART_SendTelemetry() */
-  UART_SendTelemetry(st, belt_mask, BELT_DIR_LEFT, Belt_GetEstopSource());
+  belt_mask = Belt_GetActiveBelt();
+  UART_SendTelemetry(st, belt_mask, Belt_GetDirection(), Belt_GetEstopSource());
 }
 
 void App_Init(UART_HandleTypeDef *huart)
@@ -176,7 +205,9 @@ void App_Loop(void)
   poll_inputs();
   handle_buttons();
 
-  /* UART nhan bang interrupt, khong dung polling nua */
+  UART_Proto_Process();
+  handle_comm_watchdog();
+
   Belt_Tick();
   handle_belt_events();
 
