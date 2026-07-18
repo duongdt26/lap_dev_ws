@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-stm32_conveyor_bridge_node.py — Cầu nối UART STM32 ↔ ROS2 (AMR Conveyor Safe V4.1).
+stm32_conveyor_bridge_node.py — Cầu nối UART STM32 ↔ ROS2 (Version3/Safe V4.1).
 
 Link state: DISCONNECTED → HELLO_SENT → ONLINE ↔ COMM_LOST
 Safety: ưu tiên ESTOP / STOP_LOCK / FAULT / COMM_LOST trước lệnh băng tải.
@@ -49,9 +49,13 @@ from amr_stm32_bridge.uart_protocol import (
     cmd_ping,
     cmd_ready,
     cmd_reset,
+    cmd_reset_legacy,
     cmd_reset_estop,
+    cmd_reset_estop_legacy,
     cmd_start_load,
+    cmd_start_load_legacy,
     cmd_unload_belt,
+    cmd_unload_belt_legacy,
     normalize_side,
     parse_ack,
     parse_event,
@@ -116,6 +120,7 @@ class Stm32ConveyorBridgeNode(Node):
         self.declare_parameter('pong_timeout_sec', 2.0)
         self.declare_parameter('belt_action_timeout_sec', 60.0)
         self.declare_parameter('auto_ready', True)
+        self.declare_parameter('protocol_mode', 'legacy_v3')
 
         self._port = self.get_parameter('port').value
         self._baud = int(self.get_parameter('baudrate').value)
@@ -124,6 +129,14 @@ class Stm32ConveyorBridgeNode(Node):
         self._pong_timeout = float(self.get_parameter('pong_timeout_sec').value)
         self._belt_timeout = float(self.get_parameter('belt_action_timeout_sec').value)
         self._auto_ready = bool(self.get_parameter('auto_ready').value)
+        requested_protocol = str(self.get_parameter('protocol_mode').value).strip().lower()
+        if requested_protocol not in ('auto', 'legacy_v3', 'v4_1'):
+            self.get_logger().warn(
+                f'protocol_mode={requested_protocol!r} không hợp lệ; dùng legacy_v3')
+            requested_protocol = 'legacy_v3'
+        self._requested_protocol = requested_protocol
+        self._active_protocol: Optional[str] = (
+            None if requested_protocol == 'auto' else requested_protocol)
 
         self._ser = None
         self._serial_open = False
@@ -175,7 +188,9 @@ class Stm32ConveyorBridgeNode(Node):
         self.create_timer(0.2, self._publish_status_cb)
 
         mode = 'SIMULATE' if self._simulate else f'UART {self._port}@{self._baud}'
-        self.get_logger().info(f'stm32_conveyor_bridge_node — mode={mode}, protocol V4.1')
+        self.get_logger().info(
+            f'stm32_conveyor_bridge_node — mode={mode}, '
+            f'protocol_mode={self._requested_protocol}')
         self._send_hello()
 
     # ── Sequence / state helpers ──────────────────────────────────────────
@@ -183,6 +198,25 @@ class Stm32ConveyorBridgeNode(Node):
     def _next_cmd_seq(self) -> int:
         self._cmd_seq += 1
         return self._cmd_seq
+
+    def _uses_legacy_protocol(self) -> bool:
+        return self._active_protocol == 'legacy_v3'
+
+    def _find_legacy_pending(self, belt_id: int = 0) -> Optional[PendingCommand]:
+        """Version3 không echo seq, nên ghép ACK với lệnh nội bộ đang chờ."""
+        terminal = {
+            ActionPhase.LOAD_DONE,
+            ActionPhase.UNLOAD_DONE,
+            ActionPhase.FAILED,
+            ActionPhase.TIMEOUT,
+        }
+        for pending in reversed(list(self._pending.values())):
+            if pending.phase in terminal:
+                continue
+            if belt_id and pending.belt_id not in (0, belt_id):
+                continue
+            return pending
+        return None
 
     def _can_run_conveyor(self) -> tuple[bool, str]:
         if self._link_state != LinkState.ONLINE:
@@ -298,8 +332,18 @@ class Stm32ConveyorBridgeNode(Node):
                 self._last_hello_msg = msg
                 self._link_state = LinkState.ONLINE
                 self.get_logger().info(f'STM32 HELLO_ACK: {msg}')
+                if self._requested_protocol == 'auto':
+                    detected = (
+                        'v4_1' if PROTOCOL_VERSION in msg.upper() else 'legacy_v3')
+                    if detected != self._active_protocol:
+                        self._active_protocol = detected
+                        self.get_logger().warn(
+                            f'Tự nhận diện UART protocol={detected} từ HELLO_ACK={msg!r}')
                 if self._auto_ready:
-                    self._ensure_ready()
+                    # Không chờ ACK ngay trong callback đọc UART, nếu không ACK
+                    # READY sẽ nằm trong serial buffer cho tới khi timeout.
+                    threading.Thread(
+                        target=self._ensure_ready, daemon=True).start()
 
         elif parsed.msg_type == 'PONG':
             seq = parse_pong_seq(parsed)
@@ -340,7 +384,26 @@ class Stm32ConveyorBridgeNode(Node):
         self.get_logger().info(
             f'STM32 ACK: seq={ack.seq} cmd={ack.cmd} belt={ack.belt_id} status={ack.status}')
         pending = self._pending.get(ack.seq)
+        if pending is None and ack.seq == 0 and self._uses_legacy_protocol():
+            pending = self._find_legacy_pending(ack.belt_id)
         if pending is None:
+            return
+
+        if self._uses_legacy_protocol():
+            if pending.cmd == 'START':
+                if ack.cmd == 'START':
+                    pending.phase = ActionPhase.ACCEPTED
+                elif ack.cmd == 'STOP':
+                    pending.phase = ActionPhase.LOAD_DONE
+            elif pending.cmd == 'UNLOAD' and ack.cmd in ('STOP', 'UNLOAD'):
+                if ack.belt_id != pending.belt_id or ack.side != pending.side:
+                    self.get_logger().warn(
+                        f'Bỏ qua ACK unload không khớp: chờ belt={pending.belt_id} '
+                        f'side={pending.side}, nhận belt={ack.belt_id} side={ack.side}')
+                    return
+                pending.phase = ActionPhase.UNLOAD_DONE
+            elif ack.cmd in ('READY', 'ENABLE', 'RESET', 'RESET_ESTOP'):
+                pending.phase = ActionPhase.ACCEPTED
             return
         if ack.cmd in ('READY', 'ENABLE'):
             self._ros_ready_sent = True
@@ -354,6 +417,8 @@ class Stm32ConveyorBridgeNode(Node):
         self.get_logger().warn(
             f'STM32 NACK: seq={nack.seq} cmd={nack.cmd} belt={nack.belt_id} reason={nack.reason}')
         pending = self._pending.get(nack.seq)
+        if pending is None and nack.seq == 0 and self._uses_legacy_protocol():
+            pending = self._find_legacy_pending(nack.belt_id)
         if pending:
             pending.phase = ActionPhase.FAILED
             pending.error = nack.reason
@@ -399,7 +464,7 @@ class Stm32ConveyorBridgeNode(Node):
             pending.phase = ActionPhase.FAILED
             pending.error = ev.fields[0] if ev.fields else 'FAULT'
 
-    # ── Simulate STM32 V4.1 ───────────────────────────────────────────────
+    # ── Simulate STM32 Version3 / V4.1 ───────────────────────────────────
 
     def _simulate_append_later(self, lines: list[str], delay_sec: float) -> None:
         def _worker():
@@ -413,10 +478,39 @@ class Stm32ConveyorBridgeNode(Node):
         parts = frame.lstrip('$').split(',')
 
         if parts[0] == 'HELLO':
-            self._handle_uart_line(f'$HELLO_ACK,STM32,OK,{PROTOCOL_VERSION}')
+            hello_version = (
+                'good job' if self._requested_protocol == 'legacy_v3'
+                else PROTOCOL_VERSION)
+            self._handle_uart_line(f'$HELLO_ACK,STM32,OK,{hello_version}')
 
         elif parts[0] == 'PING' and len(parts) >= 2:
             self._handle_uart_line(f'$PONG,{parts[1]}')
+
+        elif parts[0] == 'CMD' and self._uses_legacy_protocol() and len(parts) >= 2:
+            sub = parts[1]
+
+            if sub == 'START' and len(parts) >= 3:
+                belt_id = parts[2]
+                self._simulate_append_later([
+                    f'$ACK,CMD,START,{belt_id}',
+                    f'$TELEMETRY,RUNNING,10000000,{belt_id},NONE',
+                ], 0.2)
+                self._simulate_append_later([
+                    f'$ACK,CMD,STOP,{belt_id}',
+                    '$TELEMETRY,IDLE,10000000,0,NONE',
+                ], 1.0)
+
+            elif sub == 'STOP' and len(parts) >= 4:
+                belt_id = parts[2]
+                side = normalize_side(parts[3])
+                self._simulate_append_later([
+                    f'$ACK,CMD,STOP,{belt_id},{side}',
+                    '$TELEMETRY,IDLE,00000000,0,NONE',
+                ], 0.6)
+
+            elif sub in ('RESET', 'RESET_ESTOP'):
+                self._handle_uart_line(f'$ACK,CMD,{sub}')
+                self._handle_uart_line('$TELEMETRY,IDLE,00000000,0,NONE')
 
         elif parts[0] == 'CMD' and len(parts) >= 3:
             seq = parts[1]
@@ -458,6 +552,17 @@ class Stm32ConveyorBridgeNode(Node):
     # ── Command helpers ───────────────────────────────────────────────────
 
     def _ensure_ready(self, timeout_sec: float = 2.0) -> tuple[bool, str]:
+        if self._active_protocol is None:
+            return False, 'Chưa nhận HELLO_ACK để xác định UART protocol'
+
+        # STM32 Version3 không có bước READY; IDLE + link/safety hợp lệ là đủ.
+        if self._uses_legacy_protocol():
+            ok, reason = self._can_run_conveyor()
+            if ok:
+                self._ros_ready_sent = True
+                return True, 'Version3 ready (không gửi CMD READY)'
+            return False, reason
+
         if self._ros_ready_sent and self._stm32_state in (STATE_READY, STATE_IDLE, STATE_RUNNING):
             return True, 'already ready'
 
@@ -486,7 +591,11 @@ class Stm32ConveyorBridgeNode(Node):
         seq = self._next_cmd_seq()
         cmd_name = 'RESET_ESTOP' if estop_only else 'RESET'
         self._pending[seq] = PendingCommand(seq=seq, cmd=cmd_name)
-        self._send_uart(cmd_reset_estop(seq) if estop_only else cmd_reset(seq))
+        if self._uses_legacy_protocol():
+            frame = cmd_reset_estop_legacy() if estop_only else cmd_reset_legacy()
+        else:
+            frame = cmd_reset_estop(seq) if estop_only else cmd_reset(seq)
+        self._send_uart(frame)
 
         deadline = time.monotonic() + timeout_sec
         while time.monotonic() < deadline:
@@ -540,23 +649,57 @@ class Stm32ConveyorBridgeNode(Node):
 
         seq = self._next_cmd_seq()
         self._pending[seq] = PendingCommand(seq=seq, cmd='START', belt_id=belt_id)
-        self._send_uart(cmd_start_load(seq, belt_id))
+        frame = (
+            cmd_start_load_legacy(belt_id) if self._uses_legacy_protocol()
+            else cmd_start_load(seq, belt_id))
+        legacy_deadline = (
+            time.monotonic() + timeout_sec
+            if self._uses_legacy_protocol() else None)
+        self._send_uart(frame)
+
+        ack_timeout = 15.0
+        if legacy_deadline is not None:
+            ack_timeout = min(
+                ack_timeout, max(0.0, legacy_deadline - time.monotonic()))
+        ok, msg = self._wait_for_pending(
+            seq, ack_timeout, lambda p: p.phase in (
+                ActionPhase.ACCEPTED,
+                ActionPhase.LOAD_DETECTED,
+                ActionPhase.LOAD_DONE,
+            ))
+        if not ok:
+            if msg == 'TIMEOUT':
+                return False, f'Timeout ACK START belt {belt_id}'
+            return False, msg
+
+        completion_timeout = timeout_sec
+        if legacy_deadline is not None:
+            completion_timeout = max(
+                0.0, legacy_deadline - time.monotonic())
 
         ok, msg = self._wait_for_pending(
-            seq, 5.0, lambda p: p.phase == ActionPhase.ACCEPTED)
+            seq, completion_timeout,
+            lambda p: p.phase in (ActionPhase.LOAD_DETECTED, ActionPhase.LOAD_DONE))
         if not ok:
-            return False, msg or f'Timeout ACK START belt {belt_id}'
-
-        ok, msg = self._wait_for_pending(
-            seq, timeout_sec, lambda p: p.phase in (ActionPhase.LOAD_DETECTED, ActionPhase.LOAD_DONE))
-        if not ok:
-            return False, msg or f'Timeout LOAD_DETECTED belt {belt_id}'
+            if msg == 'TIMEOUT':
+                return False, (
+                    f'Timeout BT{belt_id} sau {timeout_sec:.1f}s '
+                    f'tu luc gui CMD START')
+            return False, msg
 
         if self._pending[seq].phase == ActionPhase.LOAD_DETECTED:
+            done_timeout = timeout_sec
+            if legacy_deadline is not None:
+                done_timeout = max(
+                    0.0, legacy_deadline - time.monotonic())
             ok, msg = self._wait_for_pending(
-                seq, timeout_sec, lambda p: p.phase == ActionPhase.LOAD_DONE)
+                seq, done_timeout, lambda p: p.phase == ActionPhase.LOAD_DONE)
             if not ok:
-                return False, msg or f'Timeout LOAD_DONE belt {belt_id}'
+                if msg == 'TIMEOUT':
+                    return False, (
+                        f'Timeout BT{belt_id} sau {timeout_sec:.1f}s '
+                        f'tu luc gui CMD START')
+                return False, msg
 
         self._send_uart(cmd_buzzer_start(belt_id))
         return True, f'Belt {belt_id} load thành công (seq={seq})'
@@ -575,17 +718,42 @@ class Stm32ConveyorBridgeNode(Node):
 
         seq = self._next_cmd_seq()
         self._pending[seq] = PendingCommand(seq=seq, cmd='UNLOAD', belt_id=belt_id, side=side_norm)
-        self._send_uart(cmd_unload_belt(seq, belt_id, side_norm))
+        frame = (
+            cmd_unload_belt_legacy(belt_id, side_norm) if self._uses_legacy_protocol()
+            else cmd_unload_belt(seq, belt_id, side_norm))
+        legacy_deadline = (
+            time.monotonic() + timeout_sec
+            if self._uses_legacy_protocol() else None)
+        self._send_uart(frame)
+
+        ack_timeout = 5.0
+        if legacy_deadline is not None:
+            ack_timeout = min(
+                ack_timeout, max(0.0, legacy_deadline - time.monotonic()))
+        ok, msg = self._wait_for_pending(
+            seq, ack_timeout, lambda p: p.phase in (
+                ActionPhase.ACCEPTED,
+                ActionPhase.UNLOAD_DONE,
+            ))
+        if not ok:
+            if msg == 'TIMEOUT':
+                return False, f'Timeout ACK UNLOAD belt {belt_id}'
+            return False, msg
+
+        completion_timeout = timeout_sec
+        if legacy_deadline is not None:
+            completion_timeout = max(
+                0.0, legacy_deadline - time.monotonic())
 
         ok, msg = self._wait_for_pending(
-            seq, 5.0, lambda p: p.phase == ActionPhase.ACCEPTED)
+            seq, completion_timeout,
+            lambda p: p.phase == ActionPhase.UNLOAD_DONE)
         if not ok:
-            return False, msg or f'Timeout ACK UNLOAD belt {belt_id}'
-
-        ok, msg = self._wait_for_pending(
-            seq, timeout_sec, lambda p: p.phase == ActionPhase.UNLOAD_DONE)
-        if not ok:
-            return False, msg or f'Timeout UNLOAD_DONE belt {belt_id}'
+            if msg == 'TIMEOUT':
+                return False, (
+                    f'Timeout BT{belt_id} sau {timeout_sec:.1f}s '
+                    f'tu luc gui lenh UART')
+            return False, msg
 
         self._send_uart(cmd_buzzer_stop(belt_id))
         return True, f'Belt {belt_id} unload {side_norm} thành công (seq={seq})'
@@ -712,7 +880,14 @@ class Stm32ConveyorBridgeNode(Node):
     def _run_belt_srv_cb(self, request: RunBeltCommand.Request, response: RunBeltCommand.Response):
         timeout = request.timeout_sec if request.timeout_sec > 0 else self._belt_timeout
         side = getattr(request, 'side', '') or ''
+        self.get_logger().info(
+            f'ROS service /run_belt_command: belt={request.belt_id}, '
+            f'command={request.command}, side={side or "-"}, '
+            f'timeout={timeout:.1f}s, '
+            f'protocol={self._active_protocol or "chưa xác định"}')
         ok, msg = self._run_belt_sync(request.belt_id, request.command, side, timeout)
+        log = self.get_logger().info if ok else self.get_logger().error
+        log(f'Kết quả belt {request.belt_id}: success={ok}, message={msg}')
         response.success = ok
         response.message = msg
         return response

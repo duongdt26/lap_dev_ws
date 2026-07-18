@@ -20,7 +20,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f1xx_it.h"
-#include "uart_proto.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -199,19 +198,6 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32f1xx.s).                    */
 /******************************************************************************/
 
-/**
-  * @brief This project polls PB4-PB9 with debounce, so EXTI lines are not used.
-  * These handlers are kept only as safe stubs in case old CubeMX/NVIC settings remain.
-  */
-void EXTI4_IRQHandler(void)
-{
-  __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_4);
-}
-
-void EXTI9_5_IRQHandler(void)
-{
-  __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9);
-}
 extern UART_HandleTypeDef huart1;
 
 void USART1_IRQHandler(void)

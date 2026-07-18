@@ -1,5 +1,5 @@
 """
-uart_protocol.py — Frame UART ROS2 ↔ STM32 (AMR Conveyor Safe V4.1).
+uart_protocol.py — Frame UART ROS2 ↔ STM32 (Version3 và Safe V4.1).
 
 Quy ước:
   - Bắt đầu bằng '$', field phân tách bằng ','
@@ -114,9 +114,27 @@ def cmd_start_load(seq: int, belt_id: int) -> str:
     return frame(MSG_CMD, str(seq), CMD_START, str(belt_id))
 
 
+def cmd_start_load_legacy(belt_id: int) -> str:
+    """Protocol V3 dang chay tren STM32: khong co sequence trong CMD."""
+    return frame(MSG_CMD, CMD_START, str(belt_id))
+
+
 def cmd_unload_belt(seq: int, belt_id: int, side: str) -> str:
     side_norm = normalize_side(side)
     return frame(MSG_CMD, str(seq), CMD_UNLOAD, str(belt_id), side_norm)
+
+
+def cmd_unload_belt_legacy(belt_id: int, side: str) -> str:
+    """Protocol V3 dung STOP de tra hang."""
+    return frame(MSG_CMD, CMD_STOP, str(belt_id), normalize_side(side))
+
+
+def cmd_reset_estop_legacy() -> str:
+    return frame(MSG_CMD, CMD_RESET_ESTOP)
+
+
+def cmd_reset_legacy() -> str:
+    return frame(MSG_CMD, CMD_RESET)
 
 
 def cmd_buzzer_start(belt_id: int) -> str:
@@ -254,27 +272,38 @@ def parse_pong_seq(parsed: ParsedFrame) -> Optional[int]:
 
 def parse_ack(parsed: ParsedFrame) -> Optional[AckFrame]:
     """
+    $ACK,CMD,START,<belt>                 (Version3: bắt đầu load)
+    $ACK,CMD,STOP,<belt>                  (Version3: load xong)
+    $ACK,CMD,STOP,<belt>,LEFT|RIGHT       (Version3: unload xong)
     $ACK,<seq>,CMD,START,<belt>,ACCEPTED
     $ACK,<seq>,CMD,STOP,<belt>,LEFT,ACCEPTED
     $ACK,<seq>,CMD,READY
     $ACK,<seq>,CMD,RESET,<WHAT>
     """
-    if parsed.msg_type != MSG_ACK or len(parsed.fields) < 4:
-        return None
-    if parsed.fields[2] != MSG_CMD:
+    if parsed.msg_type != MSG_ACK or len(parsed.fields) < 3:
         return None
 
-    seq = _parse_int(parsed.fields[1])
-    cmd = parsed.fields[3]
+    # V4.1: $ACK,<seq>,CMD,...
+    # V3:   $ACK,CMD,...
+    if len(parsed.fields) >= 4 and parsed.fields[2] == MSG_CMD:
+        seq = _parse_int(parsed.fields[1])
+        cmd_index = 3
+    elif parsed.fields[1] == MSG_CMD:
+        seq = 0
+        cmd_index = 2
+    else:
+        return None
+
+    cmd = parsed.fields[cmd_index]
     belt_id = 0
     side = None
     status = ''
     extra: list[str] = []
 
-    if cmd in (CMD_START, CMD_STOP, CMD_UNLOAD) and len(parsed.fields) >= 5:
-        belt_id = _parse_int(parsed.fields[4])
-        if len(parsed.fields) >= 6:
-            tail = parsed.fields[5:]
+    if cmd in (CMD_START, CMD_STOP, CMD_UNLOAD) and len(parsed.fields) > cmd_index + 1:
+        belt_id = _parse_int(parsed.fields[cmd_index + 1])
+        if len(parsed.fields) > cmd_index + 2:
+            tail = parsed.fields[cmd_index + 2:]
             if tail and tail[-1] == ACCEPTED:
                 status = ACCEPTED
                 tail = tail[:-1]
@@ -283,8 +312,11 @@ def parse_ack(parsed: ParsedFrame) -> Optional[AckFrame]:
                 extra = tail[1:]
             else:
                 extra = tail
-    elif cmd in (CMD_RESET, CMD_RESET_ESTOP) and len(parsed.fields) >= 5:
-        extra = parsed.fields[4:]
+        # ACK START cua V3 co nghia lenh load da duoc nhan.
+        if seq == 0 and cmd == CMD_START:
+            status = ACCEPTED
+    elif cmd in (CMD_RESET, CMD_RESET_ESTOP) and len(parsed.fields) > cmd_index + 1:
+        extra = parsed.fields[cmd_index + 1:]
     elif cmd in (CMD_READY, CMD_ENABLE):
         status = ACCEPTED
 
@@ -292,23 +324,33 @@ def parse_ack(parsed: ParsedFrame) -> Optional[AckFrame]:
 
 
 def parse_nack(parsed: ParsedFrame) -> Optional[NackFrame]:
-    """$NACK,<seq>,CMD,START,<belt>,BUSY"""
+    """Parse NACK của cả Version3 và Safe V4.1."""
     if parsed.msg_type != MSG_NACK or len(parsed.fields) < 4:
         return None
-    if parsed.fields[2] != MSG_CMD:
+
+    # V4.1: $NACK,<seq>,CMD,...
+    # V3:   $NACK,CMD,...
+    if len(parsed.fields) >= 5 and parsed.fields[2] == MSG_CMD:
+        seq = _parse_int(parsed.fields[1])
+        cmd_index = 3
+    elif parsed.fields[1] == MSG_CMD:
+        seq = 0
+        cmd_index = 2
+    else:
         return None
 
-    seq = _parse_int(parsed.fields[1])
-    cmd = parsed.fields[3]
+    cmd = parsed.fields[cmd_index]
     belt_id = 0
     reason = 'UNKNOWN'
 
-    if len(parsed.fields) >= 5:
+    if len(parsed.fields) > cmd_index + 1:
         if cmd in (CMD_START, CMD_STOP, CMD_UNLOAD):
-            belt_id = _parse_int(parsed.fields[4])
-            reason = parsed.fields[5] if len(parsed.fields) >= 6 else 'UNKNOWN'
+            belt_id = _parse_int(parsed.fields[cmd_index + 1])
+            reason = (
+                parsed.fields[cmd_index + 2]
+                if len(parsed.fields) > cmd_index + 2 else 'UNKNOWN')
         else:
-            reason = parsed.fields[4]
+            reason = parsed.fields[cmd_index + 1]
 
     return NackFrame(seq=seq, cmd=cmd, belt_id=belt_id, reason=reason)
 

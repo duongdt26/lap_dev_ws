@@ -305,6 +305,19 @@
     if (stationStatus) stationStatus.textContent = msg;
   }
 
+  window.addEventListener('amr-line-status', (event) => {
+    const status = event.detail || {};
+    if (!status.request_id || status.state === 'idle') return;
+    const markerText = status.marker > 0
+      ? (status.workflow === 'home'
+        ? ' | line ngang sạc'
+        : ` | line ngang ${status.marker}/3`)
+      : '';
+    const message = `Line từ: ${status.message || status.state}${markerText}`;
+    setDetail(message);
+    setStationStatus(message);
+  });
+
   function stopAutoRoute() {
     // Cancel = dừng tạm thời (STOP). Nếu Auto Route đang chạy thì nhớ bước
     // đang dở để lần sau nhấn Auto Route đi lại từ đầu bước đó (resume).
@@ -319,6 +332,9 @@
     }
     if (window.AmrNavigation?.cancelNavigation) {
       window.AmrNavigation.cancelNavigation();
+    }
+    if (window.AmrMagneticLine?.cancel) {
+      window.AmrMagneticLine.cancel();
     }
   }
 
@@ -382,8 +398,6 @@
     }
 
     const byName = Object.fromEntries(getSetpoints().map((sp) => [sp.name, sp]));
-    let lastDockStart = null;
-
     // Resume: nếu đang pause thì đi lại từ đầu bước bị cancel (redo_step).
     const resuming = routeState.paused && routeState.pausedIndex >= 0;
     const startIndex = resuming
@@ -423,28 +437,33 @@
       setStationStatus(`Auto Route: đang đi tới ${label}`);
 
       try {
-        if (window.AmrStations?.isStartPoint?.(sp)) {
+        if (window.AmrStations?.isMagneticLinePoint?.(sp)) {
           const yawRad = (sp.yawDeg * Math.PI) / 180;
-          setDetail(`Auto Route: tới điểm chuẩn bị ${label}`);
-          setStationStatus(`Start docking: đang đi tới ${label}`);
+          const isHome = window.AmrStations?.isHomePoint?.(sp);
+          const pointLabel = isHome ? 'Home' : 'Approach Pose';
+          setDetail(`Auto Route: tới ${pointLabel} ${label}`);
+          setStationStatus(`${pointLabel}: đang đi tới ${label}`);
           await window.AmrNavigation.navigateAndWait(sp.x, sp.y, yawRad, {
             postArrivalDelayMs: 500,
             destinationName: sp.name,
           });
-          lastDockStart = sp;
-
-          const arrivedMsg = `Đã đến ${sp.name} ✓ — chuyển sang bước docking tiếp theo`;
+          if (!window.AmrNavigation?.cancelNavigationAsync) {
+            throw new Error('Không có dịch vụ chuyển quyền điều khiển khỏi Nav2');
+          }
+          setDetail(`Auto Route: đã đến ${sp.name}, dừng Nav2`);
+          await window.AmrNavigation.cancelNavigationAsync();
+          if (!window.AmrMagneticLine?.start) {
+            throw new Error('Line follower chưa sẵn sàng');
+          }
+          const lineAction = isHome ? 'lùi theo line vào sạc' : 'bám line vào trạm';
+          setDetail(`Auto Route: đã đến ${sp.name}, ${lineAction}`);
+          setStationStatus(`${pointLabel} ${sp.name}: ${lineAction}`);
+          await window.AmrMagneticLine.start(sp);
+          const arrivedMsg = isHome
+            ? `Đã lùi vào Home ${sp.name} ✓ — dừng tại line ngang sạc`
+            : `Đã vào trạm ${sp.name} ✓ — line ngang cuối`;
           setDetail(`Auto Route: ${arrivedMsg}`);
           setStationStatus(arrivedMsg);
-        } else if (window.AmrStations?.isDockFinalPoint?.(sp)) {
-          const startPt = lastDockStart || window.AmrStations.findDockStartForFinal?.(sp);
-          if (!startPt) {
-            throw new Error(`${sp.name} là điểm ${sp.pointType}; cần đặt Start Load/Unload ngay trước nó trong process`);
-          }
-          setDetail(`Auto Route: docking ${startPt.name} → ${sp.name}`);
-          setStationStatus(`Docking: ${startPt.name} → ${sp.name}`);
-          await window.AmrStations.runDockingCycle(startPt, sp);
-          lastDockStart = null;
         } else {
           const yawRad = (sp.yawDeg * Math.PI) / 180;
           await window.AmrNavigation.navigateAndWait(sp.x, sp.y, yawRad, {

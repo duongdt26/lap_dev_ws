@@ -5,7 +5,9 @@
         <ros2_control name="RealRobot" type="system">
             <hardware>
                 <plugin>hinson_hardware/HinsonSystemHardware</plugin>
-                <param name="port">/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A5069RR4-if00-port0</param>
+                <!-- <param name="port">/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A5069RR4-if00-port0</param> -->
+                <param name="port">/dev/serial/by-path/pci-0000:00:14.0-usb-0:2:1.0-port0</param>
+        
                 <!-- <param name="port">/dev/ttyUSB0</param> -->
                 <param name="baudrate">115200</param>
             </hardware>

@@ -4,7 +4,6 @@
 import math
 
 import rclpy
-from ament_index_python.packages import get_package_share_directory
 from rclpy.action import ActionClient
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from rclpy.duration import Duration
@@ -27,11 +26,6 @@ class NavPoseBridgeNode(Node):
         super().__init__('nav_pose_bridge_node')
 
         self.declare_parameter('nav_wait_timeout_sec', 300.0)
-        self.declare_parameter(
-            'dock_dwb_bt_xml',
-            get_package_share_directory('amr_lan_3') +
-            '/behavior_trees/navigate_to_pose_dock_dwb.xml')
-
         self._nav_cb_group = MutuallyExclusiveCallbackGroup()
         self._action = ActionClient(
             self, NavigateToPose, 'navigate_to_pose',
@@ -136,6 +130,12 @@ class NavPoseBridgeNode(Node):
         controller_id = str(getattr(request, 'controller_id', '') or '').strip()
         label = f'{x:.2f},{y:.2f},{math.degrees(yaw):.1f}'
 
+        if controller_id:
+            response.success = False
+            response.message = f'Controller-specific navigation is unavailable: {controller_id}'
+            self._publish_nav_status('failed', 'controller_unavailable')
+            return response
+
         if not self._action.server_is_ready():
             response.success = False
             response.message = 'Nav2 action /navigate_to_pose chưa sẵn sàng'
@@ -160,9 +160,6 @@ class NavPoseBridgeNode(Node):
         goal.pose.pose.orientation.y = qy
         goal.pose.pose.orientation.z = qz
         goal.pose.pose.orientation.w = qw
-        if controller_id == 'DockDWB':
-            goal.behavior_tree = self.get_parameter('dock_dwb_bt_xml').value
-
         self._nav_label = label
         self._nav_finished = False
         send_future = self._action.send_goal_async(goal)

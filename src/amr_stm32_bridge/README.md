@@ -1,6 +1,11 @@
 # amr_stm32_bridge
 
-Cầu nối UART giữa ROS2 Humble và STM32 — **AMR Conveyor Safe V4.1**.
+Cầu nối UART giữa ROS2 Humble và STM32, tương thích cả firmware
+**Version3** và **AMR Conveyor Safe V4.1**.
+
+Mặc định `protocol_mode: legacy_v3` để khớp firmware đang chạy trên xe thật.
+Có thể chọn `auto` để bridge đọc `HELLO_ACK`: firmware trả `good job` sẽ dùng
+Version3, còn firmware trả `AMR_CONVEYOR_SAFE_V4` sẽ dùng V4.1.
 
 Xem spec đầy đủ: `docs/STM32_UART_PROTOCOL_V4.1.md`
 
@@ -37,6 +42,16 @@ Xem spec đầy đủ: `docs/STM32_UART_PROTOCOL_V4.1.md`
 5. `$EVENT,<seq>,LOAD_DETECTED,...`
 6. `$EVENT,<seq>,LOAD_DONE,...`
 
+## Luồng load Version3
+
+1. `$HELLO` → `$HELLO_ACK,STM32,OK,good job`
+2. Không gửi `READY`
+3. `$CMD,START,<belt>` → `$ACK,CMD,START,<belt>`
+4. `$ACK,CMD,STOP,<belt>` báo load xong
+
+Với line ngang thứ nhất và lệnh `load`, frame gửi xuống STM32 là
+`$CMD,START,1`.
+
 ## Chạy
 
 ```bash
@@ -44,7 +59,8 @@ cd ~/dev_ws && source install/setup.bash
 ros2 launch amr_stm32_bridge stm32_bridge.launch.py
 ```
 
-Config: `config/stm32_bridge.yaml` — `ping_interval_sec: 0.5`, `pong_timeout_sec: 2.0`
+Config: `config/stm32_bridge.yaml` — `protocol_mode: legacy_v3`,
+`ping_interval_sec: 0.5`, `pong_timeout_sec: 2.0`.
 
 ## Test
 

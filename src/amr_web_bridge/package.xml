@@ -12,8 +12,6 @@
   <depend>rclpy</depend>
   <depend>std_srvs</depend>
   <depend>amr_web_interfaces</depend>
-  <depend>amr_mission_supervisor</depend>
-  <depend>amr_docking_server</depend>
   <exec_depend>nav2_map_server</exec_depend>
 
   <depend>geometry_msgs</depend>
