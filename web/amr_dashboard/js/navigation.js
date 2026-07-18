@@ -388,23 +388,32 @@ function setNavMode(enabled) {
   }
 }
 
-function cancelNavigation() {
+function cancelNavigationAsync() {
   if (!cancelNavClient) {
     updateNavStatus('disconnected', '#f87171');
-    return;
+    return Promise.reject(new Error('Chưa kết nối /cancel_nav'));
   }
   if (window.AmrMap) window.AmrMap.clearPlanPath();
-  cancelNavClient.callService(
-    new ROSLIB.ServiceRequest({}),
-    (result) => {
-      updateNavStatus(result.message, result.success ? '#f87171' : '#f87171');
-      setNavMode(false);
-    },
-    (err) => {
-      updateNavStatus('Lỗi /cancel_nav', '#f87171');
-      console.error(err);
-    }
-  );
+  return new Promise((resolve, reject) => {
+    cancelNavClient.callService(
+      new ROSLIB.ServiceRequest({}),
+      (result) => {
+        updateNavStatus(result.message, result.success ? '#f87171' : '#f87171');
+        setNavMode(false);
+        if (result.success) resolve(result);
+        else reject(new Error(result.message || 'Không dừng được Nav2'));
+      },
+      (err) => {
+        updateNavStatus('Lỗi /cancel_nav', '#f87171');
+        console.error(err);
+        reject(err instanceof Error ? err : new Error(String(err)));
+      }
+    );
+  });
+}
+
+function cancelNavigation() {
+  cancelNavigationAsync().catch((err) => console.error(err));
 }
 
 btnNavMode.addEventListener('click', () => setNavMode(!navUiOn));
@@ -465,4 +474,5 @@ window.AmrNavigation = {
   waitForNavArrived,
   setNavMode,
   cancelNavigation,
+  cancelNavigationAsync,
 };

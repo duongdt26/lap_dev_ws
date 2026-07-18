@@ -1,13 +1,10 @@
-# Tham số stm32_conveyor_bridge_node
+# Tham số stm32_conveyor_bridge_node (firmware Version3 trên xe thật)
 stm32_conveyor_bridge_node:
   ros__parameters:
-    # port chuyen sang amr_lan_3/config/hardware_ports.yaml
-    # port: "/dev/ttyUSB0"
-    # port: "/dev/serial/by-path/pci-0000:05:00.3-usb-0:2.3:1.0-port0"
     baudrate: 256000
-    simulate: false          # true = test không cần STM32; false = dùng UART thật
-    hello_client_name: "ChuongDuong"
-    ping_interval_sec: 1.0
-    pong_timeout_sec: 3.0
+    simulate: false
+    ping_interval_sec: 0.5      # khuyến nghị 500ms
+    pong_timeout_sec: 2.0       # COMM_LOST nếu mất PONG >2s
     belt_action_timeout_sec: 60.0
-    
+    protocol_mode: legacy_v3    # không có seq, không gửi CMD READY
+    auto_ready: true            # legacy_v3 tự bỏ qua READY

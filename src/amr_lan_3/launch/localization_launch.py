@@ -97,7 +97,7 @@ def generate_launch_description():
 
     declare_set_initial_pose_cmd = DeclareLaunchArgument(
         'set_initial_pose',
-        default_value='false',
+        default_value='true',
         description='If true, AMCL starts with initial_pose_x/y/z/yaw and publishes map->odom immediately')
 
     declare_initial_pose_x_cmd = DeclareLaunchArgument(
@@ -155,6 +155,16 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
+                parameters=[configured_params],
+                arguments=['--ros-args', '--log-level', log_level],
+                remappings=remappings),
+            Node(
+                package='nav2_amcl',
+                executable='amcl',
+                name='amcl',
+                output='screen',
+                respawn=use_respawn,
+                respawn_delay=2.0,
                 parameters=[
                     configured_params,
                     {
@@ -166,16 +176,6 @@ def generate_launch_description():
                         'initial_pose.yaw': initial_pose_yaw,
                     },
                 ],
-                arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings),
-            Node(
-                package='nav2_amcl',
-                executable='amcl',
-                name='amcl',
-                output='screen',
-                respawn=use_respawn,
-                respawn_delay=2.0,
-                parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings),
             Node(

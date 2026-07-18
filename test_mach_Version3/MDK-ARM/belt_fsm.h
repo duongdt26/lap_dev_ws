@@ -7,7 +7,9 @@
 #define ESTOP_SRC_EMER     10U
 #define ESTOP_SRC_BUMPER1  11U
 #define ESTOP_SRC_BUMPER2  12U
-#define ESTOP_SRC_STOP_BTN 13U
+#define LOAD_ARMED_TIMEOUT_MS   300000U
+#define LOAD_MOVING_TIMEOUT_MS   15000U
+#define UNLOAD_MOVING_TIMEOUT_MS 30000U
 
 typedef enum {
   BELT_CMD_OK = 0,
@@ -22,7 +24,10 @@ typedef enum {
   BELT_EVENT_NONE = 0,
   BELT_EVENT_LOAD_STARTED,     /* gui $ACK,CMD,START,belt_id */
   BELT_EVENT_LOAD_STOPPED,     /* gui $ACK,CMD,STOP,belt_id */
-  BELT_EVENT_UNLOAD_DONE       /* gui $ACK,CMD,STOP,belt_id,LEFT/RIGHT */
+  BELT_EVENT_UNLOAD_DONE,      /* gui $ACK,CMD,STOP,belt_id,LEFT/RIGHT */
+  BELT_EVENT_LOAD_NO_CARGO_TIMEOUT,
+  BELT_EVENT_LOAD_JAM,
+  BELT_EVENT_UNLOAD_JAM
 } BeltEventType_t;
 
 typedef struct {
@@ -36,7 +41,6 @@ void Belt_Tick(void);
 
 SystemState_t Belt_GetState(void);
 uint8_t Belt_GetActiveBelt(void);       /* bitmask: 1=belt1, 2=belt2, 3=ca 2 */
-BeltDirection_t Belt_GetDirection(void);/* chi dung noi bo/debug, telemetry dang de NONE */
 uint8_t Belt_GetEstopSource(void);
 uint8_t Belt_HasCargo(uint8_t belt_id);
 
@@ -50,22 +54,7 @@ void Belt_OnStopButton(void);
 void Belt_OnStartButton(void);   /* Nut RUN vat ly: auto lien tuc ca 2 bang tai: belt1 S1<->S3, belt2 S2<->S4 den khi STOP */
 uint8_t Belt_TryResetEstop(void);
 
-/*
-   Nut RESET vat ly:
-   return 0 = khong lam gi
-   return 1 = da reset ESTOP
-   return 2 = da mo khoa STOP vat ly
-*/
-uint8_t Belt_OnResetButton(void);
-uint8_t Belt_IsStopLocked(void);
-
 /* App lay event de gui UART ACK */
 uint8_t Belt_PopEvent(BeltEvent_t *ev);
 
-/* Da tat audio cam bien theo yeu cau */
-uint8_t Belt_SensorAudioEnabled(void);
-
 #endif
-
-
-

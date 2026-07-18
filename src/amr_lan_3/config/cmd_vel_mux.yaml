@@ -5,9 +5,9 @@ twist_mux:
         topic: cmd_vel_nav
         timeout: 0.5
         priority: 10
-      docking:
-        topic: cmd_vel_dock
-        timeout: 0.5
+      magnetic_line:
+        topic: cmd_vel_line
+        timeout: 0.3
         priority: 70
       web:
         topic: cmd_vel_web

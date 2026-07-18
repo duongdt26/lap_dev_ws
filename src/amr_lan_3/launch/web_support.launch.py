@@ -15,7 +15,6 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     use_rosbridge = LaunchConfiguration('use_rosbridge')
     twist_mux_yaml = os.path.join(pkg, 'config', 'twist_mux.yaml')
-    dock_dwb_bt_xml = os.path.join(pkg, 'behavior_trees', 'navigate_to_pose_dock_dwb.xml')
 
     sim_time_param = {'use_sim_time': use_sim_time}
 
@@ -41,7 +40,7 @@ def generate_launch_description():
         executable='nav_pose_bridge_node',
         name='nav_pose_bridge_node',
         output='screen',
-        parameters=[sim_time_param, {'dock_dwb_bt_xml': dock_dwb_bt_xml}],
+        parameters=[sim_time_param],
     )
 
     mission_client_node = Node(
@@ -61,6 +60,16 @@ def generate_launch_description():
         name='stm32_conveyor_bridge_node',
         output='screen',
         parameters=[hardware_ports, stm32_config], # Load config from config/hardware_ports.yaml and config/stm32_bridge.yaml
+    )
+
+    line_pkg = get_package_share_directory('amr_magnetic_line_follower')
+    line_config = os.path.join(line_pkg, 'config', 'magnetic_line_follower.yaml')
+    magnetic_line_node = Node(
+        package='amr_magnetic_line_follower',
+        executable='magnetic_line_follower_node',
+        name='magnetic_line_follower_node',
+        output='screen',
+        parameters=[hardware_ports, line_config, sim_time_param],
     )
 
     rosbridge = IncludeLaunchDescription(
@@ -93,5 +102,6 @@ def generate_launch_description():
         nav_pose_bridge_node,
         mission_client_node,
         stm32_bridge_node,
+        magnetic_line_node,
         rosbridge,
     ])

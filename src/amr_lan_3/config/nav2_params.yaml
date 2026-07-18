@@ -12,6 +12,15 @@ amcl:
    alpha4: 0.3  # Nhieu quy trinh du kien trong uoc luong dich chuyen tu quay (odom)
    alpha5: 0.2  # Chi cho mo hinh Omni: nhieu dich chuyen
    base_frame_id: "base_footprint"  # Khung goc robot (base frame)
+   # Tu dong dat robot tai goc map moi khi AMCL khoi dong.
+   # Co the ghi de bang cac launch argument initial_pose_x/y/z/yaw.
+   set_initial_pose: true
+   always_reset_initial_pose: true
+   initial_pose:
+     x: 0.0
+     y: 0.0
+     z: 0.0
+     yaw: 0.0
    beam_skip_distance: 0.5  # Khoang cach toi da (m) de bo qua tia laser khong khop voi hat
    beam_skip_error_threshold: 0.9  # Ty le tia loi sau do bat buoc cap nhat day du de phuc hoi hoi tu
    beam_skip_threshold: 0.3  # Ty le tia toi thieu de kich hoat bo qua tia (beam skip)
@@ -361,7 +370,7 @@ bt_navigator_navigate_to_pose_rclcpp_node:
 #    failure_tolerance: 5.0  # Thoi gian toi da (s) plugin controller loi truoc khi FollowPath that bai; -1 vo han, 0 tat
 #    progress_checker_plugin: "progress_checker"  # Ten plugin kiem tra tien trinh (Humble: progress_checker_plugin)
 #    goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker" --- Danh sach plugin kiem tra dat goal
-#    controller_plugins: ["FollowPath", "DockDWB"]  # FollowPath: chạy thường, DockDWB: chạy docking bằng DWB
+#    controller_plugins: ["FollowPath"]
 
 
 #    # Progress checker parameters
@@ -413,46 +422,6 @@ bt_navigator_navigate_to_pose_rclcpp_node:
 #     min_approach_linear_velocity: 0.12
 
 #     allow_reversing: false
-
-#    DockDWB:
-#     plugin: "dwb_core::DWBLocalPlanner"
-#     debug_trajectory_details: false
-#     min_vel_x: -0.08
-#     max_vel_x: 0.12
-#     min_vel_y: 0.0
-#     max_vel_y: 0.0
-#     max_vel_theta: 0.18
-#     min_speed_xy: 0.0
-#     max_speed_xy: 0.12
-#     min_speed_theta: 0.0
-#     acc_lim_x: 0.12
-#     acc_lim_y: 0.0
-#     acc_lim_theta: 0.20
-#     decel_lim_x: -0.12
-#     decel_lim_y: 0.0
-#     decel_lim_theta: -0.20
-#     vx_samples: 18
-#     vy_samples: 1
-#     vtheta_samples: 24
-#     sim_time: 2.0
-#     linear_granularity: 0.025
-#     angular_granularity: 0.025
-#     transform_tolerance: 0.3
-#     xy_goal_tolerance: 0.11
-#     trans_stopped_velocity: 0.02
-#     short_circuit_trajectory_evaluation: true
-#     stateful: true
-#     critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
-#     BaseObstacle.scale: 0.12
-#     PathAlign.scale: 20.0
-#     PathAlign.forward_point_distance: 0.15
-#     GoalAlign.scale: 18.0
-#     GoalAlign.forward_point_distance: 0.15
-#     PathDist.scale: 24.0
-#     GoalDist.scale: 20.0
-#     RotateToGoal.scale: 12.0
-#     RotateToGoal.slowing_factor: 3.0
-#     RotateToGoal.lookahead_time: 0.5
 
 #    # DWB parameters
 #   #  FollowPath:
@@ -558,8 +527,8 @@ controller_server:
       angular_disengage_threshold: 0.17  # ≈ 25° thì shim nhường DWB
       # forward_sampling_distance: 1.0
       forward_sampling_distance: 0.5
-      rotate_to_heading_angular_vel: 0.5  
-      max_angular_accel: 7.5
+      rotate_to_heading_angular_vel: 0.35
+      max_angular_accel: 5.25
       max_cost_threshold: 254.0
       simulate_ahead_time: 1.0
 
@@ -574,25 +543,25 @@ controller_server:
       # Vận tốc tuyến tính
       # ======================
       min_vel_x: -0.15
-      max_vel_x: 0.3
+      max_vel_x: 0.30
       min_vel_y: 0.0
       max_vel_y: 0.0
 
       # Xe của bạn chạy ổn thấp nhất 0.06 m/s
       # Không nên để min_vel_x = 0.06, vì xe cần có mẫu dừng 0.0
-      min_speed_xy: 0.06
-      max_speed_xy: 0.3
+      min_speed_xy: 0.033
+      max_speed_xy: 0.30
 
       # ======================
       # Vận tốc xoay
       # ======================
       max_vel_theta: 0.3  # 318,181818182
-      min_speed_theta: 0.15  # 0.22 rad/s
+      min_speed_theta: 0.121  # 0.121 rad/s
 
       # ======================
       # Gia tốc
       # ======================
-      acc_lim_x: 4.5
+      acc_lim_x: 7.0
       acc_lim_y: 0.0
       acc_lim_theta: 5.0
 
@@ -639,18 +608,21 @@ controller_server:
       BaseObstacle.scale: 0.10
 
       # Bám path vừa phải, không ép quá gắt
-      PathAlign.scale: 40.0 #Scale càng cao, xe càng cố căn hướng theo path. Nếu xe cắt góc nhiều, tăng:
-      PathAlign.forward_point_distance: 0.18
+      # PathAlign.scale: 40.0 #Scale càng cao, xe càng cố căn hướng theo path. Nếu xe cắt góc nhiều, tăng:
+      # PathAlign.forward_point_distance: 0.18
+
+      PathAlign.scale: 60.0 #Scale càng cao, xe càng cố căn hướng theo path. Nếu xe cắt góc nhiều, tăng:
+      PathAlign.forward_point_distance: 0.28
 
       GoalAlign.scale: 4.0 #Critic này chấm độ thẳng hàng với hướng goal, Nếu cao quá, xe có xu hướng sớm quay đầu về goal, dễ cắt path cong.
       GoalAlign.forward_point_distance: 0.18
 
-      PathDist.scale: 32.0
+      PathDist.scale: 52.0
       GoalDist.scale: 22.0 #Nếu GoalDist cao, DWB có xu hướng chọn đường tiến nhanh về goal hơn.
 
       # Đoạn cuối xoay vừa phải, không gắt như bộ 1
       RotateToGoal.scale: 1.0 # Neu tang xe sẽ rất cố xoay đúng yaw cuối.
-      RotateToGoal.slowing_factor: 1.0 #Hệ số làm chậm khi gần goal và chuẩn bị xoay. Số càng lớn, xe càng giảm tốc nhiều hơn trước khi xoay.
+      RotateToGoal.slowing_factor: 1.8 #Hệ số làm chậm khi gần goal và chuẩn bị xoay. Số càng lớn, xe càng giảm tốc nhiều hơn trước khi xoay.
       RotateToGoal.lookahead_time: -1.0 #Nếu > 0: thời gian (s) nhìn trước để kiểm tra va chạm; -1 để tắt
 
 local_costmap:
@@ -673,7 +645,7 @@ local_costmap:
      plugins: ["voxel_layer", "inflation_layer"]  # Danh sach layer plugin costmap
      inflation_layer:
        plugin: "nav2_costmap_2d::InflationLayer"  # Layer phong dai cost quanh vat can
-       cost_scaling_factor: 8.5  # He so suy giam mu cost trong vung inflation
+       cost_scaling_factor: 6.0  # He so suy giam mu cost trong vung inflation
        # inflation_radius: 0.55
        inflation_radius: 0.78 # sqrt(0.585^2 + 0.3325^2) --- Ban kinh (m) phong dai cost quanh vat can lethal
      voxel_layer:
@@ -821,7 +793,7 @@ behavior_server:
    max_rotational_vel: 0.3  # Van toc goc toi da (rad/s) cho spin
   #  max_rotational_vel: 0.35  # Van toc goc toi da (rad/s) cho spin
    # min_rotational_vel: -0.5  # Van toc goc toi thieu (rad/s) cho spin
-   min_rotational_vel: 0.16  # Van toc goc toi thieu (rad/s) cho spin
+   min_rotational_vel: 0.121  # Van toc goc toi thieu (rad/s) cho spin
    # rotational_acc_lim: 0.22  # Gia toc goc toi da (rad/s^2) cho spin
    rotational_acc_lim: 4.5  # Gia toc goc toi da (rad/s^2) cho spin
 
@@ -849,17 +821,18 @@ velocity_smoother:
    smoothing_frequency: 30.0  # Tan so (Hz) lam muot lenh van toc
    scale_velocities: False  # Dieu chinh ty le cac thanh phan van toc khi bi gioi han gia toc
    feedback: "OPEN_LOOP"  # OPEN_LOOP: dung lenh van toc cuoi; CLOSED_LOOP: dung odom
-   max_velocity: [0.3, 0.0, 0.3]  # Van toc toi da [x, y, theta] (m/s, m/s, rad/s)
+   max_velocity: [0.4, 0.0, 0.3]  # Van toc toi da [x, y, theta] (m/s, m/s, rad/s)
   #  min_velocity: [0.07, 0.0, 0.15]  # Van toc toi thieu [x, y, theta] (m/s, m/s, rad/s)
-   min_velocity: [-0.3, 0.0, -0.3]  # Van toc toi thieu [x, y, theta] (m/s, m/s, rad/s)
-   max_accel: [4.5, 0.0, 5.0]  # Gia toc toi da [x, y, theta]
-   max_decel: [-4.5, 0.0, -5.0]  # Gia toc giam toi da [x, y, theta] (gia tri am)
+   min_velocity: [-0.4, 0.0, -0.3]  # Van toc toi thieu [x, y, theta] (m/s, m/s, rad/s)
+   max_accel: [6.667, 0.0, 5.0]  # Gia toc toi da [x, y, theta]
+   max_decel: [-6.667, 0.0, -5.0]  # Gia toc giam toi da [x, y, theta] (gia tri am)
   #  max_accel: [0.45, 0.0, 0.45 ]  # Gia toc toi da [x, y, theta]
   #  max_decel: [-0.50, 0.0, -0.50]  # Gia toc giam toi da [x, y, theta] (gia tri am)
    # odom_topic: "odom"
    odom_topic: /odometry/filtered # dung vi minh dung bo loc odom --- Topic odom (chi dung khi feedback CLOSEDLoop)
    odom_duration: 0.1  # Thoi gian (s) buffer odom de uoc luong toc do (chi dung khi CLOSEDLoop)
    # deadband_velocity: [0.0, 0.0, 0.0]  # Van toc toi thieu gui xuong driver [x, y, theta] de tranh stall
-   deadband_velocity: [0.06, 0.0, 0.13]  # Van toc toi thieu gui xuong driver [x, y, theta] de tranh stall
-   # 0.16rad/s = 145vong/phut
+   deadband_velocity: [0.0165, 0.0, 0.121]  # Van toc toi thieu gui xuong driver [x, y, theta] de tranh stall
+   # 0.0165 m/s = 110 vong/phut
+   # 0.121rad/s = 110vong/phut
    velocity_timeout: 1.0  # Timeout (s) khong nhan lenh moi thi gui Twist zero va dung publish

@@ -19,5 +19,4 @@ test_mach_version2/stm32f1xx_it.o: ..\Core\Src\stm32f1xx_it.c \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h \
-  ..\Core\Inc\stm32f1xx_it.h ..\MDK-ARM\uart_proto.h \
-  ..\MDK-ARM\board_gpio.h
+  ..\Core\Inc\stm32f1xx_it.h

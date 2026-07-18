@@ -41,15 +41,17 @@
 
   const POINT_TYPE_OPTIONS = [
     { value: 'normal', label: 'Normal' },
-    { value: 'start_load', label: 'Start Load' },
-    { value: 'load', label: 'Load' },
-    { value: 'start_unload', label: 'Start Unload' },
-    { value: 'unload', label: 'Unload' },
+    { value: 'approach', label: 'Approach Pose' },
+    { value: 'home', label: 'Home' },
   ];
 
   function normalizePointType(value) {
     const v = String(value || '').toLowerCase();
-    if (['start_load', 'load', 'start_unload', 'unload'].includes(v)) return v;
+    if (v === 'start_load' || v === 'start_unload' || v === 'approach_pose') {
+      return 'approach';
+    }
+    if (v === 'approach') return v;
+    if (v === 'home') return v;
     return 'normal';
   }
 
@@ -82,12 +84,16 @@
   }
 
   function normalizeSetpoint(pt) {
+    const pointType = normalizePointType(pt.pointType);
+    const belt1Cmd = normalizeBeltCmd(pt.belt1Cmd);
+    const belt2Cmd = normalizeBeltCmd(pt.belt2Cmd);
     return {
       ...pt,
       status: pt.status === 'Occupied' ? 'Occupied' : 'Free',
-      pointType: normalizePointType(pt.pointType),
-      belt1Cmd: normalizeBeltCmd(pt.belt1Cmd),
-      belt2Cmd: normalizeBeltCmd(pt.belt2Cmd),
+      pointType,
+      // Normal chi dung Nav2; moi lenh bang tai cu deu duoc bo qua an toan.
+      belt1Cmd: ['normal', 'home'].includes(pointType) ? 'none' : belt1Cmd,
+      belt2Cmd: ['normal', 'home'].includes(pointType) ? 'none' : belt2Cmd,
     };
   }
 
@@ -103,6 +109,8 @@
       .replace(/Đ/g, 'D')
       .toLowerCase()
       .trim()
+      .replace(/^approach\s+pose\s+/i, '')
+      .replace(/^approach\s+/i, '')
       .replace(/^start\s+(load|unload)\s+/i, '')
       .replace(/^(load|unload)\s+/i, '')
       .replace(/^tram\s+tra\s+hang\s+/i, '')
@@ -113,38 +121,16 @@
       .trim()
   }
 
-  function isStartPoint(pt) {
-    const t = normalizePointType(pt?.pointType);
-    return t === 'start_load' || t === 'start_unload';
+  function isApproachPoint(pt) {
+    return normalizePointType(pt?.pointType) === 'approach';
   }
 
-  function isDockFinalPoint(pt) {
-    const t = normalizePointType(pt?.pointType);
-    return t === 'load' || t === 'unload';
+  function isHomePoint(pt) {
+    return normalizePointType(pt?.pointType) === 'home';
   }
 
-  function finalTypeForStart(pt) {
-    return normalizePointType(pt?.pointType) === 'start_unload' ? 'unload' : 'load';
-  }
-
-  function startTypeForFinal(pt) {
-    return normalizePointType(pt?.pointType) === 'unload' ? 'start_unload' : 'start_load';
-  }
-
-  function findDockFinalForStart(startPt) {
-    const key = stationKey(startPt);
-    const finalType = finalTypeForStart(startPt);
-    return setpoints.find((pt) => (
-      normalizePointType(pt.pointType) === finalType && stationKey(pt) === key
-    ));
-  }
-
-  function findDockStartForFinal(finalPt) {
-    const key = stationKey(finalPt);
-    const startType = startTypeForFinal(finalPt);
-    return setpoints.find((pt) => (
-      normalizePointType(pt.pointType) === startType && stationKey(pt) === key
-    ));
+  function isMagneticLinePoint(pt) {
+    return isApproachPoint(pt) || isHomePoint(pt);
   }
 
   function poseJson(pt) {
@@ -201,7 +187,8 @@
         mode,
         onStatus(status) {
           if (status.task_id !== taskId || status.mode !== mode) return;
-          if (status.status === 'failed' || status.status === 'error' || status.status === 'rejected') {
+          if (status.status === 'failed' || status.status === 'error'
+              || status.status === 'rejected' || status.status === 'unavailable') {
             window.clearTimeout(deadline);
             dockWaiters = dockWaiters.filter((w) => w !== waiter);
             reject(new Error(status.detail || `Dock ${mode} failed`));
@@ -277,77 +264,6 @@
   function publishCargoDone(mode) {
     if (!cargoDoneTopic) throw new Error('Chưa kết nối mission cargo topic');
     cargoDoneTopic.publish(new ROSLIB.Message({ data: mode === 'UNLOAD' ? 'DROP' : 'PICK' }));
-  }
-
-  async function runDockMission(startPt, finalPt) {
-    if (!missionRequestTopic) throw new Error('Chưa kết nối Mission Supervisor');
-    if (!startPt || !finalPt) throw new Error('Thiếu cặp Start/Load-Unload cho docking');
-
-    const mode = finalTypeForStart(startPt).toUpperCase();
-    const stationId = stationKey(startPt).replace(/\s+/g, '_').toUpperCase() || startPt.id;
-    const taskId = `WEB_${stationId}_${Date.now()}`;
-    const payload = {
-      task_id: taskId,
-      station_id: stationId,
-      cargo_mode: mode === 'UNLOAD' ? 'DROP' : 'PICK',
-      use_dynamic_poses: true,
-      pre_dock_pose: poseJson(startPt),
-      dock_final_pose: poseJson(finalPt),
-      has_next_goal: false,
-    };
-
-    setWorkflowStep('mission', `Mission ${taskId}: Nav2 tới ${startPt.name}, docking vào ${finalPt.name}`);
-    missionRequestTopic.publish(new ROSLIB.Message({ data: JSON.stringify(payload) }));
-
-    await waitForMission(taskId, ['WAITING_CARGO', 'DOCKED'], 300000);
-    setWorkflowStep('mission', `Đã dock tại ${finalPt.name} — chạy ${pointTypeLabel(finalPt.pointType)}`);
-    if (window.AmrStm32?.setpointNeedsBelt?.(finalPt)) {
-      await window.AmrStm32.runSetpointBelts(finalPt);
-    }
-    publishCargoDone(mode);
-    await waitForMission(taskId, ['MISSION_DONE'], 300000);
-    setWorkflowStep('mission', `Hoàn tất docking ${startPt.name} → ${finalPt.name} → ra lại A`);
-  }
-
-  async function runDockingCycle(startPt, finalPt) {
-    if (!startPt || !finalPt) throw new Error('Thiếu cặp Start/Load-Unload cho docking');
-    if (!isStartPoint(startPt) || !isDockFinalPoint(finalPt)) {
-      throw new Error('Sai kiểu setpoint docking: cần Start Load/Unload và Load/Unload');
-    }
-
-    const finalType = normalizePointType(finalPt.pointType);
-    const modeLabel = finalType === 'unload' ? 'Unload' : 'Load';
-    const finalYawRad = (Number(finalPt.yawDeg) * Math.PI) / 180;
-    const startYawRad = (Number(startPt.yawDeg) * Math.PI) / 180;
-
-    setWorkflowStep('dock', `Dock Nav2: giảm costmap về 0.35 trước khi vào ${finalPt.name}`);
-    await setDockCostmapMode('dock', 0.35);
-
-    try {
-      setWorkflowStep('dock', `Nav2 docking: ${startPt.name} → ${finalPt.name}`);
-      await window.AmrNavigation.navigateAndWait(finalPt.x, finalPt.y, finalYawRad, {
-        destinationName: finalPt.name,
-        controllerId: 'DockDWB',
-      });
-
-      setWorkflowStep('dock', `Đã vào ${finalPt.name} — chạy băng tải ${modeLabel}`);
-      if (window.AmrStm32?.setpointNeedsBelt?.(finalPt)) {
-        await window.AmrStm32.runSetpointBelts(finalPt);
-      }
-
-      setWorkflowStep('dock', `Băng tải xong — Nav2 quay về ${startPt.name}`);
-      await window.AmrNavigation.navigateAndWait(startPt.x, startPt.y, startYawRad, {
-        destinationName: startPt.name,
-        controllerId: 'DockDWB',
-      });
-      setWorkflowStep('dock', `Hoàn tất Nav2 docking ${startPt.name} → ${finalPt.name} → ${startPt.name}`);
-    } finally {
-      try {
-        await setDockCostmapMode('restore', 0.35);
-      } catch (err) {
-        console.warn('restore costmap:', err);
-      }
-    }
   }
 
   async function reloadSetpointsFromServer(mapName) {
@@ -586,8 +502,8 @@
     document.getElementById('setpoint-y').value = '';
     document.getElementById('setpoint-yaw').value = '';
     document.getElementById('setpoint-point-type').value = 'normal';
-    document.getElementById('setpoint-belt1-cmd').value = 'load';
-    document.getElementById('setpoint-belt2-cmd').value = 'load';
+    document.getElementById('setpoint-belt1-cmd').value = 'none';
+    document.getElementById('setpoint-belt2-cmd').value = 'none';
   }
 
   function setModalMode(mode) {
@@ -601,6 +517,7 @@
     setModalMode('create');
     refreshModalPose();
     resetModalForm();
+    applyPointTypeDefaults(false);
     modal.classList.remove('hidden');
     modal.setAttribute('aria-hidden', 'false');
   }
@@ -626,6 +543,9 @@
     document.getElementById('setpoint-point-type').value = normalizePointType(pt.pointType);
     document.getElementById('setpoint-belt1-cmd').value = normalizeBeltCmd(pt.belt1Cmd);
     document.getElementById('setpoint-belt2-cmd').value = normalizeBeltCmd(pt.belt2Cmd);
+    // Setpoint Approach cu co None se duoc giu de nguoi dung tu chon lai,
+    // khong tu dong doi thanh Load/Unload.
+    applyPointTypeDefaults(false);
     modal.classList.remove('hidden');
     modal.setAttribute('aria-hidden', 'false');
   }
@@ -636,18 +556,22 @@
     modal.setAttribute('aria-hidden', 'true');
   }
 
-  function applyPointTypeDefaults() {
+  function applyPointTypeDefaults(defaultApproachCommands = true) {
     const type = normalizePointType(document.getElementById('setpoint-point-type').value);
-    const belt1 = document.getElementById('setpoint-belt1-cmd');
-    const belt2 = document.getElementById('setpoint-belt2-cmd');
-    if (type === 'start_load' || type === 'start_unload') {
-      belt1.value = 'none';
-      belt2.value = 'none';
-    } else if (type === 'load') {
-      if (belt1.value === 'none' && belt2.value === 'none') belt1.value = 'load';
-    } else if (type === 'unload') {
-      if (belt1.value === 'none' && belt2.value === 'none') belt1.value = 'unload';
-    }
+    const beltSelects = [
+      document.getElementById('setpoint-belt1-cmd'),
+      document.getElementById('setpoint-belt2-cmd'),
+    ];
+    beltSelects.forEach((select) => {
+      const noneOption = Array.from(select.options).find((option) => option.value === 'none');
+      if (noneOption) noneOption.disabled = false;
+      select.disabled = type !== 'approach';
+      if (type !== 'approach') {
+        select.value = 'none';
+      } else if (defaultApproachCommands && select.value === 'none') {
+        select.value = 'load';
+      }
+    });
   }
 
   function useCurrentPosition() {
@@ -667,11 +591,12 @@
     const y = parseFloat(document.getElementById('setpoint-y').value);
     const yawDeg = parseFloat(document.getElementById('setpoint-yaw').value);
     const pointType = normalizePointType(document.getElementById('setpoint-point-type').value);
-    let belt1Cmd = normalizeBeltCmd(document.getElementById('setpoint-belt1-cmd').value);
-    let belt2Cmd = normalizeBeltCmd(document.getElementById('setpoint-belt2-cmd').value);
-    if (pointType === 'start_load' || pointType === 'start_unload') {
-      belt1Cmd = 'none';
-      belt2Cmd = 'none';
+    const belt1Cmd = normalizeBeltCmd(document.getElementById('setpoint-belt1-cmd').value);
+    const belt2Cmd = normalizeBeltCmd(document.getElementById('setpoint-belt2-cmd').value);
+
+    if (pointType === 'approach' && belt1Cmd === 'none' && belt2Cmd === 'none') {
+      stationStatus.textContent = 'Approach Pose phải chọn ít nhất một băng tải';
+      return;
     }
 
     if (!name) {
@@ -732,6 +657,25 @@
     if (stationStatus) stationStatus.textContent = message;
   }
 
+  async function runArrivalBeltCommands(pt) {
+    const needsBelt = window.AmrStm32?.setpointNeedsBelt?.(pt);
+    if (!needsBelt) return;
+
+    if (!window.AmrStm32?.isBeltAvailable?.()) {
+      throw new Error('STM32 chưa kết nối — không thể chạy lệnh băng tải');
+    }
+
+    const bt1 = pt.belt1Cmd || 'none';
+    const bt2 = pt.belt2Cmd || 'none';
+    setWorkflowStep('belt', `Đã đến ${pt.name} — chạy băng tải (BT1:${bt1}, BT2:${bt2})`);
+    stationStatus.textContent = `Băng tải: ${pt.name} — chờ ACK STM32`;
+
+    await window.AmrStm32.runSetpointBelts(pt);
+
+    setWorkflowStep('belt', `Băng tải xong tại ${pt.name}`);
+    stationStatus.textContent = `Băng tải xong: ${pt.name}`;
+  }
+
   async function goToSelectedStation() {
     const pt = setpoints.find((p) => p.id === selectedId);
     if (!pt) {
@@ -750,25 +694,31 @@
     stationStatus.textContent = `Đang đi tới: ${pt.name}`;
 
     try {
-      if (isStartPoint(pt)) {
+      if (isMagneticLinePoint(pt)) {
         await window.AmrNavigation.navigateAndWait(pt.x, pt.y, yawRad, {
           destinationName: pt.name,
         });
-      } else if (isDockFinalPoint(pt)) {
-        const startPt = findDockStartForFinal(pt);
-        if (!startPt) {
-          throw new Error(`Không tìm thấy điểm ${pointTypeLabel(startTypeForFinal(pt))} cùng trạm với ${pt.name}`);
+        if (!window.AmrNavigation?.cancelNavigationAsync) {
+          throw new Error('Không có dịch vụ chuyển quyền điều khiển khỏi Nav2');
         }
-        await runDockingCycle(startPt, pt);
+        await window.AmrNavigation.cancelNavigationAsync();
+        if (!window.AmrMagneticLine?.start) {
+          throw new Error('Line follower chưa sẵn sàng');
+        }
+        const lineMode = isHomePoint(pt) ? 'lùi theo line vào sạc' : 'bám line vào trạm';
+        stationStatus.textContent = `Đã đến ${pt.name} — ${lineMode}`;
+        await window.AmrMagneticLine.start(pt);
+        stationStatus.textContent = `Đã vào trạm ${pt.name} ✓`;
       } else {
         await window.AmrNavigation.navigateAndWait(pt.x, pt.y, yawRad, {
           destinationName: pt.name,
         });
+        await runArrivalBeltCommands(pt);
       }
     } catch (err) {
-      const msg = err?.message || 'Lỗi navigation';
-      stationStatus.textContent = `Nav thất bại tới ${pt.name}: ${msg}`;
-      setWorkflowStep('goto', `Nav thất bại: ${pt.name}`);
+      const msg = err?.message || 'Workflow thất bại';
+      stationStatus.textContent = `Thất bại tại ${pt.name}: ${msg}`;
+      setWorkflowStep('goto', `Thất bại: ${pt.name}`);
     }
   }
 
@@ -806,7 +756,8 @@
   document.getElementById('btn-use-current').addEventListener('click', useCurrentPosition);
   document.getElementById('btn-save-point').addEventListener('click', savePoint);
   document.getElementById('btn-cancel-setpoint').addEventListener('click', closeSetpointModal);
-  document.getElementById('setpoint-point-type').addEventListener('change', applyPointTypeDefaults);
+  document.getElementById('setpoint-point-type').addEventListener(
+    'change', () => applyPointTypeDefaults(true));
   document.getElementById('btn-delete-cancel').addEventListener('click', closeDeleteConfirm);
   document.getElementById('btn-delete-confirm').addEventListener('click', confirmDeleteSetpoint);
 
@@ -941,12 +892,9 @@
     getSetpoints: () => [...setpoints],
     reloadFromServer: reloadSetpointsFromServer,
     setWorkflowStep,
-    isStartPoint,
-    isDockFinalPoint,
-    findDockFinalForStart,
-    findDockStartForFinal,
-    runDockMission,
-    runDockingCycle,
+    isApproachPoint,
+    isHomePoint,
+    isMagneticLinePoint,
     pointTypeLabel,
     setConveyorStatus,
     getConveyorStatus,

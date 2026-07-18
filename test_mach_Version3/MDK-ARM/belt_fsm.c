@@ -18,8 +18,8 @@
    - Nut STOP vat ly tao STOP_LOCK:
      + Dung toan bo relay.
      + ROS2 khong duoc chay tiep khi dang STOP_LOCK.
-     + Chi nut RESET vat ly hoac START/RUN vat ly moi mo khoa.
-     + Moi cap nguon, bam RESET khong lam bang tai chay; phai bam START/RUN.
+     + Nut START/RUN vat ly hoac lenh $CMD,START,<belt> moi mo khoa.
+     + RESET chi dung de reset ESTOP, khong lien quan STOP_LOCK.
 */
 
 typedef enum {
@@ -36,15 +36,14 @@ typedef enum {
 
 typedef struct {
   BeltMode_t mode;
-  uint8_t source_sensor;      /* 1..4 */
   uint8_t target_sensor;      /* 1..4 */
   uint8_t exit_sensor;        /* 1..4 */
   uint8_t exit_seen;
   uint8_t exit_inactive_pending;
   uint32_t exit_inactive_tick;
+  uint32_t mode_start_tick;
   uint8_t cargo_valid;
   uint8_t cargo_sensor;       /* vi tri hang da luu tren belt */
-  BeltDirection_t dir;
   BeltSide_t unload_side;
 } BeltRuntime_t;
 
@@ -52,9 +51,9 @@ typedef struct {
 #define EVENT_Q_SIZE              8U
 #define UNLOAD_EXIT_DEBOUNCE_MS   150U  /* Cam bien dich phai mat lien tuc 150ms moi xac nhan da roi bang tai */
 
-static SystemState_t s_state = SYS_BOOT;
+static SystemState_t s_state = SYS_IDLE;
 static uint8_t s_estop_source = 0U;
-static uint8_t s_stop_locked = 0U;   /* 1 = da bam STOP vat ly, cho RESET/START vat ly mo khoa */
+static uint8_t s_stop_locked = 0U;   /* 1 = da bam STOP vat ly, cho START vat ly/ROS2 mo khoa */
 static BeltRuntime_t s_belt[MAX_BELTS + 1U]; /* index 1..2 */
 
 static BeltEvent_t s_evt_q[EVENT_Q_SIZE];
@@ -180,7 +179,6 @@ static void run_belt_towards_sensor(uint8_t belt_id, uint8_t sensor_id)
   BeltDirection_t dir = direction_towards_sensor(sensor_id);
 
   if (belt_id_valid(belt_id)) {
-    s_belt[belt_id].dir = dir;
     Board_BeltRun(belt_id, dir);
   }
 }
@@ -219,13 +217,12 @@ static void reset_belt_runtime(uint8_t belt_id)
   }
 
   s_belt[belt_id].mode = MODE_IDLE;
-  s_belt[belt_id].source_sensor = 0U;
   s_belt[belt_id].target_sensor = 0U;
   s_belt[belt_id].exit_sensor = 0U;
   s_belt[belt_id].exit_seen = 0U;
   s_belt[belt_id].exit_inactive_pending = 0U;
   s_belt[belt_id].exit_inactive_tick = 0U;
-  s_belt[belt_id].dir = BELT_DIR_LEFT;
+  s_belt[belt_id].mode_start_tick = 0U;
   s_belt[belt_id].unload_side = BELT_SIDE_LEFT;
 
   Board_BeltStop(belt_id);
@@ -243,15 +240,14 @@ void Belt_Init(void)
 
   for (i = 1U; i <= MAX_BELTS; i++) {
     s_belt[i].mode = MODE_IDLE;
-    s_belt[i].source_sensor = 0U;
     s_belt[i].target_sensor = 0U;
     s_belt[i].exit_sensor = 0U;
     s_belt[i].exit_seen = 0U;
     s_belt[i].exit_inactive_pending = 0U;
     s_belt[i].exit_inactive_tick = 0U;
+    s_belt[i].mode_start_tick = 0U;
     s_belt[i].cargo_valid = 0U;
     s_belt[i].cargo_sensor = 0U;
-    s_belt[i].dir = BELT_DIR_LEFT;
     s_belt[i].unload_side = BELT_SIDE_LEFT;
   }
 
@@ -281,19 +277,6 @@ uint8_t Belt_GetActiveBelt(void)
   return mask;
 }
 
-BeltDirection_t Belt_GetDirection(void)
-{
-  if (s_belt[1U].mode != MODE_IDLE) {
-    return s_belt[1U].dir;
-  }
-
-  if (s_belt[2U].mode != MODE_IDLE) {
-    return s_belt[2U].dir;
-  }
-
-  return BELT_DIR_LEFT;
-}
-
 uint8_t Belt_GetEstopSource(void)
 {
   return s_estop_source;
@@ -308,11 +291,6 @@ uint8_t Belt_HasCargo(uint8_t belt_id)
   return 0U;
 }
 
-uint8_t Belt_SensorAudioEnabled(void)
-{
-  return 0U;
-}
-
 void Belt_TriggerEstop(uint8_t source_code)
 {
   uint8_t i;
@@ -322,12 +300,12 @@ void Belt_TriggerEstop(uint8_t source_code)
 
   for (i = 1U; i <= MAX_BELTS; i++) {
     s_belt[i].mode = MODE_IDLE;
-    s_belt[i].source_sensor = 0U;
     s_belt[i].target_sensor = 0U;
     s_belt[i].exit_sensor = 0U;
     s_belt[i].exit_seen = 0U;
     s_belt[i].exit_inactive_pending = 0U;
     s_belt[i].exit_inactive_tick = 0U;
+    s_belt[i].mode_start_tick = 0U;
   }
 
   Board_RelayAllOff();
@@ -357,31 +335,6 @@ uint8_t Belt_TryResetEstop(void)
   return 1U;
 }
 
-uint8_t Belt_OnResetButton(void)
-{
-  /*
-     RESET vat ly:
-     - Neu dang ESTOP va nut emergency da nha -> reset ESTOP.
-     - Neu dang STOP_LOCK do nut STOP vat ly -> chi mo khoa, KHONG chay bang tai.
-     - Neu moi cap nguon/chua bam STOP/chua ESTOP -> khong lam gi.
-  */
-  if (s_state == SYS_ESTOP) {
-    return Belt_TryResetEstop() ? 1U : 0U;
-  }
-
-	if (s_stop_locked) {
-		Belt_OnStartButton();
-		return 2U;
-	}
-
-  return 0U;
-}
-
-uint8_t Belt_IsStopLocked(void)
-{
-  return s_stop_locked;
-}
-
 void Belt_OnStopButton(void)
 {
   uint8_t i;
@@ -391,19 +344,19 @@ void Belt_OnStopButton(void)
      - Dung tat ca relay.
      - Xoa mode dang chay cua ca 2 bang tai.
      - Dat STOP_LOCK = 1.
-     - Sau do chi RESET vat ly hoac START/RUN vat ly moi mo khoa.
+     - Sau do chi START/RUN vat ly hoac $CMD,START,<belt> moi mo khoa.
   */
   Board_RelayAllOff();
 
   if (s_state != SYS_ESTOP) {
     for (i = 1U; i <= MAX_BELTS; i++) {
       s_belt[i].mode = MODE_IDLE;
-      s_belt[i].source_sensor = 0U;
       s_belt[i].target_sensor = 0U;
       s_belt[i].exit_sensor = 0U;
       s_belt[i].exit_seen = 0U;
       s_belt[i].exit_inactive_pending = 0U;
       s_belt[i].exit_inactive_tick = 0U;
+      s_belt[i].mode_start_tick = 0U;
     }
 
     s_stop_locked = 1U;
@@ -442,7 +395,6 @@ void Belt_OnStartButton(void)
       reset_belt_runtime(belt_id);
       s_belt[belt_id].cargo_valid = 0U;
       s_belt[belt_id].cargo_sensor = 0U;
-      s_belt[belt_id].source_sensor = 0U;
       s_belt[belt_id].target_sensor = 0U;
       s_belt[belt_id].exit_sensor = 0U;
       s_belt[belt_id].exit_seen = 0U;
@@ -466,9 +418,8 @@ BeltCmdResult_t Belt_CmdStartLoad(uint8_t belt_id)
     return BELT_CMD_ESTOP;
   }
 
-  if (s_stop_locked) {
-    return BELT_CMD_STOP_LOCK;
-  }
+  /* Lenh START tu ROS2 duoc phep mo khoa STOP vat ly. */
+  s_stop_locked = 0U;
 
   if (s_belt[belt_id].mode != MODE_IDLE) {
     return BELT_CMD_BUSY;
@@ -481,12 +432,12 @@ BeltCmdResult_t Belt_CmdStartLoad(uint8_t belt_id)
   s_belt[belt_id].cargo_sensor = 0U;
 
   s_belt[belt_id].mode = MODE_LOAD_ARMED;
-  s_belt[belt_id].source_sensor = 0U;
   s_belt[belt_id].target_sensor = 0U;
   s_belt[belt_id].exit_sensor = 0U;
   s_belt[belt_id].exit_seen = 0U;
   s_belt[belt_id].exit_inactive_pending = 0U;
   s_belt[belt_id].exit_inactive_tick = 0U;
+  s_belt[belt_id].mode_start_tick = HAL_GetTick();
 
   s_state = SYS_RUNNING;
 
@@ -536,12 +487,12 @@ BeltCmdResult_t Belt_CmdUnload(uint8_t belt_id, BeltSide_t side)
 
   s_belt[belt_id].mode = MODE_UNLOAD_MOVING;
   s_belt[belt_id].unload_side = side;
-  s_belt[belt_id].source_sensor = sensor_id;
   s_belt[belt_id].target_sensor = 0U;
   s_belt[belt_id].exit_sensor = exit_sensor;
   s_belt[belt_id].exit_seen = sensor_active_by_id(exit_sensor);
   s_belt[belt_id].exit_inactive_pending = 0U;
   s_belt[belt_id].exit_inactive_tick = 0U;
+  s_belt[belt_id].mode_start_tick = HAL_GetTick();
 
   s_state = SYS_RUNNING;
 
@@ -559,6 +510,12 @@ static void tick_load_armed(uint8_t belt_id)
   sensor_id = first_active_sensor_on_belt(belt_id);
   if (sensor_id == 0U) {
     Board_BeltStop(belt_id);
+
+    if ((HAL_GetTick() - s_belt[belt_id].mode_start_tick) >= LOAD_ARMED_TIMEOUT_MS) {
+      reset_belt_runtime(belt_id);
+      push_event(BELT_EVENT_LOAD_NO_CARGO_TIMEOUT, belt_id, BELT_SIDE_LEFT);
+    }
+
     return;
   }
 
@@ -568,13 +525,13 @@ static void tick_load_armed(uint8_t belt_id)
     return;
   }
 
-  s_belt[belt_id].source_sensor = sensor_id;
   s_belt[belt_id].target_sensor = target_sensor;
 
   push_event(BELT_EVENT_LOAD_STARTED, belt_id, BELT_SIDE_LEFT);
 
   run_belt_towards_sensor(belt_id, target_sensor);
   s_belt[belt_id].mode = MODE_LOAD_MOVING;
+  s_belt[belt_id].mode_start_tick = HAL_GetTick();
 }
 
 static void tick_load_moving(uint8_t belt_id)
@@ -595,8 +552,16 @@ static void tick_load_moving(uint8_t belt_id)
     push_event(BELT_EVENT_LOAD_STOPPED, belt_id, BELT_SIDE_LEFT);
 
     s_belt[belt_id].mode = MODE_IDLE;
-    s_belt[belt_id].source_sensor = 0U;
     s_belt[belt_id].target_sensor = 0U;
+    s_belt[belt_id].mode_start_tick = 0U;
+    return;
+  }
+
+  if ((HAL_GetTick() - s_belt[belt_id].mode_start_tick) >= LOAD_MOVING_TIMEOUT_MS) {
+    reset_belt_runtime(belt_id);
+    s_belt[belt_id].cargo_valid = 0U;
+    s_belt[belt_id].cargo_sensor = 0U;
+    push_event(BELT_EVENT_LOAD_JAM, belt_id, BELT_SIDE_LEFT);
   }
 }
 
@@ -606,6 +571,16 @@ static void tick_unload_moving(uint8_t belt_id)
 
   if (exit_sensor == 0U) {
     reset_belt_runtime(belt_id);
+    return;
+  }
+
+  if ((HAL_GetTick() - s_belt[belt_id].mode_start_tick) >= UNLOAD_MOVING_TIMEOUT_MS) {
+    BeltSide_t side = s_belt[belt_id].unload_side;
+
+    reset_belt_runtime(belt_id);
+    s_belt[belt_id].cargo_valid = 0U;
+    s_belt[belt_id].cargo_sensor = 0U;
+    push_event(BELT_EVENT_UNLOAD_JAM, belt_id, side);
     return;
   }
 
@@ -654,12 +629,12 @@ static void tick_unload_moving(uint8_t belt_id)
   push_event(BELT_EVENT_UNLOAD_DONE, belt_id, s_belt[belt_id].unload_side);
 
   s_belt[belt_id].mode = MODE_IDLE;
-  s_belt[belt_id].source_sensor = 0U;
   s_belt[belt_id].target_sensor = 0U;
   s_belt[belt_id].exit_sensor = 0U;
   s_belt[belt_id].exit_seen = 0U;
   s_belt[belt_id].exit_inactive_pending = 0U;
   s_belt[belt_id].exit_inactive_tick = 0U;
+  s_belt[belt_id].mode_start_tick = 0U;
 }
 
 
@@ -723,7 +698,6 @@ static void tick_physical_armed(uint8_t belt_id)
     return;
   }
 
-  s_belt[belt_id].source_sensor = (target_sensor == right_sensor) ? left_sensor : right_sensor;
   s_belt[belt_id].target_sensor = target_sensor;
 
   run_belt_towards_sensor(belt_id, target_sensor);
@@ -789,7 +763,6 @@ static void tick_physical_hold(uint8_t belt_id)
      - Quay lai che do chờ chu ky moi.
   */
   Board_BeltStop(belt_id);
-  s_belt[belt_id].source_sensor = 0U;
   s_belt[belt_id].target_sensor = 0U;
   s_belt[belt_id].mode = MODE_PHYSICAL_ARMED;
 }
@@ -842,6 +815,3 @@ void Belt_Tick(void)
 
   refresh_system_state();
 }
-
-
-
