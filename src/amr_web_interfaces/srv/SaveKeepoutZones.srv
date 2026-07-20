@@ -1,0 +1,7 @@
+# Lưu các đa giác vùng cấm của map và phát lại mask cho Nav2.
+string map_name
+string json_data
+---
+bool success
+bool nav2_active
+string message

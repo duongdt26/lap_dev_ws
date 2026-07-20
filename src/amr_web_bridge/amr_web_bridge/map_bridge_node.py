@@ -3,6 +3,7 @@
 
 import glob
 import json
+import math
 import os
 import re
 import subprocess
@@ -13,6 +14,7 @@ from rclpy.node import Node
 from rclpy.parameter import Parameter
 from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, ReliabilityPolicy
 from nav_msgs.msg import OccupancyGrid
+from nav2_msgs.msg import CostmapFilterInfo
 from std_msgs.msg import String
 from std_srvs.srv import Trigger
 
@@ -21,15 +23,18 @@ from amr_web_interfaces.srv import (
     ListProcesses,
     LoadProcess,
     LoadSetpoints,
+    LoadKeepoutZones,
     SaveMap,
     SaveProcess,
     SaveSetpoints,
+    SaveKeepoutZones,
     SetActiveMap,
 )
 
 DEFAULT_MAPS_ROOT = os.path.expanduser('~/maps')
 DEFAULT_MAP_DATA_ROOT = os.path.expanduser('~/MAP_DATA')
 SETPOINTS_FILE = 'setpoints.json'
+KEEPOUT_ZONES_FILE = 'keepout_zones.json'
 SAFE_NAME_RE = re.compile(r'^[a-zA-Z0-9_\-]+$')
 
 
@@ -85,12 +90,17 @@ class MapBridgeNode(Node):
         os.makedirs(self._map_data_root, exist_ok=True)
 
         self._latest_map = None
+        self._keepout_zones = []
         self._map_sub = self.create_subscription(
             OccupancyGrid, '/map', self._on_map, MAP_QOS)
         self._web_map_pub = self.create_publisher(
             OccupancyGrid, '/web/map', WEB_MAP_QOS)
         self._data_updated_pub = self.create_publisher(
             String, '/web_data_updated', 10)
+        self._keepout_mask_pub = self.create_publisher(
+            OccupancyGrid, '/keepout_filter_mask', MAP_QOS)
+        self._keepout_info_pub = self.create_publisher(
+            CostmapFilterInfo, '/keepout_costmap_filter_info', MAP_QOS)
 
         self.create_service(Trigger, '/save_map', self.save_map_callback)
         self.create_service(SaveMap, '/save_map_named', self.save_map_named_cb)
@@ -100,9 +110,18 @@ class MapBridgeNode(Node):
         self.create_service(SetActiveMap, '/set_active_map', self.set_active_map_cb)
         self.create_service(SaveSetpoints, '/save_setpoints', self.save_setpoints_cb)
         self.create_service(LoadSetpoints, '/load_setpoints', self.load_setpoints_cb)
+        self.create_service(
+            SaveKeepoutZones, '/save_keepout_zones', self.save_keepout_zones_cb)
+        self.create_service(
+            LoadKeepoutZones, '/load_keepout_zones', self.load_keepout_zones_cb)
         self.create_service(ListProcesses, '/list_processes', self.list_processes_cb)
         self.create_service(LoadProcess, '/load_process', self.load_process_cb)
         self.create_service(SaveProcess, '/save_process', self.save_process_cb)
+
+        active_map = self._active_map()
+        if active_map:
+            self._ensure_data_layout(active_map)
+            self._keepout_zones = self._read_keepout_zones(active_map)
 
         self.create_timer(1.0, self._republish_timer_cb)
 
@@ -138,8 +157,10 @@ class MapBridgeNode(Node):
         root = self._data_dir(name)
         setpoint_dir = os.path.join(root, 'setpoint')
         process_dir = os.path.join(root, 'process')
+        zones_dir = os.path.join(root, 'zones')
         os.makedirs(setpoint_dir, exist_ok=True)
         os.makedirs(process_dir, exist_ok=True)
+        os.makedirs(zones_dir, exist_ok=True)
 
         setpoints_path = os.path.join(setpoint_dir, SETPOINTS_FILE)
         if not os.path.isfile(setpoints_path):
@@ -149,6 +170,16 @@ class MapBridgeNode(Node):
                 'setpoints': [],
             }
             with open(setpoints_path, 'w', encoding='utf-8') as fh:
+                json.dump(payload, fh, ensure_ascii=False, indent=2)
+
+        zones_path = os.path.join(zones_dir, KEEPOUT_ZONES_FILE)
+        if not os.path.isfile(zones_path):
+            payload = {
+                'mapName': name,
+                'updatedAt': _now_iso(),
+                'zones': [],
+            }
+            with open(zones_path, 'w', encoding='utf-8') as fh:
                 json.dump(payload, fh, ensure_ascii=False, indent=2)
 
         self.get_logger().info(f'MAP_DATA folder: {root}')
@@ -163,6 +194,114 @@ class MapBridgeNode(Node):
     def _process_path(self, map_name: str, process_name: str) -> str:
         safe = sanitize_process_name(process_name)
         return os.path.join(self._data_dir(map_name), 'process', f'{safe}.json')
+
+    def _keepout_zones_path(self, map_name: str) -> str:
+        return os.path.join(
+            self._data_dir(map_name), 'zones', KEEPOUT_ZONES_FILE)
+
+    def _read_keepout_zones(self, map_name: str):
+        path = self._keepout_zones_path(map_name)
+        if not os.path.isfile(path):
+            return []
+        try:
+            with open(path, 'r', encoding='utf-8') as fh:
+                raw = json.load(fh)
+            zones = raw.get('zones', []) if isinstance(raw, dict) else raw
+            return self._normalize_keepout_zones(zones)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            self.get_logger().error(f'Không thể đọc vùng cấm {path}: {exc}')
+            return []
+
+    @staticmethod
+    def _normalize_keepout_zones(zones):
+        if not isinstance(zones, list):
+            raise ValueError('json_data phải là một mảng vùng cấm')
+        normalized = []
+        for index, zone in enumerate(zones):
+            if not isinstance(zone, dict):
+                raise ValueError(f'Vùng cấm thứ {index + 1} không hợp lệ')
+            points = zone.get('points', [])
+            if not isinstance(points, list) or len(points) < 3:
+                raise ValueError(
+                    f'Vùng cấm thứ {index + 1} phải có ít nhất 3 điểm')
+            clean_points = []
+            for point in points:
+                x = float(point.get('x'))
+                y = float(point.get('y'))
+                if not math.isfinite(x) or not math.isfinite(y):
+                    raise ValueError('Tọa độ vùng cấm phải là số hữu hạn')
+                clean_points.append({'x': x, 'y': y})
+            normalized.append({
+                'id': str(zone.get('id') or f'zone-{index + 1}'),
+                'name': str(zone.get('name') or f'Vùng cấm {index + 1}'),
+                'reason': str(zone.get('reason') or ''),
+                'enabled': bool(zone.get('enabled', True)),
+                'points': clean_points,
+            })
+        return normalized
+
+    @staticmethod
+    def _point_in_polygon(x, y, points):
+        inside = False
+        previous = points[-1]
+        for current in points:
+            x1, y1 = previous['x'], previous['y']
+            x2, y2 = current['x'], current['y']
+            if ((y1 > y) != (y2 > y)):
+                x_at_y = (x2 - x1) * (y - y1) / (y2 - y1) + x1
+                if x < x_at_y:
+                    inside = not inside
+            previous = current
+        return inside
+
+    def _publish_keepout_mask(self):
+        if self._latest_map is None:
+            return False
+
+        source = self._latest_map
+        info = source.info
+        mask = OccupancyGrid()
+        mask.header.stamp = self.get_clock().now().to_msg()
+        mask.header.frame_id = source.header.frame_id or 'map'
+        mask.info = info
+        width = int(info.width)
+        height = int(info.height)
+        resolution = float(info.resolution)
+        origin_x = float(info.origin.position.x)
+        origin_y = float(info.origin.position.y)
+        data = [0] * (width * height)
+
+        for zone in self._keepout_zones:
+            if not zone.get('enabled', True):
+                continue
+            points = zone['points']
+            min_x = max(0, int(math.floor(
+                (min(p['x'] for p in points) - origin_x) / resolution)))
+            max_x = min(width - 1, int(math.ceil(
+                (max(p['x'] for p in points) - origin_x) / resolution)))
+            min_y = max(0, int(math.floor(
+                (min(p['y'] for p in points) - origin_y) / resolution)))
+            max_y = min(height - 1, int(math.ceil(
+                (max(p['y'] for p in points) - origin_y) / resolution)))
+            for row in range(min_y, max_y + 1):
+                world_y = origin_y + (row + 0.5) * resolution
+                for col in range(min_x, max_x + 1):
+                    world_x = origin_x + (col + 0.5) * resolution
+                    if self._point_in_polygon(world_x, world_y, points):
+                        data[row * width + col] = 100
+
+        mask.data = data
+        self._keepout_mask_pub.publish(mask)
+
+        filter_info = CostmapFilterInfo()
+        filter_info.header.stamp = mask.header.stamp
+        filter_info.header.frame_id = mask.header.frame_id
+        filter_info.type = 0
+        filter_info.filter_mask_topic = '/keepout_filter_mask'
+        filter_info.base = 0.0
+        filter_info.multiplier = 1.0
+        self._keepout_info_pub.publish(filter_info)
+        return True
 
     def _find_process_file(self, map_name: str, process_name: str) -> str:
         proc_name = (process_name or '').strip()
@@ -189,6 +328,7 @@ class MapBridgeNode(Node):
     def _on_map(self, msg: OccupancyGrid):
         self._latest_map = msg
         self._web_map_pub.publish(msg)
+        self._publish_keepout_mask()
 
     def _republish_timer_cb(self):
         if self._latest_map is not None:
@@ -225,7 +365,9 @@ class MapBridgeNode(Node):
             self.set_parameters([
                 Parameter('active_map_name', Parameter.Type.STRING, name)
             ])
+            self._keepout_zones = self._read_keepout_zones(name)
             self._publish_cached_map()
+            self._publish_keepout_mask()
             response.success = True
             response.message = f'Active map: {name}'
             self._notify_data('map')
@@ -268,6 +410,8 @@ class MapBridgeNode(Node):
             Parameter('active_map_name', Parameter.Type.STRING, name),
             Parameter('map_name', Parameter.Type.STRING, name),
         ])
+        self._keepout_zones = self._read_keepout_zones(name)
+        self._publish_keepout_mask()
         self._notify_data('map')
         return (
             f'Đã lưu map: {out_path}.yaml + .pgm | '
@@ -364,6 +508,58 @@ class MapBridgeNode(Node):
             response.message = f'Đã tải {len(points)} setpoint'
         except Exception as exc:
             response.success = False
+            response.json_data = '[]'
+            response.message = str(exc)
+        return response
+
+    def save_keepout_zones_cb(self, request, response):
+        try:
+            map_name = self._resolve_map_name(request.map_name)
+            zones = self._normalize_keepout_zones(
+                json.loads(request.json_data or '[]'))
+            self._ensure_data_layout(map_name)
+            path = self._keepout_zones_path(map_name)
+            payload = {
+                'mapName': map_name,
+                'updatedAt': _now_iso(),
+                'zones': zones,
+            }
+            with open(path, 'w', encoding='utf-8') as fh:
+                json.dump(payload, fh, ensure_ascii=False, indent=2)
+
+            if map_name == self._active_map():
+                self._keepout_zones = zones
+                response.nav2_active = self._publish_keepout_mask()
+            else:
+                response.nav2_active = False
+            response.success = True
+            response.message = (
+                f'Đã lưu {len(zones)} vùng cấm và phát mask cho Nav2'
+                if response.nav2_active
+                else f'Đã lưu {len(zones)} vùng cấm; nạp map để kích hoạt Nav2'
+            )
+            self._notify_data('keepout_zones')
+        except Exception as exc:
+            response.success = False
+            response.nav2_active = False
+            response.message = str(exc)
+        return response
+
+    def load_keepout_zones_cb(self, request, response):
+        try:
+            map_name = self._resolve_map_name(request.map_name)
+            zones = self._read_keepout_zones(map_name)
+            if map_name == self._active_map():
+                self._keepout_zones = zones
+                response.nav2_active = self._publish_keepout_mask()
+            else:
+                response.nav2_active = False
+            response.success = True
+            response.json_data = json.dumps(zones, ensure_ascii=False)
+            response.message = f'Đã tải {len(zones)} vùng cấm'
+        except Exception as exc:
+            response.success = False
+            response.nav2_active = False
             response.json_data = '[]'
             response.message = str(exc)
         return response

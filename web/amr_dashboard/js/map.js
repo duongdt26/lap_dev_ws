@@ -45,6 +45,8 @@
   let planPath = [];        // mảng {x,y} tọa độ world từ /plan
   let navMode = false;
   let navGoalCallback = null;
+  let destinationState = 'idle';
+  let destinationId = null;
 
   let mapCacheCanvas = null;   // offscreen: vẽ map 1 lần, không vẽ lại mỗi pose
   let dragCurrent = null;      // pixel hiện tại khi đang kéo (preview mũi tên)
@@ -188,7 +190,7 @@
     if (panel) panel.classList.toggle('map-controls-disabled', !enabled);
   }
 
-  function updateMapStatusHint() {
+  function updateMapStatusHintLegacy() {
     const el = document.getElementById('map-status');
     if (!el) return;
     const base = mapMsg
@@ -199,6 +201,23 @@
       ? ' · LIVE (Nav/teleop/Vx — zoom tắt)'
       : ' · Đóng băng — có thể zoom / đặt pose';
     el.textContent = base + (mapMsg ? modeHint : '');
+  }
+
+  function updateMapStatusHint() {
+    const element = document.getElementById('map-status');
+    if (!element) return;
+    if (!mapMsg) {
+      element.textContent = 'Chưa có bản đồ — kỹ thuật viên cần nạp map hoặc chạy SLAM.';
+      return;
+    }
+    const setupMode = document.body.dataset.role === 'setup';
+    const base = setupMode
+      ? (mapStatusBase || 'Bản đồ đã sẵn sàng')
+      : 'Bản đồ đã sẵn sàng';
+    const mode = mapLiveMode
+      ? (setupMode ? ' · Đang cập nhật trực tiếp' : ' · Đang theo dõi robot')
+      : (setupMode ? ' · Có thể zoom / đặt pose' : '');
+    element.textContent = base + mode;
   }
 
   function updateMapInteractionMode() {
@@ -279,6 +298,17 @@
     },
     resetView() { resetMapView(); },
     resetViewAfterNavGoal() { resetMapViewAfterNavGoal(); },
+    invalidate() { scheduleRedraw(); },
+    clientPointToWorld(clientX, clientY) {
+      const canvas = canvasRef || document.getElementById('map-canvas');
+      if (!canvas || !mapMsg || !view) return null;
+      const rect = canvas.getBoundingClientRect();
+      const px = (clientX - rect.left) * (canvas.width / rect.width);
+      const py = (clientY - rect.top) * (canvas.height / rect.height);
+      const point = canvasToWorld(px, py, mapMsg.info);
+      return { x: point.wx, y: point.wy };
+    },
+    hasMap() { return !!mapMsg; },
   };
 
   function applyViewChange() {
@@ -846,7 +876,7 @@
   //   }
   // }
 
-  function redraw(ctx, canvas) {
+  function redrawLegacy(ctx, canvas) {
     if (!mapMsg || !view) return;
     const info = mapMsg.info;
 
@@ -885,6 +915,184 @@
   }
 
   /** Trục X (đỏ) Y (xanh) tại tâm bản đồ */
+  function redraw(ctx, canvas) {
+    if (!mapMsg || !view) return;
+    const info = mapMsg.info;
+
+    if (mapCacheCanvas) {
+      ctx.drawImage(mapCacheCanvas, 0, 0);
+    } else {
+      ctx.fillStyle = '#222';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    if (layerEnabled('map-layer-keepout')) drawKeepoutZones(ctx, info);
+    if (document.body.dataset.role === 'setup') drawMapAxes(ctx, info);
+
+    if (layerEnabled('map-layer-route') && planPath.length > 1) {
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+      ctx.lineWidth = 8;
+      traceWorldPath(ctx, planPath, info);
+      ctx.stroke();
+      ctx.strokeStyle = '#2563eb';
+      ctx.lineWidth = 4;
+      traceWorldPath(ctx, planPath, info);
+      ctx.stroke();
+    }
+
+    if (layerEnabled('map-layer-stations')) drawStations(ctx, info);
+
+    if (poseDragStart && dragCurrent) {
+      drawDragArrow(
+        ctx,
+        poseDragStart,
+        dragCurrent,
+        poseMode ? '#facc15' : '#f97316'
+      );
+    }
+
+    if (robotPose) drawRobot(ctx, robotPose, info);
+  }
+
+  function layerEnabled(id) {
+    const input = document.getElementById(id);
+    return !input || input.checked;
+  }
+
+  function traceWorldPath(ctx, points, info) {
+    ctx.beginPath();
+    points.forEach((point, index) => {
+      const pixel = worldToCanvas(point.x, point.y, info);
+      if (index === 0) ctx.moveTo(pixel.px, pixel.py);
+      else ctx.lineTo(pixel.px, pixel.py);
+    });
+  }
+
+  function drawPolygon(ctx, points, info, options) {
+    if (!points || !points.length) return;
+    const pixels = points.map((point) => worldToCanvas(point.x, point.y, info));
+    ctx.save();
+    ctx.beginPath();
+    pixels.forEach((point, index) => {
+      if (index === 0) ctx.moveTo(point.px, point.py);
+      else ctx.lineTo(point.px, point.py);
+    });
+    if (options.close && pixels.length > 2) ctx.closePath();
+    if (options.fill) {
+      ctx.fillStyle = options.fill;
+      ctx.fill();
+    }
+    ctx.strokeStyle = options.stroke;
+    ctx.lineWidth = options.lineWidth || 2;
+    ctx.setLineDash(options.dash || []);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    pixels.forEach((point) => {
+      ctx.fillStyle = options.pointColor || options.stroke;
+      ctx.beginPath();
+      ctx.arc(point.px, point.py, 4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+
+  function drawKeepoutZones(ctx, info) {
+    const zones = window.AmrKeepout?.getZones?.() || [];
+    zones.forEach((zone) => {
+      drawPolygon(ctx, zone.points, info, {
+        close: true,
+        fill: zone.enabled === false
+          ? 'rgba(148,163,184,0.16)'
+          : 'rgba(239,68,68,0.28)',
+        stroke: zone.enabled === false ? '#94a3b8' : '#ef4444',
+        lineWidth: 3,
+        dash: zone.enabled === false ? [7, 5] : [],
+      });
+      if (zone.points.length) {
+        const anchor = worldToCanvas(zone.points[0].x, zone.points[0].y, info);
+        drawMapLabel(ctx, anchor.px, anchor.py - 13, zone.name, '#991b1b');
+      }
+    });
+
+    const draft = window.AmrKeepout?.getDraft?.() || [];
+    if (draft.length) {
+      drawPolygon(ctx, draft, info, {
+        close: false,
+        fill: null,
+        stroke: '#f59e0b',
+        lineWidth: 3,
+        dash: [8, 5],
+        pointColor: '#fbbf24',
+      });
+    }
+  }
+
+  function drawMapLabel(ctx, x, y, text, background) {
+    if (!text) return;
+    ctx.save();
+    ctx.font = '600 12px system-ui, sans-serif';
+    const width = ctx.measureText(text).width + 14;
+    const left = x - width / 2;
+    ctx.fillStyle = background;
+    ctx.beginPath();
+    if (typeof ctx.roundRect === 'function') {
+      ctx.roundRect(left, y - 18, width, 22, 6);
+    } else {
+      ctx.rect(left, y - 18, width, 22);
+    }
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, x, y - 7);
+    ctx.restore();
+  }
+
+  function drawStations(ctx, info) {
+    const stations = window.AmrStations?.getSetpoints?.() || [];
+    const selectedId = window.AmrStations?.getSelectedId?.() || destinationId;
+    stations.forEach((station) => {
+      const pixel = worldToCanvas(Number(station.x), Number(station.y), info);
+      const selected = station.id === selectedId;
+      const arrived = selected && destinationState === 'arrived';
+      const failed = selected && destinationState === 'failed';
+      const color = arrived
+        ? '#16a34a'
+        : failed
+          ? '#dc2626'
+          : selected
+            ? '#f59e0b'
+            : '#2563eb';
+      ctx.save();
+      if (selected) {
+        ctx.fillStyle = color + '33';
+        ctx.beginPath();
+        ctx.arc(pixel.px, pixel.py, 18, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = color;
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(pixel.px, pixel.py, selected ? 9 : 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      if (arrived) {
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(pixel.px - 4, pixel.py);
+        ctx.lineTo(pixel.px - 1, pixel.py + 3);
+        ctx.lineTo(pixel.px + 5, pixel.py - 4);
+        ctx.stroke();
+      }
+      ctx.restore();
+      drawMapLabel(ctx, pixel.px, pixel.py - 16, station.name, color);
+    });
+  }
+
   function drawMapAxes(ctx, info) {
     const cx = info.origin.position.x + (info.width * info.resolution) / 2;
     const cy = info.origin.position.y + (info.height * info.resolution) / 2;
@@ -926,7 +1134,7 @@
     ctx.fill();
   }
   
-  function drawRobot(ctx, pose, info) {
+  function drawRobotLegacy(ctx, pose, info) {
     const { px, py } = worldToCanvas(pose.x, pose.y, info);
     const yawRad = (pose.yawDeg * Math.PI) / 180;
     const size = Math.max(8, view.scale * 3);
@@ -946,8 +1154,76 @@
     ctx.restore();
   }
   
+  function drawRobot(ctx, pose, info) {
+    const pixel = worldToCanvas(pose.x, pose.y, info);
+    const yawRad = (pose.yawDeg * Math.PI) / 180;
+    const size = Math.max(11, Math.min(17, view.scale * 3));
+
+    ctx.save();
+    ctx.translate(pixel.px, pixel.py);
+    ctx.fillStyle = 'rgba(34,197,94,0.2)';
+    ctx.beginPath();
+    ctx.arc(0, 0, size + 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#16a34a';
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(0, 0, size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.rotate(-yawRad);
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.moveTo(size - 3, 0);
+    ctx.lineTo(-3, 6);
+    ctx.lineTo(-3, -6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+    drawMapLabel(ctx, pixel.px, pixel.py - size - 12, 'AMR-01', '#166534');
+  }
+
   function quaternionToYawDeg(q) {
     const siny = 2 * (q.w * q.z + q.x * q.y);
     const cosy = 1 - 2 * (q.y * q.y + q.z * q.z);
     return (Math.atan2(siny, cosy) * 180) / Math.PI;
   }
+
+  window.addEventListener('amr-station-selected', (event) => {
+    destinationId = event.detail?.id || null;
+    destinationState = destinationId ? 'selected' : 'idle';
+    scheduleRedraw();
+  });
+
+  window.addEventListener('amr-destination-state', (event) => {
+    destinationState = event.detail?.state || 'idle';
+    destinationId = event.detail?.station?.id || destinationId;
+    scheduleRedraw();
+  });
+
+  window.addEventListener('amr-nav-status', (event) => {
+    const state = event.detail?.state;
+    if (state === 'navigating') destinationState = 'navigating';
+    if (state === 'failed') destinationState = 'failed';
+    if (state === 'cancelled' || state === 'cancelling') {
+      destinationState = 'selected';
+    }
+    scheduleRedraw();
+  });
+
+  window.addEventListener('amr-nav-arrived', () => {
+    destinationState = 'arrived';
+    scheduleRedraw();
+  });
+
+  window.addEventListener('amr-setpoints-changed', scheduleRedraw);
+  window.addEventListener('amr-keepout-changed', scheduleRedraw);
+  window.addEventListener('amr-role-changed', () => {
+    updateMapStatusHint();
+    scheduleRedraw();
+  });
+
+  document
+    .querySelectorAll('#map-layer-route, #map-layer-stations, #map-layer-keepout')
+    .forEach((input) => input.addEventListener('change', scheduleRedraw));

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <title>AMR Dashboard</title>
+  <title>Trung tâm vận hành AMR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="css/style.css" />
   <script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
@@ -16,9 +16,19 @@
   </script>
 </head>
 <body>
-  <header>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Logo_Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_H%E1%BB%8Dc_C%C3%B4ng_ngh%E1%BB%87_K%E1%BB%B9_Thu%E1%BA%ADt_TP_H%E1%BB%93_Ch%C3%AD_Minh.png" alt="HCM-UTE" class="header-logo" />
-    <h1>AMR Dashboard</h1>
+  <header class="app-header">
+    <div class="header-mark" aria-hidden="true">AMR</div>
+    <div class="brand-block">
+      <h1>Trung tâm vận hành AMR</h1>
+      <p>Giám sát và điều phối robot trong nhà máy</p>
+    </div>
+    <div class="header-health" aria-label="Trạng thái robot">
+      <span id="header-connection" class="health-pill health-offline"><i></i>Mất kết nối</span>
+      <span id="header-mission" class="health-pill">Chưa có nhiệm vụ</span>
+      <span id="header-safety" class="health-pill health-pending">Vùng an toàn: chưa xác nhận</span>
+      <span id="header-battery" class="health-pill">Pin: --</span>
+    </div>
+    <button type="button" id="btn-header-stop" class="header-stop" disabled>Dừng nhiệm vụ</button>
     <button type="button" id="btn-theme-toggle" class="theme-toggle" aria-label="Chế độ sáng" title="Chế độ sáng / tối">
       <span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span>
       <span class="theme-icon theme-icon-moon" aria-hidden="true">☽</span>
@@ -34,7 +44,7 @@
           <path d="M16 11l2 2 4-4"/>
         </svg>
       </span>
-      <span class="role-tab-label">Operator</span>
+      <span class="role-tab-label">Vận hành</span>
     </button>
     <button type="button" class="role-tab" data-role="setup" aria-selected="false">
       <span class="role-tab-icon" aria-hidden="true">
@@ -42,32 +52,45 @@
           <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
         </svg>
       </span>
-      <span class="role-tab-label">Setter</span>
+      <span class="role-tab-label">Kỹ thuật</span>
     </button>
   </nav>
 
   <main class="layout">
     <aside class="panel">
 
-      <section class="panel-section" data-role="both">
-        <h2 class="section-title">Config</h2>
+      <section class="panel-section operator-welcome" data-role="operator">
+        <div class="welcome-kicker">AMR-01</div>
+        <h2>Sẵn sàng nhận nhiệm vụ</h2>
+        <p id="operator-guidance">Chọn một điểm đến bên dưới để bắt đầu.</p>
+        <div class="operator-readouts">
+          <div><span>Vị trí</span><strong id="operator-position">Chưa xác định</strong></div>
+          <div><span>Tốc độ</span><strong id="operator-speed">0.00 m/s</strong></div>
+        </div>
+        <button type="button" id="btn-operator-reconnect" class="operator-reconnect">
+          Kết nối lại robot
+        </button>
+      </section>
+
+      <section class="panel-section" data-role="setup">
+        <h2 class="section-title">Kết nối hệ thống</h2>
         <div class="section-body">
           <div class="connect-row ip-row">
             <label class="ip-inline">
               <span class="ip-label">IP</span>
               <input id="ros-host" type="text" placeholder="192.168.x.x hoặc xxxx.ngrok-free.app" />
             </label>
-            <button id="btn-connect" type="button">Connect</button>
-            <span id="conn-status" class="disconnected">disconnected</span>
-            <span id="stm32-status" class="disconnected">STM32: disconnected</span>
+            <button id="btn-connect" type="button">Kết nối</button>
+            <span id="conn-status" class="disconnected">Chưa kết nối</span>
+            <span id="stm32-status" class="disconnected">STM32: chưa kết nối</span>
           </div>
         </div>
       </section>
 
-      <section class="panel-section" data-role="operator setup">
-        <h2 class="section-title">Teleop control</h2>
+      <section class="panel-section" data-role="setup">
+        <h2 class="section-title">Điều khiển thủ công</h2>
         <div class="section-body">
-          <p class="speed-row">Velocity: <span id="speed-label">0.20</span> m/s
+          <p class="speed-row">Tốc độ: <span id="speed-label">0.20</span> m/s
             <input id="speed-slider" type="range" min="0.05" max="0.8" step="0.05" value="0.2" />
           </p>
           <div class="teleop-grid">
@@ -80,8 +103,8 @@
         </div>
       </section>
 
-      <section class="panel-section" data-role="operator setup">
-        <h2 class="section-title">Robot Status</h2>
+      <section class="panel-section" data-role="setup">
+        <h2 class="section-title">Thông số kỹ thuật</h2>
         <div class="section-body status-grid">
           <div class="status-col status-col-left">
             <p>Vx: <span id="val-vx">--</span> m/s</p>
@@ -97,24 +120,24 @@
       </section>
 
       <section class="panel-section" data-role="operator setup">
-        <h2 class="section-title">Station control</h2>
+        <h2 class="section-title">Điểm đến và nhiệm vụ</h2>
         <div class="section-body">
           <div class="station-picker-row">
             <select id="station-setpoint-select" aria-label="Chọn setpoint">
               <option value="">-- Chưa có setpoint --</option>
             </select>
-            <button type="button" id="btn-edit-setpoint" class="btn-action btn-secondary station-edit-btn" disabled>Edit</button>
+            <button type="button" id="btn-edit-setpoint" class="btn-action btn-secondary station-edit-btn technical-action" disabled>Sửa</button>
           </div>
           <div class="station-btn-grid">
-            <button type="button" id="btn-setpoint" class="btn-action btn-secondary">Setpoint</button>
-            <button type="button" id="btn-auto-route" class="btn-action btn-secondary">Auto Route</button>
-            <button type="button" id="btn-go-station" class="btn-action">Go to Station</button>
-            <button type="button" id="btn-station-reset" class="btn-action btn-danger">Reset</button>
-            <button type="button" id="btn-nav-mode" class="btn-action btn-secondary">Nav mode: OFF</button>
-            <button type="button" id="btn-nav-cancel" class="btn-action btn-danger">Cancel navigation</button>
+            <button type="button" id="btn-setpoint" class="btn-action btn-secondary technical-action">Thêm điểm</button>
+            <button type="button" id="btn-auto-route" class="btn-action btn-secondary">Chạy quy trình</button>
+            <button type="button" id="btn-go-station" class="btn-action btn-primary-large">Bắt đầu di chuyển</button>
+            <button type="button" id="btn-station-reset" class="btn-action btn-secondary technical-action">Đặt lại</button>
+            <button type="button" id="btn-nav-mode" class="btn-action btn-secondary technical-action">Chọn đích trên map: Tắt</button>
+            <button type="button" id="btn-nav-cancel" class="btn-action btn-danger">Dừng nhiệm vụ</button>
           </div>
           <p id="station-status" class="hint">Chưa có station nào được chọn</p>
-          <p id="nav-status" class="hint">No goal</p>
+          <p id="nav-status" class="hint mission-status-line">Chưa có nhiệm vụ</p>
         </div>
       </section>
 
@@ -153,14 +176,39 @@
         </div>
       </section>
 
+      <section class="panel-section keepout-editor" data-role="setup">
+        <h2 class="section-title">Vùng an toàn</h2>
+        <div class="section-body">
+          <div id="keepout-nav2-state" class="safety-state safety-pending">
+            <strong>Nav2 chưa xác nhận</strong>
+            <span>Nạp map và kết nối để kích hoạt vùng cấm.</span>
+          </div>
+          <label>
+            Tên vùng
+            <input id="keepout-name" type="text" placeholder="Ví dụ: Khu vực máy ép" />
+          </label>
+          <label>
+            Lý do / ghi chú
+            <input id="keepout-reason" type="text" placeholder="Khu vực nguy hiểm, cấm robot đi vào" />
+          </label>
+          <div class="keepout-tools">
+            <button type="button" id="btn-keepout-draw" class="btn-action">Vẽ đa giác</button>
+            <button type="button" id="btn-keepout-finish" class="btn-action btn-secondary" disabled>Khép vùng</button>
+            <button type="button" id="btn-keepout-cancel" class="btn-action btn-secondary" disabled>Hủy vẽ</button>
+          </div>
+          <p id="keepout-hint" class="hint">Nhấn “Vẽ đa giác”, sau đó chọn ít nhất 3 điểm trên map.</p>
+          <ul id="keepout-list" class="keepout-list"></ul>
+        </div>
+      </section>
+
     </aside>
 
     <aside class="workflow-panel panel-section" data-role="operator setup">
-      <h2 class="section-title workflow-heading">Process</h2>
+      <h2 class="section-title workflow-heading">Quy trình nhiệm vụ</h2>
       <div class="workflow-toolbar">
-        <button type="button" id="btn-process-add" class="workflow-add-btn" title="Thêm bước" aria-label="Thêm bước">+</button>
-        <button type="button" id="btn-process-open" class="btn-action btn-secondary workflow-tool-btn">List</button>
-        <button type="button" id="btn-process-save" class="btn-action btn-secondary workflow-save-btn">Save</button>
+        <button type="button" id="btn-process-add" class="workflow-add-btn technical-action" title="Thêm bước" aria-label="Thêm bước">+</button>
+        <button type="button" id="btn-process-open" class="btn-action btn-secondary workflow-tool-btn">Danh sách</button>
+        <button type="button" id="btn-process-save" class="btn-action btn-secondary workflow-save-btn technical-action">Lưu</button>
       </div>
       <div class="section-body workflow-body">
         <div id="process-add-bar" class="process-add-bar hidden">
@@ -176,10 +224,20 @@
 
     <div class="map-column">
       <section class="map-area map-area-compact">
-        <p id="map-status" class="hint">Chưa có bản đồ - chạy localization hoặc SLAM</p>
+        <div class="map-heading">
+          <div>
+            <span class="eyebrow">BẢN ĐỒ NHÀ MÁY</span>
+            <p id="map-status" class="hint">Chưa có bản đồ - chạy localization hoặc SLAM</p>
+          </div>
+          <div class="map-layer-toggles" aria-label="Lớp hiển thị bản đồ">
+            <label><input id="map-layer-route" type="checkbox" checked /> Đường đi</label>
+            <label><input id="map-layer-stations" type="checkbox" checked /> Điểm đến</label>
+            <label><input id="map-layer-keepout" type="checkbox" checked /> Vùng cấm</label>
+          </div>
+        </div>
         <div class="map-canvas-wrap">
           <div class="map-canvas-inner">
-            <canvas id="map-canvas" width="720" height="420"></canvas>
+            <canvas id="map-canvas" width="1200" height="700"></canvas>
             <div class="map-view-controls" aria-label="Điều khiển zoom và pan map">
               <button type="button" id="map-zoom-out" class="map-ctrl-btn" aria-label="Thu nhỏ">−</button>
               <button type="button" id="map-zoom-in"  class="map-ctrl-btn" aria-label="Phóng to">+</button>
@@ -190,34 +248,40 @@
               <button type="button" id="map-pan-down"  class="map-ctrl-btn" aria-label="Xuống">▼</button>
               <button type="button" id="map-pan-right" class="map-ctrl-btn" aria-label="Phải">►</button>
             </div>
+            <div class="map-legend" aria-label="Chú giải bản đồ">
+              <span><i class="legend-robot"></i>Robot</span>
+              <span><i class="legend-route"></i>Đường dự kiến</span>
+              <span><i class="legend-station"></i>Điểm đến</span>
+              <span><i class="legend-keepout"></i>Vùng cấm</span>
+            </div>
           </div>
         </div>
       </section>
 
       <section class="panel-section setpoints-card" data-role="operator setup">
-        <h2 class="section-title">Setpoint list</h2>
+        <h2 class="section-title">Danh sách điểm đến</h2>
         <div class="section-body setpoints-body">
           <div class="conveyor-status-bar">
             <div class="conveyor-item">
               <span class="conveyor-label">Băng tải 1</span>
-              <span id="conveyor-1-status" class="status-badge status-free">Free</span>
+              <span id="conveyor-1-status" class="status-badge status-free">Sẵn sàng</span>
             </div>
             <div class="conveyor-item">
               <span class="conveyor-label">Băng tải 2</span>
-              <span id="conveyor-2-status" class="status-badge status-free">Free</span>
+              <span id="conveyor-2-status" class="status-badge status-free">Sẵn sàng</span>
             </div>
           </div>
           <div class="setpoints-table-wrap">
             <table class="setpoints-table">
               <thead>
                 <tr>
-                  <th class="col-order">Order</th>
-                  <th class="col-name">Name</th>
-                  <th class="col-type">Type</th>
-                  <th class="col-position">Position</th>
+                  <th class="col-order">STT</th>
+                  <th class="col-name">Tên điểm</th>
+                  <th class="col-type">Loại</th>
+                  <th class="col-position">Tọa độ</th>
                   <th class="col-cmd-belt">Lệnh băng tải 1</th>
                   <th class="col-cmd-belt">Lệnh băng tải 2</th>
-                  <th class="col-status">Status</th>
+                  <th class="col-status">Trạng thái</th>
                   <th class="col-action"></th>
                 </tr>
               </thead>
@@ -242,9 +306,9 @@
         <label>
           Loại điểm:
           <select id="setpoint-point-type" class="modal-select">
-            <option value="normal">Normal</option>
-            <option value="approach">Approach Pose</option>
-            <option value="home">Home</option>
+            <option value="normal">Điểm thường</option>
+            <option value="approach">Điểm tiếp cận trạm</option>
+            <option value="home">Điểm về nhà / sạc</option>
           </select>
         </label>
         <fieldset class="modal-fieldset">
@@ -269,17 +333,17 @@
             <label>
               Lệnh băng tải 1
               <select id="setpoint-belt1-cmd" class="modal-select">
-                <option value="none">None</option>
-                <option value="load">Load</option>
-                <option value="unload">Unload</option>
+                <option value="none">Không chạy</option>
+                <option value="load">Nạp hàng</option>
+                <option value="unload">Dỡ hàng</option>
               </select>
             </label>
             <label>
               Lệnh băng tải 2
               <select id="setpoint-belt2-cmd" class="modal-select">
-                <option value="none">None</option>
-                <option value="load">Load</option>
-                <option value="unload">Unload</option>
+                <option value="none">Không chạy</option>
+                <option value="load">Nạp hàng</option>
+                <option value="unload">Dỡ hàng</option>
               </select>
             </label>
           </div>
@@ -359,5 +423,7 @@
   <script src="js/map-data.js?v=4"></script>
   <script src="js/stations.js?v=12"></script>
   <script src="js/process.js?v=11"></script>
+  <script src="js/keepout.js?v=1"></script>
+  <script src="js/dashboard.js?v=1"></script>
 </body>
 </html>

@@ -42,6 +42,16 @@
         name: '/save_setpoints',
         serviceType: 'amr_web_interfaces/srv/SaveSetpoints',
       }),
+      loadKeepoutZones: new ROSLIB.Service({
+        ros,
+        name: '/load_keepout_zones',
+        serviceType: 'amr_web_interfaces/srv/LoadKeepoutZones',
+      }),
+      saveKeepoutZones: new ROSLIB.Service({
+        ros,
+        name: '/save_keepout_zones',
+        serviceType: 'amr_web_interfaces/srv/SaveKeepoutZones',
+      }),
       listProcesses: new ROSLIB.Service({
         ros,
         name: '/list_processes',
@@ -157,6 +167,36 @@
     return res;
   }
 
+  async function loadKeepoutZones(mapName) {
+    await waitUntilReady();
+    const name = await requireMapName(mapName);
+    const res = await callService(clients.loadKeepoutZones, {
+      map_name: name,
+    });
+    if (!res.success) throw new Error(res.message || 'Không tải được vùng cấm');
+    let zones = [];
+    try {
+      zones = JSON.parse(res.json_data || '[]');
+    } catch {
+      zones = [];
+    }
+    return { zones, nav2Active: !!res.nav2_active, message: res.message };
+  }
+
+  async function saveKeepoutZones(zones, mapName) {
+    await waitUntilReady();
+    const name = await requireMapName(mapName);
+    const res = await callService(clients.saveKeepoutZones, {
+      map_name: name,
+      json_data: JSON.stringify(zones),
+    });
+    if (!res.success) throw new Error(res.message || 'Không lưu được vùng cấm');
+    return {
+      nav2Active: !!res.nav2_active,
+      message: res.message,
+    };
+  }
+
   async function listProcesses(mapName) {
     await waitUntilReady();
     const name = await requireMapName(mapName);
@@ -246,6 +286,8 @@
     isReady: () => ready,
     loadSetpoints,
     saveSetpoints,
+    loadKeepoutZones,
+    saveKeepoutZones,
     listProcesses,
     loadProcess,
     saveProcess,

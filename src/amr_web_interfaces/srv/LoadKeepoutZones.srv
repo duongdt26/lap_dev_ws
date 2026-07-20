@@ -1,0 +1,7 @@
+# Tải các đa giác vùng cấm; map_name rỗng = map đang active.
+string map_name
+---
+bool success
+bool nav2_active
+string json_data
+string message

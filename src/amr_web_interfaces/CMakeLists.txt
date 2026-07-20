@@ -12,6 +12,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/SetActiveMap.srv"
   "srv/SaveSetpoints.srv"
   "srv/LoadSetpoints.srv"
+  "srv/SaveKeepoutZones.srv"
+  "srv/LoadKeepoutZones.srv"
   "srv/ListProcesses.srv"
   "srv/LoadProcess.srv"
   "srv/SaveProcess.srv"

@@ -34,15 +34,15 @@
   const conveyorState = { belt1: 'Free', belt2: 'Free' };
 
   const BELT_CMD_OPTIONS = [
-    { value: 'none', label: 'None' },
-    { value: 'load', label: 'Load' },
-    { value: 'unload', label: 'Unload' },
+    { value: 'none', label: 'Không chạy' },
+    { value: 'load', label: 'Nạp hàng' },
+    { value: 'unload', label: 'Dỡ hàng' },
   ];
 
   const POINT_TYPE_OPTIONS = [
-    { value: 'normal', label: 'Normal' },
-    { value: 'approach', label: 'Approach Pose' },
-    { value: 'home', label: 'Home' },
+    { value: 'normal', label: 'Điểm thường' },
+    { value: 'approach', label: 'Tiếp cận trạm' },
+    { value: 'home', label: 'Về nhà / sạc' },
   ];
 
   function normalizePointType(value) {
@@ -329,7 +329,7 @@
 
   function statusBadgeHtml(status) {
     const cls = status === 'Occupied' ? 'status-occupied' : 'status-free';
-    const label = status === 'Occupied' ? 'Occupied' : 'Free';
+    const label = status === 'Occupied' ? 'Đang bận' : 'Sẵn sàng';
     return `<span class="status-badge ${cls}">${label}</span>`;
   }
 
@@ -338,15 +338,21 @@
     const cls1 = conveyorBadgeClass(conveyorState.belt1);
     const cls2 = conveyorBadgeClass(conveyorState.belt2);
     conveyor1El.className = `status-badge ${cls1}`;
-    conveyor1El.textContent = conveyorState.belt1;
+    conveyor1El.textContent = conveyorStatusLabel(conveyorState.belt1);
     conveyor2El.className = `status-badge ${cls2}`;
-    conveyor2El.textContent = conveyorState.belt2;
+    conveyor2El.textContent = conveyorStatusLabel(conveyorState.belt2);
   }
 
   function conveyorBadgeClass(status) {
     if (status === 'Delivering') return 'status-delivering';
     if (status === 'Occupied') return 'status-occupied';
     return 'status-free';
+  }
+
+  function conveyorStatusLabel(status) {
+    if (status === 'Delivering') return 'Đang chuyển';
+    if (status === 'Occupied') return 'Đang bận';
+    return 'Sẵn sàng';
   }
 
   function normalizeConveyorStatus(status) {
@@ -398,6 +404,12 @@
     renderSetpointsList();
     renderStationPicker();
     updateStationStatus();
+    window.dispatchEvent(new CustomEvent('amr-station-selected', {
+      detail: {
+        id: selectedId,
+        station: setpoints.find((point) => point.id === selectedId) || null,
+      },
+    }));
   }
 
   function renderSetpointsList() {
@@ -693,6 +705,10 @@
     setWorkflowStep('goto', `Đang đi tới ${pt.name}...`);
     stationStatus.textContent = `Đang đi tới: ${pt.name}`;
 
+    window.dispatchEvent(new CustomEvent('amr-destination-state', {
+      detail: { state: 'navigating', station: pt },
+    }));
+
     try {
       if (isMagneticLinePoint(pt)) {
         await window.AmrNavigation.navigateAndWait(pt.x, pt.y, yawRad, {
@@ -890,6 +906,9 @@
 
   window.AmrStations = {
     getSetpoints: () => [...setpoints],
+    getSelectedId: () => selectedId,
+    getSelectedSetpoint: () =>
+      setpoints.find((point) => point.id === selectedId) || null,
     reloadFromServer: reloadSetpointsFromServer,
     setWorkflowStep,
     isApproachPoint,
