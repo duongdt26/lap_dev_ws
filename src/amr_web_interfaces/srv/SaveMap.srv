@@ -1,0 +1,5 @@
+# Lưu map vào ~/maps + tạo thư mục MAP_DATA/{map_name}
+string map_name
+---
+bool success
+string message

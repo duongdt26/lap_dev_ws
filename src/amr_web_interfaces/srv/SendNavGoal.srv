@@ -1,0 +1,8 @@
+# Gửi goal Nav2 từ web (tọa độ map frame, yaw radian)
+float64 x
+float64 y
+float64 yaw
+string controller_id
+---
+bool success
+string message

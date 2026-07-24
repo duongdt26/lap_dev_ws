@@ -1,0 +1,7 @@
+# Lưu process — json_data: {"steps":["name1","name2"], "updatedAt":"..."}
+string map_name
+string name
+string json_data
+---
+bool success
+string message

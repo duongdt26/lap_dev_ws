@@ -1,0 +1,7 @@
+{
+  "webUrl": "https://YOUR-TUNNEL.ngrok-free.app",
+  "rosbridgeHost": "YOUR-TUNNEL.ngrok-free.app",
+  "rosbridgePath": "/rosbridge",
+  "singleTunnel": true,
+  "updatedAt": "2026-01-01T00:00:00+00:00"
+}

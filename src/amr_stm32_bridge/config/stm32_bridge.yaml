@@ -1,0 +1,10 @@
+# Tham số stm32_conveyor_bridge_node (firmware Version3 trên xe thật)
+stm32_conveyor_bridge_node:
+  ros__parameters:
+    baudrate: 256000
+    simulate: false
+    ping_interval_sec: 0.5      # khuyến nghị 500ms
+    pong_timeout_sec: 2.0       # COMM_LOST nếu mất PONG >2s
+    belt_action_timeout_sec: 60.0
+    protocol_mode: legacy_v3    # không có seq, không gửi CMD READY
+    auto_ready: true            # legacy_v3 tự bỏ qua READY

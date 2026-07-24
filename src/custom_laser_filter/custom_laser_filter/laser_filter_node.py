@@ -37,8 +37,12 @@ class LaserFilterNode(Node):
         new_ranges = list(msg.ranges)
 
         # Size of robot AMR's frame
-        box_x_min, box_x_max = -0.7, 0.7 
-        box_y_min, box_y_max = -0.35, 0.35
+        box_x_min, box_x_max = -0.600, 0.600 #after measure in real world 0.532 + 0.035
+        box_y_min, box_y_max = -0.340, 0.340 #after measure in real world 0.288 + 0.035
+        # box_x_min, box_x_max = -0.567, 0.567 #after measure in real world 0.532 + 0.035
+        # box_y_min, box_y_max = -0.323, 0.323 #after measure in real world 0.288 + 0.035
+        # box_x_min, box_x_max = -0.7, 0.7 #before measure in real world
+        # box_y_min, box_y_max = -0.35, 0.35 #before measure in real world
 
         for i in range (len(new_ranges)):
             r = new_ranges[i]
@@ -55,8 +59,10 @@ class LaserFilterNode(Node):
             y_l = r * math.sin(angle)
 
             # Convert coordinate to baselink (based on xyz and rpy parameters in xacro)
-            x_base = -x_l + 0.545
-            y_base = -y_l + 0.2925
+            x_base = -x_l + 0.532 #after measure in real world
+            y_base = -y_l + 0.288 #after measure in real world
+            # x_base = -x_l + 0.545 #before measure in real world
+            # y_base = -y_l + 0.2925 #before measure in real world
             # x_base = -x_l + 0.2925
             # y_base = -y_l + 0.545
 
@@ -75,9 +81,14 @@ class LaserFilterNode(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = LaserFilterNode()
-    rclpy.spin(node=node)
-    node.destroy_node()
-    rclpy.shutdown()
+    try:
+        rclpy.spin(node=node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 if __name__ == '__main__':
     main()

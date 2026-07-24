@@ -1,0 +1,5 @@
+# Web báo map vừa được chọn/nạp
+string map_name
+---
+bool success
+string message

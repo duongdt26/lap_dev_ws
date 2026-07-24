@@ -1,0 +1,26 @@
+magnetic_line_follower_node:
+  ros__parameters:
+    baudrate: 115200
+    serial_timeout_sec: 0.10
+    bus_gap_sec: 0.035
+    front_sensor_id: 83
+    rear_sensor_id: 86
+
+    # Hinh hoc dang dung trong my_controllers.yaml.
+    gear_ratio: 30.0
+    wheel_radius_m: 0.09
+    wheel_separation_m: 0.5703
+
+    # Sau Nav2: dung on dinh, lay pose that, can yaw va quet ±90°.
+    settle_time_sec: 0.5
+    pose_timeout_sec: 1.0
+    yaw_align_deadband_deg: 5.0
+    lateral_deadband_m: 0.02
+    max_search_yaw_deg: 90.0
+    search_timeout_sec: 60.0
+    marker_clear_timeout_sec: 3.0
+    marker_clear_confirm_samples: 3
+    belt_timeout_sec: 60.0       # BT2 va cac belt khac
+    belt1_timeout_sec: 120.0     # Tinh tu luc gui lenh cho BT1
+    unload_side: LEFT
+    sensor_fault_timeout_sec: 1.0

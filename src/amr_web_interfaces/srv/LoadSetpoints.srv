@@ -1,0 +1,6 @@
+# Tải setpoint — map_name rỗng = map đang active
+string map_name
+---
+bool success
+string json_data
+string message

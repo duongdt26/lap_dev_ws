@@ -1,0 +1,414 @@
+duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 launch_robot.launch.py
+[INFO] [launch]: All log files can be found below /home/duo/.ros/log/2026-06-21-17-46-22-130555-duolap-35465
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [robot_state_publisher-1]: process started with pid [35498]
+[INFO] [ekf_node-2]: process started with pid [35500]
+[INFO] [imu_uart_node-3]: process started with pid [35502]
+[INFO] [laser_filter-4]: process started with pid [35504]
+[INFO] [twist_mux-5]: process started with pid [35506]
+[INFO] [map_bridge_node-6]: process started with pid [35508]
+[INFO] [nav_pose_bridge_node-7]: process started with pid [35510]
+[INFO] [rosbridge_websocket-8]: process started with pid [35512]
+[INFO] [rosapi_node-9]: process started with pid [35514]
+[twist_mux-5] [INFO] [1782038783.054694036] [twist_mux]: Topic handler 'topics.keyboard' subscribed to topic 'cmd_vel_key': timeout = 0.500000s , priority = 100.
+[twist_mux-5] [INFO] [1782038783.059495283] [twist_mux]: Topic handler 'topics.navigation' subscribed to topic 'cmd_vel': timeout = 0.500000s , priority = 10.
+[twist_mux-5] [INFO] [1782038783.061081633] [twist_mux]: Topic handler 'topics.web' subscribed to topic 'cmd_vel_web': timeout = 0.500000s , priority = 80.
+[robot_state_publisher-1] [INFO] [1782038783.183174431] [robot_state_publisher]: got segment base_footprint
+[robot_state_publisher-1] [INFO] [1782038783.183779433] [robot_state_publisher]: got segment base_link
+[robot_state_publisher-1] [INFO] [1782038783.183834145] [robot_state_publisher]: got segment caster_wheel_left_behind
+[robot_state_publisher-1] [INFO] [1782038783.183848582] [robot_state_publisher]: got segment caster_wheel_left_front
+[robot_state_publisher-1] [INFO] [1782038783.183860515] [robot_state_publisher]: got segment caster_wheel_right_behind
+[robot_state_publisher-1] [INFO] [1782038783.183877807] [robot_state_publisher]: got segment caster_wheel_right_front
+[robot_state_publisher-1] [INFO] [1782038783.183892745] [robot_state_publisher]: got segment chassis_1_link
+[robot_state_publisher-1] [INFO] [1782038783.183907944] [robot_state_publisher]: got segment imu_link
+[robot_state_publisher-1] [INFO] [1782038783.183920427] [robot_state_publisher]: got segment laser_frame
+[robot_state_publisher-1] [INFO] [1782038783.183932239] [robot_state_publisher]: got segment left_wheel
+[robot_state_publisher-1] [INFO] [1782038783.183944823] [robot_state_publisher]: got segment right_wheel
+[map_bridge_node-6] [INFO] [1782038783.750227933] [map_bridge_node]: Service /save_map (Trigger) → /home/duo/maps
+[map_bridge_node-6] [INFO] [1782038783.754249270] [map_bridge_node]: Service /list_maps → /home/duo/maps
+[laser_filter-4] [INFO] [1782038783.982785553] [laser_filter]: Laser Filter of Duo was started!!!
+[imu_uart_node-3] [INFO] [1782038784.240224326] [imu_uart_node]: Đã kết nối thành công với STM32 IMU qua cổng /dev/serial/by-path/pci-0000:05:00.3-usb-0:3:1.0-port0 (Baudrate: 256000)
+[rosbridge_websocket-8] [WARN] [1782038784.262319746] [rosbridge_websocket]: The 'default_call_service_timeout' parameter is currently set to 0.0, which means service calls will block indefinitely if no response is received. Please note that in the Jazzy and later releases, the default value for this parameter will be updated to 5.0 seconds.
+[rosbridge_websocket-8] [WARN] [1782038784.263534600] [rosbridge_websocket]: The 'call_services_in_new_thread' parameter is currently set to False, which means service calls will block the main thread. Please note that in the Jazzy and later releases, the default value for this parameter will be updated to True.
+[rosbridge_websocket-8] [WARN] [1782038784.264510698] [rosbridge_websocket]: The 'send_action_goals_in_new_thread' parameter is currently set to False, which means sending action goals will block the main thread. Please note that in the Jazzy and later releases, the default value for this parameter will be updated to True.
+[rosbridge_websocket-8] [INFO] [1782038784.269240141] [rosbridge_websocket]: Rosbridge WebSocket server started on port 9090
+[nav_pose_bridge_node-7] [INFO] [1782038784.487508723] [nav_pose_bridge_node]: Services: /send_nav_goal, /cancel_nav
+[nav_pose_bridge_node-7] [INFO] [1782038784.488271130] [nav_pose_bridge_node]: Topic: /robot_pose_map (4 Hz)
+[INFO] [ros2_control_node-10]: process started with pid [35664]
+[INFO] [spawner-11]: process started with pid [35666]
+[INFO] [spawner-12]: process started with pid [35668]
+[ros2_control_node-10] [WARN] [1782038787.930287631] [controller_manager]: [Deprecated] Passing the robot description parameter directly to the control_manager node is deprecated. Use '~/robot_description' topic from 'robot_state_publisher' instead.
+[ros2_control_node-10] [INFO] [1782038787.931076408] [resource_manager]: Loading hardware 'RealRobot' 
+[ros2_control_node-10] [INFO] [1782038787.933169426] [resource_manager]: Initialize hardware 'RealRobot' 
+[ros2_control_node-10] [INFO] [1782038787.933846594] [resource_manager]: Successful initialization of hardware 'RealRobot'
+[ros2_control_node-10] [INFO] [1782038787.934240762] [resource_manager]: 'configure' hardware 'RealRobot' 
+[ros2_control_node-10] [INFO] [1782038787.934278823] [resource_manager]: Successful 'configure' of hardware 'RealRobot'
+[ros2_control_node-10] [INFO] [1782038787.934291176] [resource_manager]: 'activate' hardware 'RealRobot' 
+[ros2_control_node-10] [INFO] [1782038787.934338074] [HinsonSystemHardware]: Connecting Modbus at /dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A5069RR4-if00-port0, baud 115200...
+[ros2_control_node-10] [INFO] [1782038788.165214803] [HinsonSystemHardware]: System Successfully Activated!
+[ros2_control_node-10] [INFO] [1782038788.165311654] [resource_manager]: Successful 'activate' of hardware 'RealRobot'
+[ros2_control_node-10] [INFO] [1782038788.200278694] [controller_manager]: update rate is 30 Hz
+[ros2_control_node-10] [INFO] [1782038788.200403998] [controller_manager]: Spawning controller_manager RT thread with scheduler priority: 50
+[ros2_control_node-10] [INFO] [1782038788.201722266] [controller_manager]: Successful set up FIFO RT scheduling policy with priority 50.
+[ros2_control_node-10] [INFO] [1782038788.528289014] [controller_manager]: Loading controller 'diff_cont'
+[spawner-11] [INFO] [1782038788.538986410] [spawner_joint_broad]: waiting for service /controller_manager/list_controllers to become available...
+[spawner-12] [INFO] [1782038788.625512952] [spawner_diff_cont]: Loaded diff_cont
+[ros2_control_node-10] [INFO] [1782038788.629595755] [controller_manager]: Configuring controller 'diff_cont'
+[spawner-12] [INFO] [1782038788.740951849] [spawner_diff_cont]: Configured and activated diff_cont
+[INFO] [spawner-12]: process has finished cleanly [pid 35668]
+[ros2_control_node-10] [INFO] [1782038791.550050521] [controller_manager]: Loading controller 'joint_broad'
+[spawner-11] [INFO] [1782038791.608204235] [spawner_joint_broad]: Loaded joint_broad
+[ros2_control_node-10] [INFO] [1782038791.611220331] [controller_manager]: Configuring controller 'joint_broad'
+[ros2_control_node-10] [INFO] [1782038791.611408604] [joint_broad]: 'joints' or 'interfaces' parameter is empty. All available state interfaces will be published
+[spawner-11] [INFO] [1782038791.707580023] [spawner_joint_broad]: Configured and activated joint_broad
+[INFO] [spawner-11]: process has finished cleanly [pid 35666]
+[rosbridge_websocket-8] [INFO] [1782038803.321558048] [rosbridge_websocket]: Calling services in existing thread
+[rosbridge_websocket-8] [INFO] [1782038803.322722950] [rosbridge_websocket]: Sending action goals in existing thread
+[rosbridge_websocket-8] [INFO] [1782038803.325047783] [rosbridge_websocket]: Client connected. 1 clients total.
+[rosbridge_websocket-8] [INFO] [1782038803.418978974] [rosbridge_websocket]: [Client 685392d4-4a7a-456c-8fac-19767812c6ae] Subscribed to /map
+[rosbridge_websocket-8] [INFO] [1782038803.423581864] [rosbridge_websocket]: [Client 685392d4-4a7a-456c-8fac-19767812c6ae] Subscribed to /amcl_pose
+[rosbridge_websocket-8] [INFO] [1782038803.428170717] [rosbridge_websocket]: [Client 685392d4-4a7a-456c-8fac-19767812c6ae] Subscribed to /plan
+[rosbridge_websocket-8] [INFO] [1782038803.432122948] [rosbridge_websocket]: [Client 685392d4-4a7a-456c-8fac-19767812c6ae] Subscribed to /received_global_plan
+[rosbridge_websocket-8] [INFO] [1782038803.475103386] [rosbridge_websocket]: [Client 685392d4-4a7a-456c-8fac-19767812c6ae] Subscribed to /web_plan_clear
+[rosbridge_websocket-8] [INFO] [1782038803.480139136] [rosbridge_websocket]: [Client 685392d4-4a7a-456c-8fac-19767812c6ae] Subscribed to /robot_pose_map
+[rosbridge_websocket-8] [INFO] [1782038803.829675518] [rosbridge_websocket]: [Client 685392d4-4a7a-456c-8fac-19767812c6ae] Subscribed to /odometry/filtered
+[rosbridge_websocket-8] [INFO] [1782038803.833820210] [rosbridge_websocket]: [Client 685392d4-4a7a-456c-8fac-19767812c6ae] Subscribed to /amcl_pose
+[rosbridge_websocket-8] [INFO] [1782038956.416694450] [rosbridge_websocket]: Calling services in existing thread
+[rosbridge_websocket-8] [INFO] [1782038956.417451191] [rosbridge_websocket]: Sending action goals in existing thread
+[rosbridge_websocket-8] [INFO] [1782038956.419413627] [rosbridge_websocket]: Client connected. 2 clients total.
+[rosbridge_websocket-8] [INFO] [1782038956.432039288] [rosbridge_websocket]: [Client e4a81088-aaf5-46fa-866d-31271688e548] Subscribed to /map
+[rosbridge_websocket-8] [INFO] [1782038956.433415282] [rosbridge_websocket]: [Client e4a81088-aaf5-46fa-866d-31271688e548] Subscribed to /amcl_pose
+[rosbridge_websocket-8] [INFO] [1782038956.441150709] [rosbridge_websocket]: [Client e4a81088-aaf5-46fa-866d-31271688e548] Subscribed to /plan
+[rosbridge_websocket-8] [INFO] [1782038956.446351005] [rosbridge_websocket]: [Client e4a81088-aaf5-46fa-866d-31271688e548] Subscribed to /received_global_plan
+[rosbridge_websocket-8] [INFO] [1782038956.454418515] [rosbridge_websocket]: [Client e4a81088-aaf5-46fa-866d-31271688e548] Subscribed to /web_plan_clear
+[rosbridge_websocket-8] [INFO] [1782038956.459857189] [rosbridge_websocket]: [Client e4a81088-aaf5-46fa-866d-31271688e548] Subscribed to /robot_pose_map
+[rosbridge_websocket-8] [INFO] [1782038956.907811775] [rosbridge_websocket]: [Client e4a81088-aaf5-46fa-866d-31271688e548] Subscribed to /odometry/filtered
+[rosbridge_websocket-8] [INFO] [1782038956.908916369] [rosbridge_websocket]: [Client e4a81088-aaf5-46fa-866d-31271688e548] Subscribed to /amcl_pose
+[rosbridge_websocket-8] [INFO] [1782038969.736627337] [rosbridge_websocket]: Calling services in existing thread
+[rosbridge_websocket-8] [INFO] [1782038969.737981280] [rosbridge_websocket]: Sending action goals in existing thread
+[rosbridge_websocket-8] [INFO] [1782038969.740894682] [rosbridge_websocket]: Client connected. 3 clients total.
+[rosbridge_websocket-8] [INFO] [1782038969.751319814] [rosbridge_websocket]: [Client 6978880c-ecb7-48bf-bae4-deec68571b60] Subscribed to /map
+[rosbridge_websocket-8] [INFO] [1782038969.754278592] [rosbridge_websocket]: [Client 6978880c-ecb7-48bf-bae4-deec68571b60] Subscribed to /amcl_pose
+[rosbridge_websocket-8] [INFO] [1782038969.755870723] [rosbridge_websocket]: [Client 6978880c-ecb7-48bf-bae4-deec68571b60] Subscribed to /plan
+[rosbridge_websocket-8] [INFO] [1782038969.757208526] [rosbridge_websocket]: [Client 6978880c-ecb7-48bf-bae4-deec68571b60] Subscribed to /received_global_plan
+[rosbridge_websocket-8] [INFO] [1782038969.761092912] [rosbridge_websocket]: [Client 6978880c-ecb7-48bf-bae4-deec68571b60] Subscribed to /web_plan_clear
+[rosbridge_websocket-8] [INFO] [1782038969.765034465] [rosbridge_websocket]: [Client 6978880c-ecb7-48bf-bae4-deec68571b60] Subscribed to /robot_pose_map
+[rosbridge_websocket-8] [INFO] [1782038970.237103395] [rosbridge_websocket]: [Client 6978880c-ecb7-48bf-bae4-deec68571b60] Subscribed to /odometry/filtered
+[rosbridge_websocket-8] [INFO] [1782038970.238346540] [rosbridge_websocket]: [Client 6978880c-ecb7-48bf-bae4-deec68571b60] Subscribed to /amcl_pose
+[rosbridge_websocket-8] [INFO] [1782039851.801802832] [rosbridge_websocket]: Client disconnected. 2 clients total.
+[rosbridge_websocket-8] [INFO] [1782039868.157226379] [rosbridge_websocket]: Calling services in existing thread
+[rosbridge_websocket-8] [INFO] [1782039868.158385310] [rosbridge_websocket]: Sending action goals in existing thread
+[rosbridge_websocket-8] [INFO] [1782039868.160801548] [rosbridge_websocket]: Client connected. 3 clients total.
+[rosbridge_websocket-8] [INFO] [1782039868.204439572] [rosbridge_websocket]: [Client cded2e27-7dd8-49c9-800e-c82d18a2e87f] Subscribed to /map
+[rosbridge_websocket-8] [INFO] [1782039868.206794605] [rosbridge_websocket]: [Client cded2e27-7dd8-49c9-800e-c82d18a2e87f] Subscribed to /amcl_pose
+[rosbridge_websocket-8] [INFO] [1782039868.208992921] [rosbridge_websocket]: [Client cded2e27-7dd8-49c9-800e-c82d18a2e87f] Subscribed to /plan
+[rosbridge_websocket-8] [INFO] [1782039868.212211526] [rosbridge_websocket]: [Client cded2e27-7dd8-49c9-800e-c82d18a2e87f] Subscribed to /received_global_plan
+[rosbridge_websocket-8] [INFO] [1782039868.215794771] [rosbridge_websocket]: [Client cded2e27-7dd8-49c9-800e-c82d18a2e87f] Subscribed to /web_plan_clear
+[rosbridge_websocket-8] [INFO] [1782039868.232912625] [rosbridge_websocket]: [Client cded2e27-7dd8-49c9-800e-c82d18a2e87f] Subscribed to /robot_pose_map
+[rosbridge_websocket-8] [INFO] [1782039868.652343803] [rosbridge_websocket]: [Client cded2e27-7dd8-49c9-800e-c82d18a2e87f] Subscribed to /odometry/filtered
+[rosbridge_websocket-8] [INFO] [1782039868.654125542] [rosbridge_websocket]: [Client cded2e27-7dd8-49c9-800e-c82d18a2e87f] Subscribed to /amcl_pose
+[map_bridge_node-6] [INFO] [1782039885.507676385] [map_bridge_node]: Lưu map: ros2 run nav2_map_server map_saver_cli -f /home/duo/maps/mks_2106_001_map_save
+[ekf_node-2] Failed to meet update rate! Took 0.054020624000000003195seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.63018893099999995222seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.80316320699999999011seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.21194967100000000615seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.26979540499999998815seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.45846249199999999924seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.167154725000000004seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.24888237499999998903seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[rosbridge_websocket-8] [INFO] [1782040603.642422864] [rosbridge_websocket]: Client disconnected. 2 clients total.
+[rosbridge_websocket-8] [WARN] [1782040603.823951894] [rosbridge_websocket]: WebSocketClosedError: Tried to write to a closed websocket
+[rosbridge_websocket-8] [WARN] [1782040604.827179010] [rosbridge_websocket]: WebSocketClosedError: Tried to write to a closed websocket
+[rosbridge_websocket-8] [WARN] [1782040605.828390913] [rosbridge_websocket]: WebSocketClosedError: Tried to write to a closed websocket
+[rosbridge_websocket-8] [WARN] [1782040606.828625753] [rosbridge_websocket]: WebSocketClosedError: Tried to write to a closed websocket
+[rosbridge_websocket-8] [WARN] [1782040607.828956948] [rosbridge_websocket]: WebSocketClosedError: Tried to write to a closed websocket
+[rosbridge_websocket-8] [WARN] [1782040608.829352727] [rosbridge_websocket]: WebSocketClosedError: Tried to write to a closed websocket
+[rosbridge_websocket-8] [WARN] [1782040609.829778947] [rosbridge_websocket]: WebSocketClosedError: Tried to write to a closed websocket
+[ekf_node-2] Failed to meet update rate! Took 0.1389679669999999978seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.060416618999999997797seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.15542142500000000194seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.24320316000000000156seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.10049817099999999725seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.31918640199999998019seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.10812340300000000681seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.14807463800000000842seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.12761234199999998973seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.11522889799999999627seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.050848358000000003221seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.30575075899999998308seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.061787758999999997656seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.14987809999999998634seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.090762371999999993943seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.12679399699999999163seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.11237639300000000497seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.064805367000000002609seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.066441541000000006734seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.20303000600000001286seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.12020193299999999692seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.20948537500000000144seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.24281571199999998911seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.1642313450000000008seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.084456340000000004742seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.33436083300000002394seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.10505488300000000168seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.090092485999999999402seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.052878848999999998604seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.10655613199999999785seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.15991740600000001193seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.12291640199999999405seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.14123204200000000208seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.099533784000000000147seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.10335047699999999615seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.38977405500000000815seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.085519696000000006153seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.10108274300000000268seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.47535371999999997961seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.46503760999999999015seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.066426549000000001399seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.058340672000000003139seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.23656506799999998947seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.23045906799999998915seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.18095983600000001279seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.2094388950000000138seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.15776124699999999335seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.097486383999999995376seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.18338202100000000616seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.28135306500000001328seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.093310728999999995037seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.095106816999999996276seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.10802518399999999632seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.33690547300000001085seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.26173168299999999276seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.32341059999999999253seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.16560249599999998793seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.11551209199999999677seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.14169473199999998991seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.15726064400000000498seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.054032634000000002994seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.12133574499999999485seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.34478487000000002105seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.16002397700000001168seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.17587098100000000955seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.17825787100000001217seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.17824096799999999963seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.41575351300000001897seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.27986742599999997472seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.42668860299999999963seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.19636874000000001383seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.34005030899999999505seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.25552778100000000938seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.33132507900000002232seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.09268545899999999782seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.13242303199999999608seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.18250867700000000804seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.22381909599999999516seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.27137115800000000121seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.22161855799999999328seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.41584634399999997889seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.40251742299999998531seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.11679304599999999759seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.23100169700000000583seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.2084134500000000001seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.071167753000000000263seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.99319007999999997516seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.87200522000000002532seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.50584581399999994922seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.26497702000000000755seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.32779407999999998768seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.22728395000000001236seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.10428240799999999311seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.061792558999999996905seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.22635113200000001044seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.24524864399999998787seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.19910761399999998833seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.20936477200000000454seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.20956727499999999731seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.20325828000000001339seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.23929850699999999364seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.47419724600000001669seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.3498767150000000048seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.29318796899999999273seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.27544912300000001792seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.22591200799999999749seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.21971137800000001272seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.15901070800000000061seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.20375826599999999345seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.18477335000000000287seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.18889469899999999924seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.14702537600000001317seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.13917495899999998699seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.1885238469999999944seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.094713003000000003939seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.77731934400000002316seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.16653906399999998666seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.33450453200000002107seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.32500128099999997522seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.10240809500000000454seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-2] Failed to meet update rate! Took 0.066553376999999996899seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[rosbridge_websocket-8] [INFO] [1782041606.581998668] [rosbridge_websocket]: Client disconnected. 1 clients total.
+[rosbridge_websocket-8] [WARN] [1782041606.627682720] [rosbridge_websocket]: WebSocketClosedError: Tried to write to a closed websocket
+[rosbridge_websocket-8] [WARN] [1782041607.627811997] [rosbridge_websocket]: WebSocketClosedError: Tried to write to a closed websocket
+[rosbridge_websocket-8] [WARN] [1782041608.629504556] [rosbridge_websocket]: WebSocketClosedError: Tried to write to a closed websocket
+[rosbridge_websocket-8] [WARN] [1782041609.629775419] [rosbridge_websocket]: WebSocketClosedError: Tried to write to a closed websocket
+[rosbridge_websocket-8] [INFO] [1782041610.717252860] [rosbridge_websocket]: Calling services in existing thread
+[rosbridge_websocket-8] [INFO] [1782041610.718548234] [rosbridge_websocket]: Sending action goals in existing thread
+[rosbridge_websocket-8] [INFO] [1782041610.726868289] [rosbridge_websocket]: Client connected. 2 clients total.
+[rosbridge_websocket-8] [INFO] [1782041610.736794657] [rosbridge_websocket]: [Client 76bca3b5-6676-4599-a0a8-dc4c1b5d2ac0] Subscribed to /map
+[rosbridge_websocket-8] [INFO] [1782041610.745093602] [rosbridge_websocket]: [Client 76bca3b5-6676-4599-a0a8-dc4c1b5d2ac0] Subscribed to /amcl_pose
+[rosbridge_websocket-8] [INFO] [1782041610.753084423] [rosbridge_websocket]: [Client 76bca3b5-6676-4599-a0a8-dc4c1b5d2ac0] Subscribed to /plan
+[rosbridge_websocket-8] [INFO] [1782041610.762485817] [rosbridge_websocket]: [Client 76bca3b5-6676-4599-a0a8-dc4c1b5d2ac0] Subscribed to /received_global_plan
+[rosbridge_websocket-8] [INFO] [1782041610.769784396] [rosbridge_websocket]: [Client 76bca3b5-6676-4599-a0a8-dc4c1b5d2ac0] Subscribed to /web_plan_clear
+[rosbridge_websocket-8] [INFO] [1782041610.783952001] [rosbridge_websocket]: [Client 76bca3b5-6676-4599-a0a8-dc4c1b5d2ac0] Subscribed to /robot_pose_map
+[rosbridge_websocket-8] [INFO] [1782041611.155941482] [rosbridge_websocket]: [Client 76bca3b5-6676-4599-a0a8-dc4c1b5d2ac0] Subscribed to /odometry/filtered
+[rosbridge_websocket-8] [INFO] [1782041611.158957697] [rosbridge_websocket]: [Client 76bca3b5-6676-4599-a0a8-dc4c1b5d2ac0] Subscribed to /amcl_pose
+[rosbridge_websocket-8] [INFO] [1782041636.401718118] [rosbridge_websocket]: Client disconnected. 1 clients total.
+[rosbridge_websocket-8] [INFO] [1782041637.632800965] [rosbridge_websocket]: Calling services in existing thread
+[rosbridge_websocket-8] [INFO] [1782041637.634029623] [rosbridge_websocket]: Sending action goals in existing thread
+[rosbridge_websocket-8] [INFO] [1782041637.636583792] [rosbridge_websocket]: Client connected. 2 clients total.
+[rosbridge_websocket-8] [INFO] [1782041637.639526017] [rosbridge_websocket]: [Client cc172c76-cf0d-43af-80f5-ced083900831] Subscribed to /map
+[rosbridge_websocket-8] [INFO] [1782041637.641360283] [rosbridge_websocket]: [Client cc172c76-cf0d-43af-80f5-ced083900831] Subscribed to /amcl_pose
+[rosbridge_websocket-8] [INFO] [1782041637.657794662] [rosbridge_websocket]: [Client cc172c76-cf0d-43af-80f5-ced083900831] Subscribed to /plan
+[rosbridge_websocket-8] [INFO] [1782041637.659604902] [rosbridge_websocket]: [Client cc172c76-cf0d-43af-80f5-ced083900831] Subscribed to /received_global_plan
+[rosbridge_websocket-8] [INFO] [1782041637.661917183] [rosbridge_websocket]: [Client cc172c76-cf0d-43af-80f5-ced083900831] Subscribed to /web_plan_clear
+[rosbridge_websocket-8] [INFO] [1782041637.668512069] [rosbridge_websocket]: [Client cc172c76-cf0d-43af-80f5-ced083900831] Subscribed to /robot_pose_map
+[rosbridge_websocket-8] [INFO] [1782041638.116403205] [rosbridge_websocket]: [Client cc172c76-cf0d-43af-80f5-ced083900831] Subscribed to /odometry/filtered
+[rosbridge_websocket-8] [INFO] [1782041638.117939976] [rosbridge_websocket]: [Client cc172c76-cf0d-43af-80f5-ced083900831] Subscribed to /amcl_pose
+[rosbridge_websocket-8] [INFO] [1782041664.702530453] [rosbridge_websocket]: Client disconnected. 1 clients total.
+[rosbridge_websocket-8] [INFO] [1782041667.382266098] [rosbridge_websocket]: Calling services in existing thread
+[rosbridge_websocket-8] [INFO] [1782041667.383666311] [rosbridge_websocket]: Sending action goals in existing thread
+[rosbridge_websocket-8] [INFO] [1782041667.386763770] [rosbridge_websocket]: Client connected. 2 clients total.
+[rosbridge_websocket-8] [INFO] [1782041667.392187316] [rosbridge_websocket]: [Client 91f39301-a40c-40f0-b1ed-777857c73d81] Subscribed to /map
+[rosbridge_websocket-8] [INFO] [1782041667.394580100] [rosbridge_websocket]: [Client 91f39301-a40c-40f0-b1ed-777857c73d81] Subscribed to /amcl_pose
+[rosbridge_websocket-8] [INFO] [1782041667.396909794] [rosbridge_websocket]: [Client 91f39301-a40c-40f0-b1ed-777857c73d81] Subscribed to /plan
+[rosbridge_websocket-8] [INFO] [1782041667.399024411] [rosbridge_websocket]: [Client 91f39301-a40c-40f0-b1ed-777857c73d81] Subscribed to /received_global_plan
+[rosbridge_websocket-8] [INFO] [1782041667.401168173] [rosbridge_websocket]: [Client 91f39301-a40c-40f0-b1ed-777857c73d81] Subscribed to /web_plan_clear
+[rosbridge_websocket-8] [INFO] [1782041667.407797533] [rosbridge_websocket]: [Client 91f39301-a40c-40f0-b1ed-777857c73d81] Subscribed to /robot_pose_map
+[rosbridge_websocket-8] [INFO] [1782041667.882674276] [rosbridge_websocket]: [Client 91f39301-a40c-40f0-b1ed-777857c73d81] Subscribed to /odometry/filtered
+[rosbridge_websocket-8] [INFO] [1782041667.884029474] [rosbridge_websocket]: [Client 91f39301-a40c-40f0-b1ed-777857c73d81] Subscribed to /amcl_pose
+[rosbridge_websocket-8] [INFO] [1782041748.469369796] [rosbridge_websocket]: Client disconnected. 1 clients total.
+[rosbridge_websocket-8] [INFO] [1782041751.490519333] [rosbridge_websocket]: Calling services in existing thread
+[rosbridge_websocket-8] [INFO] [1782041751.491782927] [rosbridge_websocket]: Sending action goals in existing thread
+[rosbridge_websocket-8] [INFO] [1782041751.494210397] [rosbridge_websocket]: Client connected. 2 clients total.
+[rosbridge_websocket-8] [INFO] [1782041751.499746546] [rosbridge_websocket]: [Client 36ad7b0c-236d-46ac-a497-2034c41c3b45] Subscribed to /map
+[rosbridge_websocket-8] [INFO] [1782041751.506360026] [rosbridge_websocket]: [Client 36ad7b0c-236d-46ac-a497-2034c41c3b45] Subscribed to /amcl_pose
+[rosbridge_websocket-8] [INFO] [1782041751.508747149] [rosbridge_websocket]: [Client 36ad7b0c-236d-46ac-a497-2034c41c3b45] Subscribed to /plan
+[rosbridge_websocket-8] [INFO] [1782041751.511397089] [rosbridge_websocket]: [Client 36ad7b0c-236d-46ac-a497-2034c41c3b45] Subscribed to /received_global_plan
+[rosbridge_websocket-8] [INFO] [1782041751.513834498] [rosbridge_websocket]: [Client 36ad7b0c-236d-46ac-a497-2034c41c3b45] Subscribed to /web_plan_clear
+[rosbridge_websocket-8] [INFO] [1782041751.520622779] [rosbridge_websocket]: [Client 36ad7b0c-236d-46ac-a497-2034c41c3b45] Subscribed to /robot_pose_map
+[rosbridge_websocket-8] [INFO] [1782041751.989667495] [rosbridge_websocket]: [Client 36ad7b0c-236d-46ac-a497-2034c41c3b45] Subscribed to /odometry/filtered
+[rosbridge_websocket-8] [INFO] [1782041751.991956822] [rosbridge_websocket]: [Client 36ad7b0c-236d-46ac-a497-2034c41c3b45] Subscribed to /amcl_pose
+[imu_uart_node-3] Traceback (most recent call last):
+[imu_uart_node-3]   File "/home/duo/dev_ws/install/amr_imu_driver/lib/amr_imu_driver/imu_uart_node", line 33, in <module>
+[imu_uart_node-3]     sys.exit(load_entry_point('amr-imu-driver', 'console_scripts', 'imu_uart_node')())
+[imu_uart_node-3]   File "/home/duo/dev_ws/build/amr_imu_driver/amr_imu_driver/imu_uart_node.py", line 145, in main
+[imu_uart_node-3]     rclpy.spin(node)
+[imu_uart_node-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 229, in spin
+[imu_uart_node-3]     executor.spin_once()
+[imu_uart_node-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 808, in spin_once
+[imu_uart_node-3]     self._spin_once_impl(timeout_sec)
+[imu_uart_node-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 805, in _spin_once_impl
+[imu_uart_node-3]     raise handler.exception()
+[imu_uart_node-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/task.py", line 272, in _execute_coroutine_step
+[imu_uart_node-3]     result = coro.send(None)
+[imu_uart_node-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 488, in handler
+[imu_uart_node-3]     await call_coroutine(entity, arg)
+[imu_uart_node-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 396, in _execute_timer
+[imu_uart_node-3]     await await_or_execute(tmr.callback)
+[imu_uart_node-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 110, in await_or_execute
+[imu_uart_node-3]     return callback(*args)
+[imu_uart_node-3]   File "/home/duo/dev_ws/build/amr_imu_driver/amr_imu_driver/imu_uart_node.py", line 59, in read_serial_callback
+[imu_uart_node-3]     if self.ser.in_waiting > 0:
+[imu_uart_node-3]   File "/usr/lib/python3/dist-packages/serial/serialposix.py", line 549, in in_waiting
+[imu_uart_node-3]     s = fcntl.ioctl(self.fd, TIOCINQ, TIOCM_zero_str)
+[imu_uart_node-3] OSError: [Errno 5] Input/output error
+[ERROR] [imu_uart_node-3]: process has died [pid 35502, exit code 1, cmd '/home/duo/dev_ws/install/amr_imu_driver/lib/amr_imu_driver/imu_uart_node --ros-args'].
+[ros2_control_node-10] [WARN] [1782041889.702124472] [HinsonSystemHardware]: Lỗi đọc Modbus: Connection timed out (Mã lỗi: 110)
+[ros2_control_node-10] [WARN] [1782041890.202438170] [HinsonSystemHardware]: Lỗi ghi Modbus: Connection timed out (Mã lỗi: 110)
+[rosbridge_websocket-8] [INFO] [1782041948.784621965] [rosbridge_websocket]: Client disconnected. 1 clients total.
+^C[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[twist_mux-5] [INFO] [1782042058.708723526] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[robot_state_publisher-1] [INFO] [1782042058.708799470] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[ekf_node-2] [INFO] [1782042058.708777769] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[map_bridge_node-6] Traceback (most recent call last):
+[map_bridge_node-6]   File "/home/duo/dev_ws/install/amr_web_bridge/lib/amr_web_bridge/map_bridge_node", line 33, in <module>
+[map_bridge_node-6]     sys.exit(load_entry_point('amr-web-bridge', 'console_scripts', 'map_bridge_node')())
+[map_bridge_node-6]   File "/home/duo/dev_ws/build/amr_web_bridge/amr_web_bridge/map_bridge_node.py", line 77, in main
+[map_bridge_node-6]     rclpy.spin(node)
+[map_bridge_node-6]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 229, in spin
+[map_bridge_node-6]     executor.spin_once()
+[map_bridge_node-6]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 808, in spin_once
+[map_bridge_node-6]     self._spin_once_impl(timeout_sec)
+[map_bridge_node-6]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 797, in _spin_once_impl
+[map_bridge_node-6]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[map_bridge_node-6]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 780, in wait_for_ready_callbacks
+[map_bridge_node-6]     return next(self._cb_iter)
+[map_bridge_node-6]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 677, in _wait_for_ready_callbacks
+[map_bridge_node-6]     wait_set.wait(timeout_nsec)
+[map_bridge_node-6] KeyboardInterrupt
+[nav_pose_bridge_node-7] Traceback (most recent call last):
+[nav_pose_bridge_node-7]   File "/home/duo/dev_ws/install/amr_web_bridge/lib/amr_web_bridge/nav_pose_bridge_node", line 33, in <module>
+[nav_pose_bridge_node-7]     sys.exit(load_entry_point('amr-web-bridge', 'console_scripts', 'nav_pose_bridge_node')())
+[nav_pose_bridge_node-7]   File "/home/duo/dev_ws/build/amr_web_bridge/amr_web_bridge/nav_pose_bridge_node.py", line 170, in main
+[nav_pose_bridge_node-7]     rclpy.spin(node)
+[nav_pose_bridge_node-7]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 229, in spin
+[nav_pose_bridge_node-7]     executor.spin_once()
+[nav_pose_bridge_node-7]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 808, in spin_once
+[nav_pose_bridge_node-7]     self._spin_once_impl(timeout_sec)
+[nav_pose_bridge_node-7]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 797, in _spin_once_impl
+[nav_pose_bridge_node-7]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[nav_pose_bridge_node-7]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 780, in wait_for_ready_callbacks
+[nav_pose_bridge_node-7]     return next(self._cb_iter)
+[nav_pose_bridge_node-7]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 677, in _wait_for_ready_callbacks
+[nav_pose_bridge_node-7]     wait_set.wait(timeout_nsec)
+[nav_pose_bridge_node-7] KeyboardInterrupt
+[ros2_control_node-10] [INFO] [1782042058.713044132] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[ros2_control_node-10] [INFO] [1782042058.713195518] [controller_manager]: Shutdown request received....
+[ros2_control_node-10] [INFO] [1782042058.713274418] [controller_manager]: Shutting down all controllers in the controller manager.
+[ros2_control_node-10] [INFO] [1782042058.713314374] [controller_manager]: Deactivating controller 'diff_cont'
+[ros2_control_node-10] [INFO] [1782042058.713379898] [controller_manager]: Shutting down controller 'diff_cont'
+[ros2_control_node-10] [INFO] [1782042058.713429011] [controller_manager]: Deactivating controller 'joint_broad'
+[ros2_control_node-10] [INFO] [1782042058.713472563] [controller_manager]: Shutting down controller 'joint_broad'
+[ros2_control_node-10] [INFO] [1782042058.713523239] [resource_manager]: 'shutdown' hardware 'RealRobot' 
+[ros2_control_node-10] [INFO] [1782042058.713540402] [resource_manager]: Successful 'shutdown' of hardware 'RealRobot'
+[ros2_control_node-10] [INFO] [1782042058.713551723] [controller_manager]: Shutting down the controller manager.
+[laser_filter-4] Traceback (most recent call last):
+[laser_filter-4]   File "/home/duo/dev_ws/install/custom_laser_filter/lib/custom_laser_filter/laser_filter", line 33, in <module>
+[laser_filter-4]     sys.exit(load_entry_point('custom-laser-filter', 'console_scripts', 'laser_filter')())
+[laser_filter-4]   File "/home/duo/dev_ws/build/custom_laser_filter/custom_laser_filter/laser_filter_node.py", line 84, in main
+[laser_filter-4]     rclpy.spin(node=node)
+[laser_filter-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 229, in spin
+[laser_filter-4]     executor.spin_once()
+[laser_filter-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 808, in spin_once
+[laser_filter-4]     self._spin_once_impl(timeout_sec)
+[laser_filter-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 797, in _spin_once_impl
+[laser_filter-4]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[laser_filter-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 780, in wait_for_ready_callbacks
+[laser_filter-4]     return next(self._cb_iter)
+[laser_filter-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 677, in _wait_for_ready_callbacks
+[laser_filter-4]     wait_set.wait(timeout_nsec)
+[laser_filter-4] KeyboardInterrupt
+[rosbridge_websocket-8] registered capabilities (classes):
+[rosbridge_websocket-8]  - <class 'rosbridge_library.capabilities.advertise.Advertise'>
+[rosbridge_websocket-8]  - <class 'rosbridge_library.capabilities.publish.Publish'>
+[rosbridge_websocket-8]  - <class 'rosbridge_library.capabilities.subscribe.Subscribe'>
+[rosbridge_websocket-8]  - <class 'rosbridge_library.capabilities.defragmentation.Defragment'>
+[rosbridge_websocket-8]  - <class 'rosbridge_library.capabilities.advertise_service.AdvertiseService'>
+[rosbridge_websocket-8]  - <class 'rosbridge_library.capabilities.call_service.CallService'>
+[rosbridge_websocket-8]  - <class 'rosbridge_library.capabilities.service_response.ServiceResponse'>
+[rosbridge_websocket-8]  - <class 'rosbridge_library.capabilities.unadvertise_service.UnadvertiseService'>
+[rosbridge_websocket-8]  - <class 'rosbridge_library.capabilities.advertise_action.AdvertiseAction'>
+[rosbridge_websocket-8]  - <class 'rosbridge_library.capabilities.action_feedback.ActionFeedback'>
+[rosbridge_websocket-8]  - <class 'rosbridge_library.capabilities.action_result.ActionResult'>
+[rosbridge_websocket-8]  - <class 'rosbridge_library.capabilities.send_action_goal.SendActionGoal'>
+[rosbridge_websocket-8]  - <class 'rosbridge_library.capabilities.unadvertise_action.UnadvertiseAction'>
+[rosbridge_websocket-8] Exiting due to SIGINT
+[ERROR] [map_bridge_node-6]: process has died [pid 35508, exit code -2, cmd '/home/duo/dev_ws/install/amr_web_bridge/lib/amr_web_bridge/map_bridge_node --ros-args -r __node:=map_bridge_node'].
+[INFO] [twist_mux-5]: process has finished cleanly [pid 35506]
+[ERROR] [laser_filter-4]: process has died [pid 35504, exit code -2, cmd '/home/duo/dev_ws/install/custom_laser_filter/lib/custom_laser_filter/laser_filter --ros-args -r __node:=laser_filter'].
+[INFO] [robot_state_publisher-1]: process has finished cleanly [pid 35498]
+[ERROR] [nav_pose_bridge_node-7]: process has died [pid 35510, exit code -2, cmd '/home/duo/dev_ws/install/amr_web_bridge/lib/amr_web_bridge/nav_pose_bridge_node --ros-args -r __node:=nav_pose_bridge_node'].
+[INFO] [ekf_node-2]: process has finished cleanly [pid 35500]
+[INFO] [ros2_control_node-10]: process has finished cleanly [pid 35664]
+[INFO] [rosapi_node-9]: process has finished cleanly [pid 35514]
+[INFO] [rosbridge_websocket-8]: process has finished cleanly [pid 35512]
+
