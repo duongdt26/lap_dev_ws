@@ -26,3 +26,10 @@ log/
 # ngrok runtime
 web/amr_dashboard/config.json
 scripts/.ngrok_amr.pid
+
+# FastAPI local runtime (mau an toan nam o backend/.env.example)
+backend/.env
+.venv-api/
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal

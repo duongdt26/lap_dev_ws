@@ -1,0 +1,10 @@
+# Giu bo FastAPI/Starlette on dinh, tuong thich Python 3.10 cua ROS 2 Humble.
+fastapi>=0.115,<0.116
+uvicorn>=0.30,<0.35
+SQLAlchemy>=2.0,<3
+alembic>=1.13,<2
+argon2-cffi>=23.1,<26
+websockets>=13,<15
+python-multipart>=0.0.9,<1
+# AnyIO 3.x on dinh voi Python 3.10 cua ROS 2 Humble/Ubuntu 22.04.
+anyio>=3.7,<4

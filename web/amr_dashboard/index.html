@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <title>AMR Dashboard</title>
+  <title>AMR Dashboard · HCMUTE</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=19" />
   <script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
   <script>
     (function () {
@@ -16,13 +19,38 @@
   </script>
 </head>
 <body>
-  <header>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Logo_Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_H%E1%BB%8Dc_C%C3%B4ng_ngh%E1%BB%87_K%E1%BB%B9_Thu%E1%BA%ADt_TP_H%E1%BB%93_Ch%C3%AD_Minh.png" alt="HCM-UTE" class="header-logo" />
-    <h1>AMR Dashboard</h1>
-    <button type="button" id="btn-theme-toggle" class="theme-toggle" aria-label="Chế độ sáng" title="Chế độ sáng / tối">
-      <span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span>
-      <span class="theme-icon theme-icon-moon" aria-hidden="true">☽</span>
-    </button>
+  <header class="app-header">
+    <div class="brand">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Logo_Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_H%E1%BB%8Dc_C%C3%B4ng_ngh%E1%BB%87_K%E1%BB%B9_Thu%E1%BA%ADt_TP_H%E1%BB%93_Ch%C3%AD_Minh.png" alt="HCM-UTE" class="header-logo" />
+      <div class="brand-text">
+        <p class="brand-org">HCMUTE Robotics</p>
+        <h1>AMR Dashboard</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div id="auth-user-box" class="auth-user-box hidden" aria-label="Tài khoản đang đăng nhập">
+        <span id="auth-user-label"></span>
+        <button type="button" id="btn-auth-logout" class="auth-logout">Đăng xuất</button>
+      </div>
+      <div class="header-conn" aria-label="Trạng thái kết nối">
+        <span id="conn-status" class="conn-pill disconnected">ROS: disconnected</span>
+        <span id="stm32-status" class="conn-pill disconnected">STM32: disconnected</span>
+      </div>
+      <input id="ros-host" type="hidden" value="" />
+      <button type="button" id="btn-theme-toggle" class="theme-toggle" aria-label="Chế độ sáng" title="Chế độ sáng / tối">
+        <span class="theme-track" aria-hidden="true">
+          <span class="theme-knob">
+            <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="4"/>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+            </svg>
+            <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 0 0 11.5 11.5z"/>
+            </svg>
+          </span>
+        </span>
+      </button>
+    </div>
   </header>
 
   <nav class="role-nav" aria-label="Vai trò người dùng">
@@ -49,49 +77,29 @@
   <main class="layout">
     <aside class="panel">
 
-      <section class="panel-section" data-role="both">
-        <h2 class="section-title">Config</h2>
-        <div class="section-body">
-          <div class="connect-row ip-row">
-            <label class="ip-inline">
-              <span class="ip-label">IP</span>
-              <input id="ros-host" type="text" placeholder="192.168.x.x hoặc xxxx.ngrok-free.app" />
-            </label>
-            <button id="btn-connect" type="button">Connect</button>
-            <span id="conn-status" class="disconnected">disconnected</span>
-            <span id="stm32-status" class="disconnected">STM32: disconnected</span>
-          </div>
-        </div>
-      </section>
-
       <section class="panel-section" data-role="operator setup">
         <h2 class="section-title">Teleop control</h2>
         <div class="section-body">
-          <p class="speed-row">Velocity: <span id="speed-label">0.20</span> m/s
+          <p class="speed-row">
+            <span class="speed-label-row">
+              <span>Velocity</span>
+              <span class="speed-value"><span id="speed-label">0.20</span> m/s</span>
+            </span>
             <input id="speed-slider" type="range" min="0.05" max="0.8" step="0.05" value="0.2" />
+          </p>
+          <p class="speed-row">
+            <span class="speed-label-row">
+              <span>Tốc độ xoay</span>
+              <span class="speed-value"><span id="angular-label">0.40</span> rad/s</span>
+            </span>
+            <input id="angular-slider" type="range" min="0.1" max="1.2" step="0.05" value="0.4" />
           </p>
           <div class="teleop-grid">
             <button id="btn-forward" class="teleop-btn" type="button" aria-label="Tiến">▲</button>
             <button id="btn-left"     class="teleop-btn" type="button" aria-label="Quay trái">◄</button>
-            <button id="btn-stop"     class="teleop-btn teleop-stop" type="button" aria-label="Dừng">■</button>
+            <button id="btn-stop"     class="teleop-btn teleop-stop" type="button" aria-label="Dừng">Stop</button>
             <button id="btn-right"    class="teleop-btn" type="button" aria-label="Quay phải">►</button>
             <button id="btn-back"     class="teleop-btn" type="button" aria-label="Lùi">▼</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel-section" data-role="operator setup">
-        <h2 class="section-title">Robot Status</h2>
-        <div class="section-body status-grid">
-          <div class="status-col status-col-left">
-            <p>Vx: <span id="val-vx">--</span> m/s</p>
-            <p>Vyaw: <span id="val-vyaw">--</span> rad/s</p>
-            <p>Pin: <span id="val-battery">N/A</span></p>
-          </div>
-          <div class="status-col status-col-right">
-            <p>X: <span id="val-x">--</span> m</p>
-            <p>Y: <span id="val-y">--</span> m</p>
-            <p>Yaw: <span id="val-yaw">--</span> °</p>
           </div>
         </div>
       </section>
@@ -107,23 +115,37 @@
           </div>
           <div class="station-btn-grid">
             <button type="button" id="btn-setpoint" class="btn-action btn-secondary">Setpoint</button>
-            <button type="button" id="btn-auto-route" class="btn-action btn-secondary">Auto Route</button>
+            <button type="button" id="btn-auto-route" class="btn-action btn-secondary">Auto Mission</button>
             <button type="button" id="btn-go-station" class="btn-action">Go to Station</button>
             <button type="button" id="btn-station-reset" class="btn-action btn-danger">Reset</button>
-            <button type="button" id="btn-nav-mode" class="btn-action btn-secondary">Nav mode: OFF</button>
-            <button type="button" id="btn-nav-cancel" class="btn-action btn-danger">Cancel navigation</button>
+            <button type="button" id="btn-nav-cancel" class="btn-action btn-danger station-emergency-btn">EMERGENCY</button>
           </div>
-          <p id="station-status" class="hint">Chưa có station nào được chọn</p>
           <p id="nav-status" class="hint">No goal</p>
+        </div>
+      </section>
+
+      <section class="panel-section workflow-panel" data-role="operator">
+        <h2 class="section-title workflow-heading">Mission</h2>
+        <div class="workflow-toolbar">
+          <button type="button" id="btn-process-add" class="workflow-add-btn" title="Thêm bước" aria-label="Thêm bước">+</button>
+          <button type="button" id="btn-process-open" class="btn-action btn-secondary workflow-tool-btn">List</button>
+          <button type="button" id="btn-process-save" class="btn-action btn-secondary workflow-save-btn">Save</button>
+        </div>
+        <div class="section-body workflow-body">
+          <div id="process-add-bar" class="process-add-bar hidden">
+            <select id="process-add-select" aria-label="Chọn setpoint để thêm">
+              <option value="">-- Chọn setpoint --</option>
+            </select>
+          </div>
+          <ol id="process-steps" class="process-steps"></ol>
+          <p id="process-empty" class="hint">Chưa có bước — bấm + để thêm</p>
+          <p id="workflow-detail" class="hint workflow-detail">đang kết nối…</p>
         </div>
       </section>
 
       <section class="panel-section" data-role="setup">
         <h2 class="section-title">Bản đồ (SLAM)</h2>
         <div class="section-body">
-          <p id="slam-mode-hint" class="hint">
-            SLAM: tắt localization → chạy online_async_launch
-          </p>
           <label>
             Tên map khi lưu:
             <input id="map-name-input" type="text" placeholder="obs_4_map_save" />
@@ -136,7 +158,6 @@
       <section class="panel-section" data-role="setup">
         <h2 class="section-title">Localization</h2>
         <div class="section-body">
-          <p class="hint">Cần localization_launch đang chạy</p>
           <label>
             Chọn map:
             <select id="map-select">
@@ -147,39 +168,59 @@
           <button id="btn-load-map" type="button" class="btn-action">Nạp map đã chọn</button>
           <p id="load-map-status" class="hint"></p>
           <button id="btn-pose-mode" type="button" class="btn-action btn-secondary">
-            Đặt vị trí ban đầu: TẮT
+            Load vị trí ban đầu
           </button>
-          <p class="hint">Bật → click + kéo trên map (hướng mũi tên)</p>
+          <button id="btn-nav-mode" type="button" class="btn-action btn-secondary">
+            Nav2: OFF
+          </button>
+          <p class="hint">Nav2 ON: kéo trên map để đi tới điểm bất kỳ</p>
+        </div>
+      </section>
+
+      <section class="panel-section" data-role="setup">
+        <h2 class="section-title">Vùng cấm (Keepout)</h2>
+        <div class="section-body">
+          <p class="hint keepout-help">Dừng robot, click các đỉnh polygon trên map rồi lưu để Nav2 né vùng.</p>
+          <div class="keepout-actions">
+            <button id="btn-keepout-draw" type="button" class="btn-action btn-secondary">Vẽ vùng cấm</button>
+            <button id="btn-keepout-finish" type="button" class="btn-action">Hoàn tất</button>
+            <button id="btn-keepout-undo" type="button" class="btn-action btn-secondary">Hoàn tác điểm</button>
+            <button id="btn-keepout-delete" type="button" class="btn-action btn-secondary">Xóa vùng cuối</button>
+            <button id="btn-keepout-clear" type="button" class="btn-action btn-danger">Xóa tất cả</button>
+            <button id="btn-keepout-save" type="button" class="btn-action keepout-save">Lưu &amp; áp dụng</button>
+          </div>
+          <p id="keepout-status" class="hint">Nạp map để tải vùng cấm</p>
         </div>
       </section>
 
     </aside>
 
-    <aside class="workflow-panel panel-section" data-role="operator setup">
-      <h2 class="section-title workflow-heading">Process</h2>
-      <div class="workflow-toolbar">
-        <button type="button" id="btn-process-add" class="workflow-add-btn" title="Thêm bước" aria-label="Thêm bước">+</button>
-        <button type="button" id="btn-process-open" class="btn-action btn-secondary workflow-tool-btn">List</button>
-        <button type="button" id="btn-process-save" class="btn-action btn-secondary workflow-save-btn">Save</button>
-      </div>
-      <div class="section-body workflow-body">
-        <div id="process-add-bar" class="process-add-bar hidden">
-          <select id="process-add-select" aria-label="Chọn setpoint để thêm">
-            <option value="">-- Chọn setpoint --</option>
-          </select>
-        </div>
-        <ol id="process-steps" class="process-steps"></ol>
-        <p id="process-empty" class="hint">Chưa có bước — bấm + để thêm</p>
-        <p id="workflow-detail" class="hint workflow-detail">disconnected — press Connect in Config</p>
-      </div>
-    </aside>
-
     <div class="map-column">
       <section class="map-area map-area-compact">
-        <p id="map-status" class="hint">Chưa có bản đồ - chạy localization hoặc SLAM</p>
+        <div class="map-area-header">
+          <h2 class="map-area-title" id="map-area-title">MAP: —</h2>
+          <p class="map-header-conveyor" aria-label="Trạng thái băng tải">
+            <span class="conveyor-inline">Băng tải 1: <span id="conveyor-1-status" class="status-badge status-free">Free</span></span>
+            <span class="conveyor-sep" aria-hidden="true">·</span>
+            <span class="conveyor-inline">Băng tải 2: <span id="conveyor-2-status" class="status-badge status-free">Free</span></span>
+          </p>
+          <p id="map-status" class="hint hidden" aria-hidden="true"></p>
+        </div>
+        <div class="map-hud" aria-label="Trạng thái robot">
+          <div class="map-hud-group">
+            <span class="map-hud-item"><span class="map-hud-k">X:</span> <span id="val-x" class="map-hud-v">--</span><small>m</small></span>
+            <span class="map-hud-item"><span class="map-hud-k">Y:</span> <span id="val-y" class="map-hud-v">--</span><small>m</small></span>
+            <span class="map-hud-item"><span class="map-hud-k">Yaw:</span> <span id="val-yaw" class="map-hud-v">--</span><small>°</small></span>
+          </div>
+          <div class="map-hud-group">
+            <span class="map-hud-item"><span class="map-hud-k">Vx:</span> <span id="val-vx" class="map-hud-v">--</span><small>m/s</small></span>
+            <span class="map-hud-item"><span class="map-hud-k">Vyaw:</span> <span id="val-vyaw" class="map-hud-v">--</span><small>rad/s</small></span>
+            <span class="map-hud-item"><span class="map-hud-k">Pin:</span> <span id="val-battery" class="map-hud-v">N/A</span></span>
+          </div>
+        </div>
         <div class="map-canvas-wrap">
           <div class="map-canvas-inner">
-            <canvas id="map-canvas" width="720" height="420"></canvas>
+            <canvas id="map-canvas" width="960" height="560"></canvas>
             <div class="map-view-controls" aria-label="Điều khiển zoom và pan map">
               <button type="button" id="map-zoom-out" class="map-ctrl-btn" aria-label="Thu nhỏ">−</button>
               <button type="button" id="map-zoom-in"  class="map-ctrl-btn" aria-label="Phóng to">+</button>
@@ -197,26 +238,26 @@
       <section class="panel-section setpoints-card" data-role="operator setup">
         <h2 class="section-title">Setpoint list</h2>
         <div class="section-body setpoints-body">
-          <div class="conveyor-status-bar">
-            <div class="conveyor-item">
-              <span class="conveyor-label">Băng tải 1</span>
-              <span id="conveyor-1-status" class="status-badge status-free">Free</span>
-            </div>
-            <div class="conveyor-item">
-              <span class="conveyor-label">Băng tải 2</span>
-              <span id="conveyor-2-status" class="status-badge status-free">Free</span>
-            </div>
-          </div>
           <div class="setpoints-table-wrap">
             <table class="setpoints-table">
+              <colgroup>
+                <col class="col-order" />
+                <col class="col-name" />
+                <col class="col-type" />
+                <col class="col-position" />
+                <col class="col-cmd-belt" />
+                <col class="col-cmd-belt" />
+                <col class="col-status" />
+                <col class="col-action" />
+              </colgroup>
               <thead>
                 <tr>
                   <th class="col-order">Order</th>
                   <th class="col-name">Name</th>
                   <th class="col-type">Type</th>
                   <th class="col-position">Position</th>
-                  <th class="col-cmd-belt">Lệnh băng tải 1</th>
-                  <th class="col-cmd-belt">Lệnh băng tải 2</th>
+                  <th class="col-cmd-belt">Băng tải 1</th>
+                  <th class="col-cmd-belt">Băng tải 2</th>
                   <th class="col-status">Status</th>
                   <th class="col-action"></th>
                 </tr>
@@ -345,19 +386,43 @@
     </div>
   </div>
 
+  <!-- Đăng nhập API; chỉ hiện khi dashboard được phục vụ bởi backend mới. -->
+  <div id="auth-modal" class="modal-overlay auth-modal hidden" aria-hidden="true">
+    <form id="auth-login-form" class="modal-card modal-card-sm auth-card">
+      <p class="brand-org">AMR Control</p>
+      <h2 class="modal-title">Đăng nhập</h2>
+      <div class="modal-body auth-fields">
+        <label>
+          Tài khoản
+          <input id="auth-username" name="username" type="text" autocomplete="username" required />
+        </label>
+        <label>
+          Mật khẩu
+          <input id="auth-password" name="password" type="password" autocomplete="current-password" required />
+        </label>
+        <p id="auth-error" class="auth-error" role="alert"></p>
+      </div>
+      <div class="modal-actions">
+        <button id="btn-auth-login" type="submit" class="btn-action">Đăng nhập</button>
+      </div>
+    </form>
+  </div>
+
   <script src="js/role-tabs.js"></script>
   <script src="js/theme.js"></script>
-  <script src="js/ros.js?v=2"></script>
-  <script src="js/status.js?v=3"></script>
-  <script src="js/teleop.js"></script>
-  <script src="js/map.js?v=10"></script>
+  <script src="js/auth.js?v=1"></script>
+  <script src="js/ros.js?v=4"></script>
+  <script src="js/status.js?v=4"></script>
+  <script src="js/teleop.js?v=2"></script>
+  <script src="js/map.js?v=21"></script>
   <script src="js/slam.js?v=2"></script>
-  <script src="js/localization.js?v=7"></script>
-  <script src="js/navigation.js?v=10"></script>
-  <script src="js/stm32.js?v=4"></script>
+  <script src="js/localization.js?v=9"></script>
+  <script src="js/navigation.js?v=12"></script>
+  <script src="js/stm32.js?v=5"></script>
   <script src="js/line-follow.js?v=5"></script>
   <script src="js/map-data.js?v=4"></script>
-  <script src="js/stations.js?v=12"></script>
-  <script src="js/process.js?v=11"></script>
+  <script src="js/keepout.js?v=1"></script>
+  <script src="js/stations.js?v=15"></script>
+  <script src="js/process.js?v=12"></script>
 </body>
 </html>

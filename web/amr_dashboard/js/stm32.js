@@ -25,13 +25,13 @@
     if (alive) {
       const detail = state ? ` (${state})` : '';
       stm32StatusEl.textContent = `STM32: connected${detail}`;
-      stm32StatusEl.className = 'connected';
+      stm32StatusEl.className = 'conn-pill connected';
     } else if (String(message || '').includes('serial open')) {
       stm32StatusEl.textContent = 'STM32: serial open — waiting heartbeat';
-      stm32StatusEl.className = 'connecting';
+      stm32StatusEl.className = 'conn-pill connecting';
     } else {
       stm32StatusEl.textContent = 'STM32: disconnected';
-      stm32StatusEl.className = 'disconnected';
+      stm32StatusEl.className = 'conn-pill disconnected';
     }
   }
 

@@ -23,6 +23,7 @@
     try {
       localStorage.setItem(STORAGE_KEY, theme);
     } catch (e) {}
+    window.dispatchEvent(new CustomEvent('amr-theme-changed', { detail: { theme } }));
   }
 
   btn.addEventListener('click', () => {

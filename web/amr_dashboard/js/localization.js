@@ -2,7 +2,7 @@
 //  * localization.js — Danh sách map + nạp map + bật initial pose
 //  */
 
-//   const MAPS_DIR = '/home/duo/maps';
+//   const MAPS_DIR = '/home/laptop/maps';
 
 //   // const ros = window.AmrRos.getRos();
 //   // if (!ros) {
@@ -146,7 +146,7 @@
  * localization.js — Danh sách map + nạp map + đặt initial pose
  */
 
-// const MAPS_DIR = '/home/duo/maps';
+// const MAPS_DIR = '/home/laptop/maps';
 
 // const mapSelect   = document.getElementById('map-select');
 // const loadStatus  = document.getElementById('load-map-status');
@@ -239,7 +239,7 @@
  * localization.js — Danh sách map + nạp map + đặt initial pose
  */
 
-const MAPS_DIR = '/home/duo/maps';
+const MAPS_DIR = '/home/laptop/maps';
 
 function mapYamlPath(name) {
   return `${MAPS_DIR}/${name}.yaml`;
@@ -278,7 +278,7 @@ function refreshActiveMapStatus() {
     .catch(() => { /* bridge chưa sẵn sàng */ });
 }
 
-function notifyMapLoaded(name) {
+async function notifyMapLoaded(name) {
   if (!window.AmrMapSync?.getMapStatus) return;
 
   const waitMs = 200;
@@ -296,41 +296,71 @@ function notifyMapLoaded(name) {
     });
   }
 
-  waitForMapReady(0)
-    .then(() => window.AmrMapSync.requestMapSync())
-    .then(() => (window.AmrMapData?.syncForMap
-      ? window.AmrMapData.syncForMap(name)
-      : (window.AmrMapSync.setActiveMapName
-        ? window.AmrMapSync.setActiveMapName(name)
-        : Promise.resolve())))
-    .then(() => {
-      refreshActiveMapStatus();
-      window.dispatchEvent(new CustomEvent('amr-map-loaded', { detail: { name } }));
-      // Ép sync thêm lần nữa — rosbridge đôi khi trễ 1 nhịp
-      setTimeout(() => {
-        if (window.AmrMapSync?.forceMapResync) {
-          window.AmrMapSync.forceMapResync().catch(() => {});
-        }
-      }, 500);
-    })
-    .catch((err) => {
-      console.warn('notify map loaded:', err);
-      loadStatus.textContent = `Loaded: ${name} — đợi /map (thử refresh nếu chưa thấy)`;
-      loadStatus.style.color = '#facc15';
-    });
+  const warnings = [];
+
+  try {
+    await waitForMapReady(0);
+    await window.AmrMapSync.requestMapSync();
+  } catch (err) {
+    // map.js còn subscribe trực tiếp /map, nên lỗi bridge không được coi là lỗi load map.
+    console.warn('map bridge sync:', err);
+    warnings.push('bridge sync chậm');
+  }
+
+  try {
+    if (window.AmrMapData?.syncForMap) {
+      await window.AmrMapData.syncForMap(name);
+    } else if (window.AmrMapSync.setActiveMapName) {
+      await window.AmrMapSync.setActiveMapName(name);
+    }
+  } catch (err) {
+    console.warn('map data sync:', err);
+    warnings.push('setpoint/process chưa đồng bộ');
+  }
+
+  refreshActiveMapStatus();
+  window.dispatchEvent(new CustomEvent('amr-map-loaded', { detail: { name } }));
+
+  if (warnings.length > 0) {
+    loadStatus.textContent = `Đã nạp: ${name} — ${warnings.join(', ')}`;
+    loadStatus.style.color = '#facc15';
+  }
+
+  // Ép sync thêm lần nữa — rosbridge đôi khi trễ 1 nhịp.
+  setTimeout(() => {
+    if (window.AmrMapSync?.forceMapResync) {
+      window.AmrMapSync.forceMapResync().catch(() => {});
+    }
+  }, 500);
 }
 
 // Đổi tên: KHÔNG dùng "poseMode" — map.js đã dùng biến đó
 let poseUiOn = false;
 
-/** Cập nhật nút + báo map.js bật/tắt chế độ kéo trên canvas */
+/** Cập nhật nút + báo map.js bật/tắt chế độ kéo trên canvas (giữ API cũ) */
 function setPoseUiOn(enabled) {
   poseUiOn = enabled;
-  btnPoseMode.textContent = `Đặt vị trí ban đầu: ${enabled ? 'BẬT' : 'TẮT'}`;
-  btnPoseMode.classList.toggle('active', enabled);
   if (window.AmrMap) {
     window.AmrMap.setPoseMode(enabled);
   }
+}
+
+/** Load vị trí ban đầu = publish /initialpose tại (0, 0, yaw=0) */
+function loadOriginPose() {
+  if (window.AmrNavigation) {
+    window.AmrNavigation.setNavMode?.(false);
+  }
+  setPoseUiOn(false);
+
+  const ok = window.AmrMap?.publishInitialPose?.(0, 0, 0);
+  if (!ok) {
+    loadStatus.textContent = 'Chưa kết nối ROS — không load được vị trí ban đầu';
+    loadStatus.style.color = '#f87171';
+    return;
+  }
+
+  loadStatus.textContent = 'Đã load vị trí ban đầu: (0.00, 0.00, 0.0°)';
+  loadStatus.style.color = '#4ade80';
 }
 
 function refreshMapList() {
@@ -393,14 +423,7 @@ btnLoad.addEventListener('click', () => {
   );
 });
 
-btnPoseMode.addEventListener('click', () => {
-  const next = !poseUiOn;
-  // Bật pose → tắt nav (hai chế độ loại trừ nhau)
-  if (next && window.AmrNavigation) {
-    window.AmrNavigation.setNavMode(false);
-  }
-  setPoseUiOn(next);
-});
+btnPoseMode.addEventListener('click', loadOriginPose);
 
 window.addEventListener('amr-ros-connected', () => {
   const ros = window.AmrRos.getRos();
@@ -413,4 +436,4 @@ window.addEventListener('amr-ros-connected', () => {
 
 window.addEventListener('amr-map-ready', refreshActiveMapStatus);
 
-window.AmrLocalization = { refreshMapList, setPoseUiOn };
+window.AmrLocalization = { refreshMapList, setPoseUiOn, loadOriginPose };

@@ -205,6 +205,10 @@ let cancelNavClient = null;
 let navUiOn = false;
 let navStatusTopic  = null;
 
+function useNavigationApi() {
+  return !!window.AmrApi?.isAvailable?.() && !!window.AmrApi?.getUser?.();
+}
+
 function parseNavStatus(data) {
   const parts = (data || '').split('|');
   return { state: parts[0] || '', detail: parts.slice(1).join('|') };
@@ -216,6 +220,22 @@ function dispatchNavStatus(state, detail) {
   );
 }
 
+function renderNavStatusEvent(event) {
+  const { state, detail } = event.detail || {};
+  if (state === 'navigating') {
+    const destName = findSetpointNameByLabel(detail);
+    updateNavStatus(destName ? `Đang đi tới ${destName}...` : `Navigating... ${detail}`, '#facc15');
+  } else if (state === 'arrived') {
+    notifyNavArrived(detail);
+  } else if (state === 'failed') {
+    updateNavStatus(`Nav failed: ${detail}`, '#f87171');
+  } else if (state === 'cancelled' || state === 'cancelling') {
+    updateNavStatus('Navigation cancelled', '#f87171');
+  }
+}
+
+window.addEventListener('amr-nav-status', renderNavStatusEvent);
+
 function updateNavStatus(msg, color = '#888') {
   navStatus.textContent = msg;
   navStatus.style.color = color;
@@ -223,6 +243,21 @@ function updateNavStatus(msg, color = '#888') {
 
 function callSendNavGoal(wx, wy, yaw, options = {}) {
   return new Promise((resolve, reject) => {
+    if (useNavigationApi()) {
+      window.AmrApi.request('/api/navigation/goal', {
+        method: 'POST',
+        body: JSON.stringify({
+          x: wx,
+          y: wy,
+          yaw,
+          controllerId: options.controllerId || options.controller_id || '',
+        }),
+      }).then((result) => {
+        if (result.success) resolve(result);
+        else reject(new Error(result.message || 'Navigation goal rejected'));
+      }).catch(reject);
+      return;
+    }
     if (!sendGoalClient) {
       reject(new Error('Not connected to Nav2'));
       return;
@@ -245,7 +280,7 @@ function callSendNavGoal(wx, wy, yaw, options = {}) {
 }
 
 function sendNavGoal(wx, wy, yaw) {
-  if (!sendGoalClient) {
+  if (!sendGoalClient && !useNavigationApi()) {
     updateNavStatus('disconnected — is nav_pose_bridge_node running?', '#f87171');
     return;
   }
@@ -372,7 +407,7 @@ async function navigateAndWait(wx, wy, yaw, options = {}) {
 }
 
 function sendNavGoalAsync(wx, wy, yaw, options = {}) {
-  if (!sendGoalClient) {
+  if (!sendGoalClient && !useNavigationApi()) {
     return Promise.reject(new Error('Not connected to Nav2'));
   }
   return navigateAndWait(wx, wy, yaw, options);
@@ -380,15 +415,27 @@ function sendNavGoalAsync(wx, wy, yaw, options = {}) {
 
 function setNavMode(enabled) {
   navUiOn = enabled;
-  btnNavMode.textContent = `Nav mode: ${enabled ? 'ON' : 'OFF'}`;
-  btnNavMode.classList.toggle('active', enabled);
+  if (btnNavMode) {
+    btnNavMode.textContent = `Nav2: ${enabled ? 'ON' : 'OFF'}`;
+    btnNavMode.classList.toggle('active', enabled);
+  }
   if (window.AmrMap) window.AmrMap.setNavMode(enabled);
   if (enabled && window.AmrLocalization) {
-    window.AmrLocalization.setPoseUiOn(false);
+    window.AmrLocalization.setPoseUiOn?.(false);
   }
 }
 
 function cancelNavigationAsync() {
+  if (useNavigationApi()) {
+    if (window.AmrMap) window.AmrMap.clearPlanPath();
+    return window.AmrApi.request('/api/navigation/cancel', { method: 'POST' })
+      .then((result) => {
+        updateNavStatus(result.message || 'Emergency stop', '#f87171');
+        setNavMode(false);
+        if (!result.success) throw new Error(result.message || 'Không dừng được Nav2');
+        return result;
+      });
+  }
   if (!cancelNavClient) {
     updateNavStatus('disconnected', '#f87171');
     return Promise.reject(new Error('Chưa kết nối /cancel_nav'));
@@ -398,7 +445,7 @@ function cancelNavigationAsync() {
     cancelNavClient.callService(
       new ROSLIB.ServiceRequest({}),
       (result) => {
-        updateNavStatus(result.message, result.success ? '#f87171' : '#f87171');
+        updateNavStatus(result.message || 'Emergency stop', result.success ? '#f87171' : '#f87171');
         setNavMode(false);
         if (result.success) resolve(result);
         else reject(new Error(result.message || 'Không dừng được Nav2'));
@@ -413,11 +460,33 @@ function cancelNavigationAsync() {
 }
 
 function cancelNavigation() {
+  window.AmrTeleop?.stop?.();
   cancelNavigationAsync().catch((err) => console.error(err));
 }
 
-btnNavMode.addEventListener('click', () => setNavMode(!navUiOn));
-btnNavCancel.addEventListener('click', cancelNavigation);
+function triggerEmergency() {
+  updateNavStatus('EMERGENCY — đang dừng...', '#f87171');
+  window.AmrTeleop?.stop?.();
+  window.AmrProcess?.stopAutoRoute?.();
+  cancelNavigationAsync()
+    .then(() => updateNavStatus('EMERGENCY — đã dừng', '#f87171'))
+    .catch(() => updateNavStatus('EMERGENCY — đã gửi lệnh dừng', '#f87171'));
+}
+
+if (btnNavMode) {
+  btnNavMode.addEventListener('click', () => setNavMode(!navUiOn));
+}
+if (btnNavCancel) {
+  btnNavCancel.addEventListener('click', triggerEmergency);
+}
+
+window.addEventListener('amr-auth-ready', () => {
+  if (!useNavigationApi()) return;
+  if (window.AmrMap) {
+    window.AmrMap.setNavGoalCallback(sendNavGoal);
+    updateNavStatus('Sẵn sàng (API Nav2)', '#4ade80');
+  }
+});
 
 window.addEventListener('amr-ros-connected', () => {
   const ros = window.AmrRos.getRos();
@@ -443,17 +512,6 @@ window.addEventListener('amr-ros-connected', () => {
   navStatusTopic.subscribe((msg) => {
     const { state, detail } = parseNavStatus(msg.data);
     dispatchNavStatus(state, detail);
-    if (state === 'navigating') {
-      const destName = findSetpointNameByLabel(detail);
-      const navMsg = destName ? `Đang đi tới ${destName}...` : `Navigating... ${detail}`;
-      updateNavStatus(navMsg, '#facc15');
-    } else if (state === 'arrived') {
-      notifyNavArrived(detail);
-    } else if (state === 'failed') {
-      updateNavStatus(`Nav failed: ${detail}`, '#f87171');
-    } else if (state === 'cancelled' || state === 'cancelling') {
-      updateNavStatus('Navigation cancelled', '#f87171');
-    }
   });
 
   function wireNavCallback() {

@@ -52,7 +52,7 @@ add_tab() { TABS+=("$1|$2"); }
 case "$MODE" in
   sim)
     add_tab "SIM"   "ros2 launch amr_lan_3 launch_sim.launch.py world:=$WORLD"
-    add_tab "WEB"   "python3 $WS/scripts/amr_web_server.py"
+    add_tab "WEB"   "AMR_USE_SIM_TIME=true $WS/scripts/start_api_server.sh"
     add_tab "NGROK" "$WS/scripts/start_ngrok.sh"
     add_tab "SLAM"  "ros2 launch slam_toolbox online_async_launch.py slam_params_file:=./src/amr_lan_3/config/mapper_params_online_async.yaml use_sim_time:=true"
     add_tab "LOC"   "ros2 launch amr_lan_3 localization_launch.py map:=./obs_3_map_save.yaml use_sim_time:=true"
@@ -61,7 +61,7 @@ case "$MODE" in
   real)
     add_tab "ROBOT" "ros2 launch amr_lan_3 launch_robot.launch.py"
     add_tab "LIDAR" "ros2 launch amr_lan_3 rplidar.launch.py"
-    add_tab "WEB"   "python3 $WS/scripts/amr_web_server.py"
+    add_tab "WEB"   "AMR_USE_SIM_TIME=false $WS/scripts/start_api_server.sh"
     add_tab "NGROK" "$WS/scripts/start_ngrok.sh"
     add_tab "SLAM"  "ros2 launch slam_toolbox online_async_launch.py slam_params_file:=./src/amr_lan_3/config/mapper_params_online_async.yaml use_sim_time:=false"
     add_tab "LOC"   "ros2 launch amr_lan_3 localization_launch.py map:=./obs_3_map_save.yaml use_sim_time:=false"

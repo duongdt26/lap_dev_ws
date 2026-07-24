@@ -1,0 +1,6 @@
+# Tải danh sách polygon vùng cấm theo map; map_name rỗng = map active
+string map_name
+---
+bool success
+string json_data
+string message

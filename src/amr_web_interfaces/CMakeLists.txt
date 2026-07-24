@@ -15,6 +15,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/ListProcesses.srv"
   "srv/LoadProcess.srv"
   "srv/SaveProcess.srv"
+  "srv/LoadKeepoutZones.srv"
+  "srv/SaveKeepoutZones.srv"
   DEPENDENCIES builtin_interfaces
 )
 

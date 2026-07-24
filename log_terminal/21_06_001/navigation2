@@ -1,5 +1,5 @@
 duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 navigation_launch.py use_sim_time:=false map_subscribe_transient_local:=true
-[INFO] [launch]: All log files can be found below /home/duo/.ros/log/2026-06-21-18-11-18-004376-duolap-36554
+[INFO] [launch]: All log files can be found below /home/laptop/.ros/log/2026-06-21-18-11-18-004376-duolap-36554
 [INFO] [launch]: Default logging verbosity is set to INFO
 [INFO] [controller_server-1]: process started with pid [36555]
 [INFO] [smoother_server-2]: process started with pid [36557]

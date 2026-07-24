@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Ngrok FREE (1 tunnel): public web + rosbridge qua amr_web_server.py
+# Ngrok FREE (1 tunnel): public web + API + rosbridge compatibility qua FastAPI
 #
 # Trước khi chạy (1 lần):
 #   ngrok config add-authtoken YOUR_TOKEN
 #
 # Mỗi lần:
 #   ros2 launch amr_lan_3 launch_robot.launch.py
-#   python3 scripts/amr_web_server.py
+#   ./scripts/start_api_server.sh
 #   ./scripts/start_ngrok.sh
 
 set -euo pipefail
@@ -45,9 +45,14 @@ if ! command -v ngrok >/dev/null 2>&1; then
   exit 1
 fi
 
-if ! python3 -c "import aiohttp" 2>/dev/null; then
-  echo "Cần aiohttp cho amr_web_server.py:"
-  echo "  pip install -r scripts/requirements-web.txt"
+PYTHON_BIN="python3"
+if [[ -x "$ROOT/.venv-api/bin/python" ]]; then
+  PYTHON_BIN="$ROOT/.venv-api/bin/python"
+fi
+
+if ! "$PYTHON_BIN" -c "import fastapi, sqlalchemy, uvicorn" 2>/dev/null; then
+  echo "Chưa có thư viện AMR API:"
+  echo "  python3 -m pip install -r backend/requirements.txt"
   exit 1
 fi
 
@@ -122,7 +127,7 @@ for _ in $(seq 1 30); do
   fi
   if ! kill -0 "$(cat "$ROOT/scripts/.ngrok_amr.pid")" 2>/dev/null; then
     echo ""
-    echo "ngrok thoát sớm — kiểm tra authtoken hoặc port 8080 đã có amr_web_server chưa."
+    echo "ngrok thoát sớm — kiểm tra authtoken hoặc port 8080 đã có AMR API server chưa."
     exit 1
   fi
   sleep 1

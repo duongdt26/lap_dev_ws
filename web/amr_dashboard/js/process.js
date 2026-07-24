@@ -67,8 +67,8 @@
   function updateProcessHeading() {
     if (!workflowHeading) return;
     workflowHeading.textContent = currentProcessName
-      ? `Process: ${currentProcessName}`
-      : 'Process';
+      ? `Mission: ${currentProcessName}`
+      : 'Mission';
   }
 
   function migrateStepNames(steps) {
