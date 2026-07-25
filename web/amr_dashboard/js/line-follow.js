@@ -1,5 +1,5 @@
 /**
- * line-follow.js — handoff tu Nav2 sang node bam line tu tai Approach Pose.
+ * line-follow.js — handoff tu Nav2 sang node bam line tu tai Approach Station.
  * Giao tiep JSON co request_id de Auto Route cho dung ket qua cua tung lan chay.
  */
 
@@ -25,10 +25,10 @@
     const belt2 = String(setpoint?.belt2Cmd || 'none').toLowerCase();
     const valid = (command) => ['none', 'load', 'unload'].includes(command);
     if (!valid(belt1) || !valid(belt2)) {
-      throw new Error('Lệnh băng tải Approach Pose không hợp lệ');
+      throw new Error('Lệnh băng tải Approach Station không hợp lệ');
     }
     if (belt1 === 'none' && belt2 === 'none') {
-      throw new Error('Approach Pose phải chọn ít nhất một băng tải');
+      throw new Error('Approach Station phải chọn ít nhất một băng tải');
     }
     return { belt1, belt2, workflow };
   }
@@ -48,7 +48,7 @@
     const targetY = Number(setpoint?.y);
     const targetYawDeg = Number(setpoint?.yawDeg);
     if (![targetX, targetY, targetYawDeg].every(Number.isFinite)) {
-      return Promise.reject(new Error('Approach Pose thiếu x, y hoặc yaw'));
+      return Promise.reject(new Error('Approach Station thiếu x, y hoặc yaw'));
     }
 
     const requestId = `line_${Date.now()}_${Math.random().toString(16).slice(2)}`;

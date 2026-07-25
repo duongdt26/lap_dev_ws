@@ -54,6 +54,11 @@
       updateMapStatusHint();
     });
 
+    window.addEventListener('amr-slam-scan', () => {
+      updateMapTitle();
+      updateMapStatusHint();
+    });
+
   // Trạng thái dùng chung khi vẽ
   let mapMsg = null;       // bản tin /map mới nhất
   let robotPose = null;    // { x, y, yawDeg } từ AMCL
@@ -234,8 +239,15 @@
   function updateMapTitle() {
     const titleEl = document.getElementById('map-area-title');
     if (!titleEl) return;
+    const scanning = !!window.AmrSlam?.isScanOn?.();
     const name = getSelectedMapName();
-    titleEl.textContent = name ? `MAP: ${name}` : 'MAP: —';
+    if (scanning) {
+      titleEl.textContent = name ? `MAP: ${name} · SCANNING` : 'MAP: SCANNING (SLAM)';
+      titleEl.classList.add('map-scanning');
+    } else {
+      titleEl.textContent = name ? `MAP: ${name}` : 'MAP: —';
+      titleEl.classList.remove('map-scanning');
+    }
   }
 
   function updateMapStatusHint() {
@@ -360,7 +372,7 @@
       return { x: point.wx, y: point.wy };
     },
     canEditKeepout() {
-      return !!mapMsg && !!view && !mapLiveMode;
+      return !!mapMsg && !!view;
     },
     setNavGoalCallback(cb) { navGoalCallback = cb; },
 
@@ -1146,7 +1158,7 @@
     }
   }
 
-  function drawKeepoutPolygon(ctx, info, points, draft = false) {
+  function drawKeepoutPolygon(ctx, info, points, draft = false, label = '') {
     if (!Array.isArray(points) || points.length === 0) return;
     const canvasPoints = points
       .filter((point) => Number.isFinite(Number(point.x)) && Number.isFinite(Number(point.y)))
@@ -1179,15 +1191,29 @@
       ctx.lineWidth = 1;
       ctx.stroke();
     });
+
+    const name = String(label || '').trim();
+    if (name && canvasPoints.length >= 1) {
+      const cx = canvasPoints.reduce((sum, p) => sum + p.px, 0) / canvasPoints.length;
+      const cy = canvasPoints.reduce((sum, p) => sum + p.py, 0) / canvasPoints.length;
+      ctx.font = '600 11px "DM Sans", "Segoe UI", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'rgba(17, 24, 39, 0.8)';
+      ctx.strokeText(name, cx, cy);
+      ctx.fillStyle = draft ? '#fef08a' : '#fecaca';
+      ctx.fillText(name, cx, cy);
+    }
     ctx.restore();
   }
 
   function drawKeepoutZones(ctx, info) {
     keepoutZones.forEach((zone) => {
       if (zone?.enabled === false) return;
-      drawKeepoutPolygon(ctx, info, zone?.points || [], false);
+      drawKeepoutPolygon(ctx, info, zone?.points || [], false, zone?.name || '');
     });
-    drawKeepoutPolygon(ctx, info, keepoutDraft, true);
+    drawKeepoutPolygon(ctx, info, keepoutDraft, true, '');
   }
 
   function setpointStyle(pt, selected) {
@@ -1197,6 +1223,7 @@
         fill: selected ? '#c084fc' : '#a855f7',
         stroke: '#f3e8ff',
         ring: 'rgba(168, 85, 247, 0.45)',
+        badge: 'Home',
       };
     }
     if (t === 'approach') {
@@ -1204,13 +1231,26 @@
         fill: selected ? '#fb923c' : '#f97316',
         stroke: '#fff7ed',
         ring: 'rgba(249, 115, 22, 0.45)',
+        badge: 'Approach',
       };
     }
     return {
       fill: selected ? '#2dd4bf' : '#14b8a6',
       stroke: '#ecfdf5',
       ring: 'rgba(45, 212, 191, 0.45)',
+      badge: 'Station',
     };
+  }
+
+  function roundRectPath(ctx, x, y, w, h, radius) {
+    const r = Math.min(radius, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
   }
 
   function drawSetpoints(ctx, info) {
@@ -1223,42 +1263,82 @@
       const { px, py } = worldToCanvas(Number(pt.x), Number(pt.y), info);
       const selected = pt.id === selectedId;
       const style = setpointStyle(pt, selected);
-      const r = selected ? 7 : 5;
+      const r = selected ? 9 : 7;
       const yawRad = (Number(pt.yawDeg) || 0) * Math.PI / 180;
+      const dirX = Math.cos(-yawRad);
+      const dirY = Math.sin(-yawRad);
 
-      // Marker tròn đơn giản
+      // Halo ngoài — dễ thấy trên map
+      ctx.beginPath();
+      ctx.arc(px, py, r + (selected ? 5 : 3.5), 0, Math.PI * 2);
+      ctx.fillStyle = style.ring;
+      ctx.fill();
+
+      // Thân marker
       ctx.beginPath();
       ctx.arc(px, py, r, 0, Math.PI * 2);
       ctx.fillStyle = style.fill;
       ctx.fill();
-      ctx.lineWidth = selected ? 2 : 1.5;
-      ctx.strokeStyle = '#111827';
+      ctx.lineWidth = selected ? 2.5 : 2;
+      ctx.strokeStyle = '#0f172a';
+      ctx.stroke();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = style.stroke;
       ctx.stroke();
 
-      // Hướng yaw — đoạn thẳng ngắn
-      const len = r + 10;
+      // Mũi tên hướng yaw
+      const tip = r + 14;
+      const tipX = px + dirX * tip;
+      const tipY = py + dirY * tip;
+      const back = r + 2;
+      const side = 5.5;
+      const bx = px + dirX * back;
+      const by = py + dirY * back;
+      const lx = bx - dirY * side;
+      const ly = by + dirX * side;
+      const rx = bx + dirY * side;
+      const ry = by - dirX * side;
       ctx.beginPath();
-      ctx.moveTo(px, py);
-      ctx.lineTo(px + Math.cos(-yawRad) * len, py + Math.sin(-yawRad) * len);
-      ctx.strokeStyle = style.fill;
-      ctx.lineWidth = 2;
+      ctx.moveTo(tipX, tipY);
+      ctx.lineTo(lx, ly);
+      ctx.lineTo(rx, ry);
+      ctx.closePath();
+      ctx.fillStyle = style.fill;
+      ctx.fill();
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 1.2;
       ctx.stroke();
 
-      // Tên điểm
-      const label = String(pt.name || '').trim();
-      if (label) {
-        const fontSize = selected ? 12 : 11;
-        ctx.font = `600 ${fontSize}px "IBM Plex Sans", "Segoe UI", sans-serif`;
-        ctx.textAlign = 'left';
-        ctx.textBaseline = 'middle';
-        const tx = px + r + 6;
-        const ty = py - r - 2;
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = 'rgba(17, 24, 39, 0.75)';
-        ctx.strokeText(label, tx, ty);
-        ctx.fillStyle = selected ? '#f8fafc' : '#e2e8f0';
-        ctx.fillText(label, tx, ty);
-      }
+      // Badge tên + loại điểm
+      const name = String(pt.name || '').trim() || 'Station';
+      const typeLabel = style.badge || '';
+      const title = typeLabel ? `${name} · ${typeLabel}` : name;
+      const fontSize = selected ? 12 : 11;
+      ctx.font = `600 ${fontSize}px "DM Sans", "Segoe UI", sans-serif`;
+      const textW = ctx.measureText(title).width;
+      const padX = 8;
+      const padY = 5;
+      const boxW = textW + padX * 2;
+      const boxH = fontSize + padY * 2;
+      const boxX = px + r + 10;
+      const boxY = py - boxH / 2;
+
+      ctx.save();
+      roundRectPath(ctx, boxX, boxY, boxW, boxH, 6);
+      ctx.fillStyle = selected ? 'rgba(15, 23, 42, 0.92)' : 'rgba(15, 23, 42, 0.82)';
+      ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = style.fill;
+      ctx.stroke();
+
+      ctx.fillStyle = style.fill;
+      ctx.fillRect(boxX, boxY + 3, 3, boxH - 6);
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(title, boxX + padX + 2, boxY + boxH / 2);
+      ctx.restore();
     });
   }
 

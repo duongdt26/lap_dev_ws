@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import subprocess
 import time
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
@@ -17,6 +18,7 @@ from ..dependencies import (
 )
 from ..models import User
 from ..ros_gateway import get_ros_gateway
+from ..mode_manager import get_mode_manager
 
 
 router = APIRouter(prefix="/api", tags=["robot"])
@@ -32,6 +34,11 @@ class NavGoal(BaseModel):
     y: float
     yaw: float
     controllerId: str = ""
+
+
+class SlamModeCommand(BaseModel):
+    enabled: bool
+    mapName: str | None = None
 
 
 def _publish_stop() -> None:
@@ -87,6 +94,25 @@ async def navigation_cancel(_user: User = Depends(require_roles("admin", "operat
         return {"success": bool(result.success), "message": result.message}
     except RuntimeError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@router.get("/slam/status")
+async def slam_status(_user: User = Depends(get_current_user)):
+    return get_mode_manager().status()
+
+
+@router.post("/slam/mode")
+async def slam_mode(
+    command: SlamModeCommand,
+    _user: User = Depends(require_roles("admin", "operator")),
+):
+    manager = get_mode_manager()
+    try:
+        if command.enabled:
+            return manager.enable_slam()
+        return manager.disable_slam(command.mapName)
+    except (RuntimeError, ValueError, OSError, TimeoutError, subprocess.CalledProcessError) as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
 
 
 @router.websocket("/ws/telemetry")

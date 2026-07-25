@@ -78,13 +78,13 @@ window.AmrRos = (function () {
   function setStatus(state) {
     if (!statusEl) return;
     if (state === 'connected') {
-      statusEl.textContent = 'ROS: connected';
+      statusEl.textContent = 'System: connected';
       statusEl.className = 'conn-pill connected';
     } else if (state === 'connecting') {
-      statusEl.textContent = 'ROS: connecting…';
+      statusEl.textContent = 'System: connecting…';
       statusEl.className = 'conn-pill connecting';
     } else {
-      statusEl.textContent = 'ROS: disconnected';
+      statusEl.textContent = 'System: disconnected';
       statusEl.className = 'conn-pill disconnected';
     }
   }

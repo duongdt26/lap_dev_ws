@@ -5,10 +5,10 @@
   const canvas = document.getElementById('map-canvas');
   const btnDraw = document.getElementById('btn-keepout-draw');
   const btnFinish = document.getElementById('btn-keepout-finish');
-  const btnUndo = document.getElementById('btn-keepout-undo');
   const btnDelete = document.getElementById('btn-keepout-delete');
-  const btnClear = document.getElementById('btn-keepout-clear');
   const btnSave = document.getElementById('btn-keepout-save');
+  const nameInput = document.getElementById('keepout-name');
+  const listEl = document.getElementById('keepout-zone-list');
   const statusEl = document.getElementById('keepout-status');
   if (!canvas || !btnDraw || !statusEl) return;
 
@@ -45,19 +45,66 @@
     return `/api/maps/${encodeURIComponent(mapName)}/keepout`;
   }
 
+  function nextDefaultName() {
+    return `NO-GO ZONE ${zones.length + 1}`;
+  }
+
+  function zonesCountLabel(count = zones.length) {
+    return `${count} No-Go Zone${count === 1 ? '' : 's'}`;
+  }
+
+  function syncNamePlaceholder() {
+    if (!nameInput) return;
+    if (!nameInput.value.trim()) nameInput.placeholder = nextDefaultName();
+  }
+
   function syncCanvas() {
     window.AmrMap?.setKeepoutZones?.(zones);
     window.AmrMap?.setKeepoutDraft?.(draft);
   }
 
+  function renderZoneList() {
+    if (!listEl) return;
+    listEl.innerHTML = '';
+    if (!zones.length) {
+      const empty = document.createElement('li');
+      empty.className = 'keepout-zone-empty';
+      empty.textContent = 'No zones created';
+      listEl.appendChild(empty);
+      return;
+    }
+    zones.forEach((zone, index) => {
+      const li = document.createElement('li');
+      li.className = 'keepout-zone-item';
+      li.dataset.index = String(index);
+
+      const name = document.createElement('span');
+      name.className = 'keepout-zone-name';
+      name.textContent = zone.name || `NO-GO ZONE ${index + 1}`;
+
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'keepout-zone-remove';
+      remove.title = 'Delete Zone';
+      remove.setAttribute('aria-label', `Delete ${name.textContent}`);
+      remove.textContent = '×';
+      remove.addEventListener('click', () => removeZoneAt(index));
+
+      li.appendChild(name);
+      li.appendChild(remove);
+      listEl.appendChild(li);
+    });
+  }
+
   function updateControls() {
-    btnDraw.textContent = drawing ? 'Hủy vẽ' : 'Vẽ vùng cấm';
+    btnDraw.textContent = drawing ? 'Cancel Draw' : 'Draw Zone';
     btnDraw.classList.toggle('active', drawing);
-    btnFinish.disabled = !drawing || draft.length < 3;
-    btnUndo.disabled = !drawing || draft.length === 0;
-    btnDelete.disabled = drawing || zones.length === 0;
-    btnClear.disabled = drawing || zones.length === 0;
-    btnSave.disabled = drawing || !dirty;
+    btnDraw.disabled = false;
+    if (btnFinish) btnFinish.disabled = !drawing || draft.length < 3;
+    if (btnDelete) btnDelete.disabled = zones.length === 0;
+    if (btnSave) btnSave.disabled = drawing || !dirty;
+    syncNamePlaceholder();
+    renderZoneList();
   }
 
   function setDrawing(enabled) {
@@ -90,13 +137,26 @@
     window.AmrMap?.setKeepoutMode?.(false);
     syncCanvas();
     updateControls();
-    writeStatus(message || `${zones.length} vùng cấm đang áp dụng`, 'ok');
+    writeStatus(message || `${zonesCountLabel()} active`, 'ok');
+  }
+
+  function removeZoneAt(index) {
+    if (index < 0 || index >= zones.length) return;
+    const removed = zones.splice(index, 1)[0];
+    dirty = true;
+    syncCanvas();
+    updateControls();
+    writeStatus(
+      `Deleted “${removed?.name || 'zone'}” · ${zonesCountLabel()} left · unsaved`,
+      'warn'
+    );
   }
 
   async function loadZones(mapName) {
     const name = await resolveMapName(mapName);
     if (!name || (!loadClient && !useApi())) {
-      writeStatus('Nạp map trước khi cấu hình vùng cấm', 'warn');
+      writeStatus('Load map before configuring No-Go Zones', 'warn');
+      updateControls();
       return;
     }
     try {
@@ -110,54 +170,53 @@
         }
       } else {
         const response = await callService(loadClient, { map_name: name });
-        if (!response.success) throw new Error(response.message || 'Không tải được vùng cấm');
+        if (!response.success) throw new Error(response.message || 'Failed to load No-Go Zones');
         data = JSON.parse(response.json_data || '[]');
       }
-      applyZones(data, name, `${data.length} vùng cấm · mask theo map ${name}`);
+      applyZones(data, name, `${zonesCountLabel(data.length)} · mask for map ${name}`);
     } catch (err) {
-      writeStatus(`Lỗi tải vùng cấm: ${err.message || err}`, 'error');
+      writeStatus(`Load No-Go Zones error: ${err.message || err}`, 'error');
     }
   }
 
   async function saveZones() {
     const name = await resolveMapName(currentMapName);
     if (!name) {
-      writeStatus('Chưa có map active', 'error');
+      writeStatus('No active map', 'error');
       return;
     }
-    btnSave.disabled = true;
-    writeStatus('Đang raster hóa và áp dụng KeepoutFilter…');
+    if (btnSave) btnSave.disabled = true;
+    writeStatus('Rasterizing and applying KeepoutFilter…');
     try {
       if (useApi()) {
-        if (!window.AmrApi.canWrite()) throw new Error('Tài khoản chỉ có quyền xem');
+        if (!window.AmrApi.canWrite()) throw new Error('View-only account');
         await window.AmrApi.request(keepoutApiPath(name), {
           method: 'PUT',
           body: JSON.stringify(zones),
         });
       }
-      // Trong giai đoạn chuyển đổi vẫn gọi ROS service để raster hóa và publish mask.
       let appliedToRos = false;
       if (saveClient) {
         const response = await callService(saveClient, {
           map_name: name,
           json_data: JSON.stringify(zones),
         });
-        if (!response.success) throw new Error(response.message || 'Áp dụng vùng cấm thất bại');
+        if (!response.success) throw new Error(response.message || 'Failed to apply No-Go Zones');
         appliedToRos = true;
       } else if (!useApi()) {
-        throw new Error('Keepout service chưa sẵn sàng');
+        throw new Error('Keepout service not ready');
       }
       dirty = false;
       updateControls();
       writeStatus(
         appliedToRos
-          ? `Đã áp dụng ${zones.length} vùng cấm cho global + local costmap`
-          : `Đã lưu ${zones.length} vùng cấm vào SQLite · ROS đang offline`,
+          ? `Saved ${zonesCountLabel()} to global + local costmap`
+          : `Saved ${zonesCountLabel()} to SQLite · ROS offline`,
         'ok'
       );
     } catch (err) {
       updateControls();
-      writeStatus(`Lỗi lưu vùng cấm: ${err.message || err}`, 'error');
+      writeStatus(`Save No-Go Zones error: ${err.message || err}`, 'error');
     }
   }
 
@@ -195,15 +254,11 @@
   btnDraw.addEventListener('click', () => {
     if (drawing) {
       setDrawing(false);
-      writeStatus(`${zones.length} vùng cấm${dirty ? ' · chưa lưu' : ''}`, dirty ? 'warn' : '');
+      writeStatus(`${zonesCountLabel()}${dirty ? ' · unsaved' : ''}`, dirty ? 'warn' : '');
       return;
     }
     if (!window.AmrMap?.hasMap?.()) {
       writeStatus('Chưa có map để vẽ', 'error');
-      return;
-    }
-    if (!window.AmrMap?.canEditKeepout?.()) {
-      writeStatus('Dừng robot/Nav trước khi vẽ vùng cấm', 'warn');
       return;
     }
     if (window.AmrLocalization?.setPoseUiOn) window.AmrLocalization.setPoseUiOn(false);
@@ -225,49 +280,31 @@
     });
     syncCanvas();
     updateControls();
-    writeStatus(`${draft.length} điểm · bấm “Hoàn tất” để đóng polygon`);
+    writeStatus(`${draft.length} điểm · bấm “Finish” để đóng polygon`);
   });
 
-  btnFinish.addEventListener('click', () => {
+  btnFinish?.addEventListener('click', () => {
     if (!drawing || draft.length < 3) return;
+    const typed = nameInput?.value.trim() || '';
+    const zoneName = typed || nextDefaultName();
     zones.push({
       id: `keepout_${Date.now()}`,
-      name: `Vùng cấm ${zones.length + 1}`,
+      name: zoneName,
       enabled: true,
       points: draft.map((point) => ({ ...point })),
     });
+    if (nameInput) nameInput.value = '';
     dirty = true;
     setDrawing(false);
-    writeStatus(`${zones.length} vùng cấm · bấm “Lưu & áp dụng”`, 'warn');
+    writeStatus(`${zonesCountLabel()} · press “Save”`, 'warn');
   });
 
-  btnUndo.addEventListener('click', () => {
-    if (!drawing || !draft.length) return;
-    draft.pop();
-    syncCanvas();
-    updateControls();
-    writeStatus(`${draft.length} điểm trong polygon đang vẽ`);
-  });
-
-  btnDelete.addEventListener('click', () => {
+  btnDelete?.addEventListener('click', () => {
     if (!zones.length) return;
-    zones.pop();
-    dirty = true;
-    syncCanvas();
-    updateControls();
-    writeStatus(`Đã xóa vùng cuối · còn ${zones.length} vùng · chưa lưu`, 'warn');
+    removeZoneAt(zones.length - 1);
   });
 
-  btnClear.addEventListener('click', () => {
-    if (!zones.length || !window.confirm('Xóa toàn bộ vùng cấm của map này?')) return;
-    zones = [];
-    dirty = true;
-    syncCanvas();
-    updateControls();
-    writeStatus('Đã xóa trên bản vẽ · bấm “Lưu & áp dụng”', 'warn');
-  });
-
-  btnSave.addEventListener('click', saveZones);
+  btnSave?.addEventListener('click', saveZones);
 
   window.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && drawing) {
@@ -291,7 +328,6 @@
     if (event.detail === 'keepout' && !dirty && !drawing) loadZones(currentMapName);
   });
 
-  // Không phụ thuộc hoàn toàn vào event: rosbridge có thể connect trước khi file này tải xong.
   setTimeout(() => {
     const ros = window.AmrRos?.getRos?.();
     if (ros?.isConnected && !loadClient) {
@@ -301,7 +337,7 @@
   }, 1000);
 
   updateControls();
-  writeStatus('Nạp map để tải vùng cấm');
+  writeStatus('Load map to load No-Go Zones');
 
   window.AmrKeepout = {
     getZones: () => zones.map((zone) => ({ ...zone, points: zone.points.map((p) => ({ ...p })) })),

@@ -125,7 +125,51 @@ backend/.env
 Nếu backup lúc server đang chạy, cần copy cả file `-wal` và `-shm` hoặc dùng
 lệnh backup của SQLite; không chỉ copy riêng file `.sqlite3`.
 
-## 8. Trạng thái chuyển đổi hiện tại
+## 8. Quy trình SLAM mapping ổn định
+
+Không chạy đồng thời `slam_toolbox` và `localization_launch.py`. Hai luồng này
+đều liên quan đến transform `map -> odom`; chạy cùng lúc có thể làm TF/map nhảy.
+
+Sau khi `launch_sim.launch.py` hoặc `launch_robot.launch.py` đã chạy, mở một
+terminal khác:
+
+```bash
+# Mô phỏng
+./scripts/slam_session.sh start sim
+
+# Robot thật
+./scripts/slam_session.sh start real
+```
+
+Điều khiển robot, chạy một vòng quét kín, rồi lưu và tự dừng SLAM:
+
+```bash
+./scripts/slam_session.sh save ten_map_moi
+```
+
+Lệnh này gọi `/save_map_named` của `map_bridge_node`, tạo
+`~/maps/ten_map_moi.yaml`, `~/maps/ten_map_moi.pgm`, sau đó dừng process SLAM.
+Nếu cần dừng mà không lưu:
+
+```bash
+./scripts/slam_session.sh stop
+```
+
+Sau khi map đã lưu, chạy localization và Nav2 (không chạy SLAM):
+
+```bash
+ros2 launch amr_lan_3 localization_launch.py map:=./ten_map_moi.yaml use_sim_time:=false
+ros2 launch amr_lan_3 navigation_launch.py use_sim_time:=false map_subscribe_transient_local:=true
+```
+
+Shortcut desktop đã được sửa để có hai profile riêng:
+
+```bash
+./scripts/amr_tabs.sh real localization  # map đã lưu + Nav2
+./scripts/amr_tabs.sh real mapping       # chỉ phiên SLAM, không LOC/NAV
+```
+
+## 9. Trạng thái chuyển đổi hiện tại
 
 Đã chuyển:
 
@@ -140,7 +184,7 @@ lệnh backup của SQLite; không chỉ copy riêng file `.sqlite3`.
 Vẫn dùng rosbridge tương thích:
 
 - Render map/costmap/plan và đặt initial pose.
-- STM32/conveyor, mission, magnetic line và phần render map/costmap.
+- STM32/conveyor, mission và magnetic line.
 - ROS service áp dụng keepout mask ngay lập tức.
 
 Vì vậy chưa đổi `AMR_ENABLE_ROSBRIDGE_PROXY=false`. Giai đoạn tiếp theo sẽ chuyển

@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import re
+from pathlib import Path
 from typing import Any
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Response
+from fastapi import APIRouter, Body, Depends, File, HTTPException, Response, UploadFile
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
@@ -33,6 +35,30 @@ can_read = Depends(get_current_user)
 can_write = Depends(require_roles("admin", "operator"))
 
 
+def _sanitize_import_name(raw: str) -> str:
+    stem = Path(raw).stem.strip()
+    cleaned = re.sub(r"[^A-Za-z0-9_-]+", "_", stem).strip("_")
+    if not cleaned:
+        raise HTTPException(status_code=400, detail="Tên file map không hợp lệ")
+    return validate_map_name(cleaned)
+
+
+def _rewrite_yaml_image(text: str, image_name: str) -> str:
+    lines = text.splitlines()
+    out: list[str] = []
+    replaced = False
+    for line in lines:
+        if re.match(r"^\s*image\s*:", line):
+            indent = re.match(r"^(\s*)", line).group(1)
+            out.append(f"{indent}image: {image_name}")
+            replaced = True
+        else:
+            out.append(line)
+    if not replaced:
+        out.insert(0, f"image: {image_name}")
+    return "\n".join(out) + ("\n" if text.endswith("\n") else "")
+
+
 def _require_map(db: Session, map_name: str) -> MapRecord:
     name = validate_map_name(map_name)
     record = get_map(db, name)
@@ -53,6 +79,100 @@ async def list_maps(_user: User = can_read, db: Session = Depends(get_db)):
         }
         for item in records
     ]
+
+
+@router.post("/map-import")
+async def import_map(
+    files: list[UploadFile] = File(...),
+    user: User = can_write,
+    db: Session = Depends(get_db),
+):
+    """Import OccupancyGrid map files (.yaml and/or .pgm/.png) into maps_root.
+
+    Có thể gửi cả 2 file cùng lúc, hoặc chỉ 1 file nếu file còn lại đã có trên đĩa.
+    """
+    if not files:
+        raise HTTPException(status_code=400, detail="Chọn file map để import")
+
+    yaml_file: UploadFile | None = None
+    image_file: UploadFile | None = None
+    for item in files:
+        name = (item.filename or "").lower()
+        if name.endswith((".yaml", ".yml")):
+            yaml_file = item
+        elif name.endswith((".pgm", ".png", ".jpg", ".jpeg")):
+            image_file = item
+
+    if yaml_file is None and image_file is None:
+        raise HTTPException(status_code=400, detail="Cần file .yaml/.yml hoặc .pgm/.png")
+
+    settings = get_settings()
+    settings.maps_root.mkdir(parents=True, exist_ok=True)
+
+    if yaml_file is not None:
+        map_name = _sanitize_import_name(yaml_file.filename or "imported_map")
+    else:
+        map_name = _sanitize_import_name(image_file.filename or "imported_map")
+
+    # Ưu tiên đuôi ảnh mới upload; nếu không có thì giữ file ảnh đã có trên đĩa.
+    image_suffix = ".pgm"
+    if image_file is not None:
+        image_suffix = Path(image_file.filename or "map.pgm").suffix.lower() or ".pgm"
+        if image_suffix not in {".pgm", ".png", ".jpg", ".jpeg"}:
+            image_suffix = ".pgm"
+    else:
+        for suffix in (".pgm", ".png", ".jpg", ".jpeg"):
+            if (settings.maps_root / f"{map_name}{suffix}").is_file():
+                image_suffix = suffix
+                break
+
+    image_name = f"{map_name}{image_suffix}"
+    yaml_path = settings.maps_root / f"{map_name}.yaml"
+    image_path = settings.maps_root / image_name
+
+    if yaml_file is not None:
+        yaml_bytes = await yaml_file.read()
+        if not yaml_bytes:
+            raise HTTPException(status_code=400, detail="File YAML rỗng")
+        try:
+            yaml_text = yaml_bytes.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise HTTPException(status_code=400, detail="YAML không phải UTF-8") from exc
+        yaml_text = _rewrite_yaml_image(yaml_text, image_name)
+        yaml_path.write_text(yaml_text, encoding="utf-8")
+    elif not yaml_path.is_file():
+        raise HTTPException(
+            status_code=400,
+            detail="Chưa có YAML — hãy import file .yaml trước hoặc chọn kèm YAML",
+        )
+    else:
+        # Cập nhật dòng image: trong yaml cũ cho khớp ảnh mới.
+        yaml_text = _rewrite_yaml_image(yaml_path.read_text(encoding="utf-8"), image_name)
+        yaml_path.write_text(yaml_text, encoding="utf-8")
+
+    if image_file is not None:
+        image_bytes = await image_file.read()
+        if not image_bytes:
+            raise HTTPException(status_code=400, detail="File ảnh map rỗng")
+        image_path.write_bytes(image_bytes)
+    elif not image_path.is_file():
+        raise HTTPException(
+            status_code=400,
+            detail="Chưa có ảnh map — hãy import .pgm/.png trước hoặc chọn kèm ảnh",
+        )
+
+    record = get_or_create_map(db, settings, map_name)
+    record.yaml_path = str(yaml_path)
+    record.image_path = str(image_path)
+    write_audit(db, user, "map.imported", f"map:{map_name}")
+    db.commit()
+
+    return {
+        "success": True,
+        "name": map_name,
+        "yamlPath": str(yaml_path),
+        "imagePath": str(image_path),
+    }
 
 
 @router.put("/maps/{map_name}")

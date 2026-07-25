@@ -105,12 +105,21 @@ function initTeleop() {
       clearInterval(publishTimer);
       publishTimer = null;
     }
+    // Luôn gửi vận tốc 0 xuống xe khi bấm Stop.
     if (controlSocket) {
       if (controlSocket.readyState === WebSocket.OPEN) {
+        controlSocket.send(JSON.stringify({ type: 'teleop', linearX: 0, angularZ: 0 }));
         controlSocket.send(JSON.stringify({ type: 'stop' }));
       }
+      window.dispatchEvent(new CustomEvent('amr-teleop-motion', {
+        detail: { moving: false },
+      }));
     } else if (cmdVelPub) {
       publishVel(0, 0);
+    } else {
+      window.dispatchEvent(new CustomEvent('amr-teleop-motion', {
+        detail: { moving: false },
+      }));
     }
   }
 

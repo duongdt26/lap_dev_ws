@@ -19,6 +19,7 @@ from .legacy_import import import_legacy_data
 from .migrations import upgrade_database
 from .models import MapRecord, User
 from .ros_gateway import get_ros_gateway
+from .mode_manager import get_mode_manager
 from .routers import auth, data, robot
 
 
@@ -38,6 +39,7 @@ async def lifespan(_app: FastAPI):
     gateway = get_ros_gateway(settings)
     gateway.start()
     yield
+    get_mode_manager(settings).close()
     gateway.stop()
 
 

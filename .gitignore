@@ -26,6 +26,7 @@ log/
 # ngrok runtime
 web/amr_dashboard/config.json
 scripts/.ngrok_amr.pid
+scripts/.slam_session.pid
 
 # FastAPI local runtime (mau an toan nam o backend/.env.example)
 backend/.env

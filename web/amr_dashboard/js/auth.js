@@ -18,12 +18,19 @@
   let readySent = false;
 
   function dispatchReady(detail) {
-    if (readySent) return;
-    readySent = true;
-    window.dispatchEvent(new CustomEvent('amr-auth-ready', { detail }));
+    if (!readySent) {
+      readySent = true;
+      window.dispatchEvent(new CustomEvent('amr-auth-ready', { detail }));
+    }
+    window.dispatchEvent(new CustomEvent('amr-auth-user', { detail }));
+  }
+
+  function lockApp(locked) {
+    document.body.classList.toggle('auth-locked', !!locked);
   }
 
   function showLogin(message = '') {
+    lockApp(true);
     modal?.classList.remove('hidden');
     modal?.setAttribute('aria-hidden', 'false');
     if (errorEl) errorEl.textContent = message;
@@ -31,6 +38,7 @@
   }
 
   function hideLogin() {
+    lockApp(false);
     modal?.classList.add('hidden');
     modal?.setAttribute('aria-hidden', 'true');
     if (passwordInput) passwordInput.value = '';
@@ -41,16 +49,23 @@
     currentUser = user;
     document.body.dataset.authRole = user?.role || 'legacy';
     if (userBox && userLabel) {
-      userLabel.textContent = user
-        ? `${user.username} · ${user.role}`
-        : 'Legacy mode';
-      userBox.classList.remove('hidden');
+      if (user) {
+        userLabel.textContent = user.username || user.role || 'user';
+        userBox.classList.remove('hidden');
+      } else {
+        userLabel.textContent = '';
+        userBox.classList.add('hidden');
+      }
     }
   }
 
   async function request(path, options = {}) {
     const headers = new Headers(options.headers || {});
-    if (options.body != null && !headers.has('Content-Type')) {
+    if (
+      options.body != null
+      && !headers.has('Content-Type')
+      && !(options.body instanceof FormData)
+    ) {
       headers.set('Content-Type', 'application/json');
     }
     const response = await fetch(path, {
@@ -68,6 +83,9 @@
       try {
         const body = await response.json();
         message = body.detail || message;
+        if (Array.isArray(body.detail)) {
+          message = body.detail.map((d) => d.msg || d).join('; ');
+        }
       } catch {
         /* response không phải JSON */
       }
@@ -87,6 +105,7 @@
       });
       if (response.status === 404) {
         setUser(null);
+        hideLogin();
         dispatchReady({ legacy: true });
         return;
       }
@@ -104,6 +123,7 @@
       // Giữ khả năng chạy server tĩnh cũ trong giai đoạn chuyển đổi.
       console.warn('AMR API chưa sẵn sàng, dùng legacy mode:', error);
       setUser(null);
+      hideLogin();
       dispatchReady({ legacy: true });
     }
   }
@@ -140,6 +160,10 @@
     }
     window.AmrRos?.disconnect?.();
     currentUser = null;
+    readySent = false;
+    if (userBox) userBox.classList.add('hidden');
+    document.body.dataset.authRole = '';
+    window.dispatchEvent(new CustomEvent('amr-auth-user', { detail: { user: null } }));
     showLogin('Đã đăng xuất');
   });
 

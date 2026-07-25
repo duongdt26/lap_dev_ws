@@ -45,7 +45,7 @@
 
   const POINT_TYPE_OPTIONS = [
     { value: 'normal', label: 'Normal' },
-    { value: 'approach', label: 'Approach Pose' },
+    { value: 'approach', label: 'Approach Station' },
     { value: 'home', label: 'Home' },
   ];
 
@@ -301,7 +301,7 @@
     window.dispatchEvent(new CustomEvent('amr-setpoints-changed'));
     setWorkflowStep('setpoint', setpoints.length
       ? `Đã lưu ${setpoints.length} setpoint`
-      : 'Chưa có setpoint — bấm Setpoint để thêm');
+      : 'Chưa có station');
 
     if (!window.AmrMapData?.saveSetpoints) return;
     const mapName = window.AmrMapData.getCurrentMapName();
@@ -374,7 +374,7 @@
 
     stationSelect.innerHTML = '';
     if (!setpoints.length) {
-      stationSelect.innerHTML = '<option value="">-- Chưa có setpoint --</option>';
+      stationSelect.innerHTML = '<option value="">-- Chưa có station --</option>';
       stationSelect.disabled = true;
       if (btnEditSetpoint) btnEditSetpoint.disabled = true;
       return;
@@ -478,7 +478,7 @@
     if (!selectedId) {
       writeStationStatus(setpoints.length
         ? 'Chọn setpoint trong dropdown hoặc danh sách bên phải'
-        : 'Chưa có setpoint — bấm Setpoint để thêm');
+        : 'Chưa có station');
       return;
     }
     const pt = setpoints.find((p) => p.id === selectedId);
@@ -600,7 +600,7 @@
     const belt2Cmd = normalizeBeltCmd(document.getElementById('setpoint-belt2-cmd').value);
 
     if (pointType === 'approach' && belt1Cmd === 'none' && belt2Cmd === 'none') {
-      writeStationStatus('Approach Pose phải chọn ít nhất một băng tải');
+      writeStationStatus('Approach Station phải chọn ít nhất một băng tải');
       return;
     }
 
@@ -746,7 +746,7 @@
     setWorkflowStep('setpoint', 'Đã reset quy trình chạy — sẵn sàng chạy lại từ đầu');
   }
 
-  document.getElementById('btn-setpoint').addEventListener('click', openSetpointModal);
+  document.getElementById('btn-setpoint')?.addEventListener('click', openSetpointModal);
   document.getElementById('btn-auto-route').addEventListener('click', autoRoute);
   document.getElementById('btn-go-station').addEventListener('click', goToSelectedStation);
   document.getElementById('btn-station-reset').addEventListener('click', resetStation);
@@ -755,9 +755,7 @@
       selectSetpoint(stationSelect.value || null);
     });
   }
-  if (btnEditSetpoint) {
-    btnEditSetpoint.addEventListener('click', openEditSetpointModal);
-  }
+  btnEditSetpoint?.addEventListener('click', openEditSetpointModal);
   document.getElementById('btn-use-current').addEventListener('click', useCurrentPosition);
   document.getElementById('btn-save-point').addEventListener('click', savePoint);
   document.getElementById('btn-cancel-setpoint').addEventListener('click', closeSetpointModal);

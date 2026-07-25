@@ -414,9 +414,12 @@ function sendNavGoalAsync(wx, wy, yaw, options = {}) {
 }
 
 function setNavMode(enabled) {
+  if (enabled && window.AmrSlam?.isScanOn?.()) {
+    window.AmrSlam.setScanMode(false);
+  }
   navUiOn = enabled;
   if (btnNavMode) {
-    btnNavMode.textContent = `Nav2: ${enabled ? 'ON' : 'OFF'}`;
+    btnNavMode.textContent = `Chọn điểm đến: ${enabled ? 'BẬT' : 'TẮT'}`;
     btnNavMode.classList.toggle('active', enabled);
   }
   if (window.AmrMap) window.AmrMap.setNavMode(enabled);
@@ -484,7 +487,7 @@ window.addEventListener('amr-auth-ready', () => {
   if (!useNavigationApi()) return;
   if (window.AmrMap) {
     window.AmrMap.setNavGoalCallback(sendNavGoal);
-    updateNavStatus('Sẵn sàng (API Nav2)', '#4ade80');
+    updateNavStatus('🟢 Navigation Ready', '#4ade80');
   }
 });
 
@@ -517,7 +520,7 @@ window.addEventListener('amr-ros-connected', () => {
   function wireNavCallback() {
     if (window.AmrMap) {
       window.AmrMap.setNavGoalCallback(sendNavGoal);
-      updateNavStatus('Sẵn sàng (service Nav2)', '#4ade80');
+      updateNavStatus('🟢 Navigation Ready', '#4ade80');
     } else {
       setTimeout(wireNavCallback, 100);
     }

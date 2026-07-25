@@ -2,9 +2,9 @@
 # 1 cửa sổ Terminator, nhiều TAB (DBus tuần tự).
 # Terminator không hỗ trợ nhiều --new-tab trong 1 lệnh — phải gọi từng lần.
 #
-# Dùng:  ./scripts/amr_terminator.sh sim
-#        ./scripts/amr_terminator.sh real
-#        ./scripts/amr_terminator.sh sim  nav   # tự Enter mọi tab TRỪ SLAM (chạy nav2)
+# Dùng:  ./scripts/amr_terminator.sh sim stage localization
+#        ./scripts/amr_terminator.sh real stage mapping
+#        ./scripts/amr_terminator.sh sim  nav   # tự Enter mọi tab TRỪ SLAM (SIM/WEB/NGROK/LOC/NAV)
 #        ./scripts/amr_terminator.sh real nav
 set -euo pipefail
 
@@ -12,9 +12,16 @@ WS="$HOME/dev_ws"
 WORLD="$WS/src/amr_lan_3/worlds/obstacle_1.world"
 MODE="${1:-sim}"
 RUN="${2:-stage}"          # stage = dán sẵn (bấm ↑+Enter) | nav = tự chạy mọi tab trừ SLAM
+PROFILE="${3:-localization}" # localization | mapping
 BOOT_WAIT="${BOOT_WAIT:-1.2}"
 TAB_WAIT="${TAB_WAIT:-0.3}"
 NAV_WAIT="${NAV_WAIT:-3.0}" # chờ thêm trước khi tự chạy tab NAV (đợi LOC lên map)
+NGROK_WAIT="${NGROK_WAIT:-2.5}" # chờ WEB/API lên trước khi mở tunnel ngrok
+
+case "$PROFILE" in
+  localization|mapping) ;;
+  *) echo "Dùng profile: localization hoặc mapping"; exit 1 ;;
+esac
 
 if pgrep -x terminator >/dev/null 2>&1; then
   echo "Đang đóng Terminator cũ để tab không bị tách 2 cửa sổ..."
@@ -54,21 +61,27 @@ case "$MODE" in
     add_tab "SIM"   "ros2 launch amr_lan_3 launch_sim.launch.py world:=$WORLD"
     add_tab "WEB"   "AMR_USE_SIM_TIME=true $WS/scripts/start_api_server.sh"
     add_tab "NGROK" "$WS/scripts/start_ngrok.sh"
-    add_tab "SLAM"  "ros2 launch slam_toolbox online_async_launch.py slam_params_file:=./src/amr_lan_3/config/mapper_params_online_async.yaml use_sim_time:=true"
-    add_tab "LOC"   "ros2 launch amr_lan_3 localization_launch.py map:=./obs_3_map_save.yaml use_sim_time:=true"
-    add_tab "NAV"   "ros2 launch amr_lan_3 navigation_launch.py use_sim_time:=true map_subscribe_transient_local:=true"
+    if [[ "$PROFILE" == "mapping" ]]; then
+      add_tab "SLAM"  "$WS/scripts/slam_session.sh start sim"
+    else
+      add_tab "LOC"   "ros2 launch amr_lan_3 localization_launch.py map:=./obs_3_map_save.yaml use_sim_time:=true"
+      add_tab "NAV"   "ros2 launch amr_lan_3 navigation_launch.py use_sim_time:=true map_subscribe_transient_local:=true"
+    fi
     ;;
   real)
     add_tab "ROBOT" "ros2 launch amr_lan_3 launch_robot.launch.py"
     add_tab "LIDAR" "ros2 launch amr_lan_3 rplidar.launch.py"
     add_tab "WEB"   "AMR_USE_SIM_TIME=false $WS/scripts/start_api_server.sh"
     add_tab "NGROK" "$WS/scripts/start_ngrok.sh"
-    add_tab "SLAM"  "ros2 launch slam_toolbox online_async_launch.py slam_params_file:=./src/amr_lan_3/config/mapper_params_online_async.yaml use_sim_time:=false"
-    add_tab "LOC"   "ros2 launch amr_lan_3 localization_launch.py map:=./obs_3_map_save.yaml use_sim_time:=false"
-    add_tab "NAV"   "ros2 launch amr_lan_3 navigation_launch.py use_sim_time:=false map_subscribe_transient_local:=true"
+    if [[ "$PROFILE" == "mapping" ]]; then
+      add_tab "SLAM"  "$WS/scripts/slam_session.sh start real"
+    else
+      add_tab "LOC"   "ros2 launch amr_lan_3 localization_launch.py map:=./obs_3_map_save.yaml use_sim_time:=false"
+      add_tab "NAV"   "ros2 launch amr_lan_3 navigation_launch.py use_sim_time:=false map_subscribe_transient_local:=true"
+    fi
     ;;
   *)
-    echo "Dùng: $0 [sim|real] [nav]"
+    echo "Dùng: $0 [sim|real] [stage|nav] [localization|mapping]"
     echo "  nav = tự Enter mọi tab trừ SLAM (chạy nav2 luôn)"
     exit 1
     ;;
@@ -86,6 +99,10 @@ for entry in "${TABS[@]}"; do
   # Chế độ 'nav': tự Enter mọi tab TRỪ SLAM (SLAM vẫn để dán sẵn cho lúc quét map)
   if [[ "$RUN" == "nav" && "$title" != "SLAM" ]]; then
     autorun="yes"
+    # NGROK cần API :8080 → chờ WEB khởi động
+    if [[ "$title" == "NGROK" ]]; then
+      sleep "$NGROK_WAIT"
+    fi
     # NAV cần map từ LOC → chờ thêm trước khi tự chạy
     if [[ "$title" == "NAV" ]]; then
       sleep "$NAV_WAIT"

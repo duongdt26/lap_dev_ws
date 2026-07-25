@@ -247,19 +247,15 @@ function mapYamlPath(name) {
 
 const mapSelect   = document.getElementById('map-select');
 const loadStatus  = document.getElementById('load-map-status');
-const btnRefresh  = document.getElementById('btn-refresh-maps');
 const btnLoad     = document.getElementById('btn-load-map');
-const btnPoseMode = document.getElementById('btn-pose-mode');
 
 let listMapsClient = null;
 let loadMapClient  = null;
 
-function formatActiveMapStatus(status) {
-  if (!status || !status.loaded) {
-    return 'No active map on robot — load map or run localization';
-  }
-  const name = status.map_name ? status.map_name : '(localization)';
-  return `Active map: ${name} — ${status.width}×${status.height} @ ${Number(status.resolution).toFixed(3)} m/cell`;
+function setLoadMapStatus(message, color = '') {
+  if (!loadStatus) return;
+  loadStatus.textContent = message || '';
+  loadStatus.style.color = color;
 }
 
 function refreshActiveMapStatus() {
@@ -270,10 +266,7 @@ function refreshActiveMapStatus() {
         const opt = Array.from(mapSelect.options).find((o) => o.value === status.map_name);
         if (opt) mapSelect.value = status.map_name;
       }
-      if (status.loaded) {
-        loadStatus.textContent = formatActiveMapStatus(status);
-        loadStatus.style.color = '#4ade80';
-      }
+      // Không ghi trạng thái Active map lên #load-map-status — chỉ hiện khi nạp thành công/lỗi.
     })
     .catch(() => { /* bridge chưa sẵn sàng */ });
 }
@@ -318,12 +311,19 @@ async function notifyMapLoaded(name) {
     warnings.push('setpoint/process chưa đồng bộ');
   }
 
+  // Tự đưa về origin (0, 0, 0) của map vừa nạp.
+  const originOk = window.AmrMap?.publishInitialPose?.(0, 0, 0);
+  if (!originOk) {
+    warnings.push('chưa set được origin 0,0,0');
+  }
+
   refreshActiveMapStatus();
   window.dispatchEvent(new CustomEvent('amr-map-loaded', { detail: { name } }));
 
   if (warnings.length > 0) {
-    loadStatus.textContent = `Đã nạp: ${name} — ${warnings.join(', ')}`;
-    loadStatus.style.color = '#facc15';
+    setLoadMapStatus(`Nạp map thành công: ${name} (${warnings.join(', ')})`, '#facc15');
+  } else {
+    setLoadMapStatus(`Nạp map thành công: ${name} · origin (0,0,0)`, '#4ade80');
   }
 
   // Ép sync thêm lần nữa — rosbridge đôi khi trễ 1 nhịp.
@@ -345,8 +345,9 @@ function setPoseUiOn(enabled) {
   }
 }
 
-/** Load vị trí ban đầu = publish /initialpose tại (0, 0, yaw=0) */
-function loadOriginPose() {
+/** Publish /initialpose tại (0, 0, yaw=0) */
+function loadOriginPose(options = {}) {
+  const silent = !!options.silent;
   if (window.AmrNavigation) {
     window.AmrNavigation.setNavMode?.(false);
   }
@@ -354,23 +355,25 @@ function loadOriginPose() {
 
   const ok = window.AmrMap?.publishInitialPose?.(0, 0, 0);
   if (!ok) {
-    loadStatus.textContent = 'Chưa kết nối ROS — không load được vị trí ban đầu';
-    loadStatus.style.color = '#f87171';
-    return;
+    if (!silent) {
+      setLoadMapStatus('Chưa kết nối ROS — không load được vị trí ban đầu', '#f87171');
+    }
+    return false;
   }
 
-  loadStatus.textContent = 'Đã load vị trí ban đầu: (0.00, 0.00, 0.0°)';
-  loadStatus.style.color = '#4ade80';
+  if (!silent) {
+    setLoadMapStatus('Đã load vị trí ban đầu (0, 0, 0)', '#4ade80');
+  }
+  return true;
 }
 
-function refreshMapList() {
+function refreshMapList(options = {}) {
+  const silent = !!options.silent;
   if (!listMapsClient) {
-    loadStatus.textContent = 'Chưa kết nối — bấm Kết nối trước';
-    loadStatus.style.color = '#f87171';
+    if (!silent) setLoadMapStatus('Chưa kết nối ROS', '#f87171');
     return;
   }
-  loadStatus.textContent = 'Đang tải danh sách...';
-  loadStatus.style.color = '#888';
+  if (!silent) setLoadMapStatus('');
   listMapsClient.callService(new ROSLIB.ServiceRequest({}),
     (result) => {
       mapSelect.innerHTML = '';
@@ -379,8 +382,7 @@ function refreshMapList() {
         .split(',').map(s => s.trim()).filter(s => s.length > 0);
       if (names.length === 0) {
         mapSelect.innerHTML = '<option value="">(không có map)</option>';
-        loadStatus.textContent = 'Không có map trong ~/maps';
-        loadStatus.style.color = '#f87171';
+        if (!silent) setLoadMapStatus('Không có map trong ~/maps', '#f87171');
         return;
       }
       names.forEach(name => {
@@ -388,49 +390,161 @@ function refreshMapList() {
         opt.value = opt.textContent = name;
         mapSelect.appendChild(opt);
       });
-      loadStatus.textContent = `Đã tải ${names.length} map`;
-      loadStatus.style.color = '#4ade80';
+      if (!silent) setLoadMapStatus('');
     },
     (err) => {
-      loadStatus.textContent = 'Lỗi /list_maps — map_bridge_node có chạy?';
-      loadStatus.style.color = '#f87171';
+      if (!silent) setLoadMapStatus('Lỗi tải danh sách map', '#f87171');
       console.error(err);
     }
   );
 }
 
-btnRefresh.addEventListener('click', refreshMapList);
-
-btnLoad.addEventListener('click', () => {
+btnLoad?.addEventListener('click', () => {
   const name = mapSelect.value;
-  if (!name) { loadStatus.textContent = 'Chọn map trước'; loadStatus.style.color = '#f87171'; return; }
-  if (!loadMapClient) { loadStatus.textContent = 'Chưa kết nối'; loadStatus.style.color = '#f87171'; return; }
-  loadStatus.textContent = 'Đang nạp map...';
-  loadStatus.style.color = '#888';
+  if (!name) { setLoadMapStatus('Chọn map trước', '#f87171'); return; }
+  if (!loadMapClient) { setLoadMapStatus('Chưa kết nối ROS', '#f87171'); return; }
+  setLoadMapStatus('Đang nạp map...', '#888');
   loadMapClient.callService(
     new ROSLIB.ServiceRequest({ map_url: mapYamlPath(name) }),
     (result) => {
       if (result.result === 0) {
-        loadStatus.textContent = `Loaded: ${name} — syncing to all clients...`;
-        loadStatus.style.color = '#4ade80';
+        setLoadMapStatus(`Nạp map thành công: ${name}`, '#4ade80');
         notifyMapLoaded(name);
       } else {
-        loadStatus.textContent = result.error_msg || 'Nạp map thất bại';
-        loadStatus.style.color = '#f87171';
+        setLoadMapStatus(result.error_msg || 'Nạp map thất bại', '#f87171');
       }
     },
-    (err) => { loadStatus.textContent = 'Lỗi load_map'; loadStatus.style.color = '#f87171'; console.error(err); }
+    (err) => { setLoadMapStatus('Lỗi nạp map', '#f87171'); console.error(err); }
   );
 });
 
-btnPoseMode.addEventListener('click', loadOriginPose);
+const btnImport = document.getElementById('btn-import-map');
+const importFiles = document.getElementById('import-map-files');
+
+/** Ghép file chọn từng lần hoặc chọn cả 2 cùng lúc. */
+const pendingImport = { yaml: null, image: null };
+
+function ensureMapOption(name) {
+  if (!mapSelect || !name) return;
+  let opt = Array.from(mapSelect.options).find((o) => o.value === name);
+  if (!opt) {
+    opt = document.createElement('option');
+    opt.value = opt.textContent = name;
+    mapSelect.appendChild(opt);
+  }
+  mapSelect.value = name;
+}
+
+function isYamlFile(file) {
+  return /\.ya?ml$/i.test(file?.name || '');
+}
+
+function isImageFile(file) {
+  return /\.(pgm|png|jpe?g)$/i.test(file?.name || '');
+}
+
+function pendingStatusText() {
+  const parts = [];
+  if (pendingImport.yaml) parts.push(`YAML: ${pendingImport.yaml.name}`);
+  else parts.push('YAML: (chưa có)');
+  if (pendingImport.image) parts.push(`Image: ${pendingImport.image.name}`);
+  else parts.push('Image: (chưa có)');
+  if (pendingImport.yaml && pendingImport.image) {
+    return `${parts.join(' · ')} — đang upload...`;
+  }
+  const missing = !pendingImport.yaml ? 'YAML' : 'ảnh (.pgm/.png)';
+  return `${parts.join(' · ')} — chọn tiếp file ${missing} (hoặc chọn cả 2 cùng lúc)`;
+}
+
+function clearPendingImport() {
+  pendingImport.yaml = null;
+  pendingImport.image = null;
+}
+
+async function uploadPendingImport() {
+  if (!pendingImport.yaml && !pendingImport.image) return;
+  if (!window.AmrApi?.isAvailable?.()) {
+    setLoadMapStatus('API chưa sẵn sàng — restart backend rồi thử lại', '#f87171');
+    return;
+  }
+
+  const form = new FormData();
+  if (pendingImport.yaml) {
+    form.append('files', pendingImport.yaml, pendingImport.yaml.name);
+  }
+  if (pendingImport.image) {
+    form.append('files', pendingImport.image, pendingImport.image.name);
+  }
+
+  const label = [
+    pendingImport.yaml?.name,
+    pendingImport.image?.name,
+  ].filter(Boolean).join(' + ');
+
+  setLoadMapStatus(`Đang import: ${label}`, '#888');
+  if (btnImport) btnImport.setAttribute('aria-disabled', 'true');
+  try {
+    const result = await window.AmrApi.request('/api/map-import', {
+      method: 'POST',
+      body: form,
+    });
+    const name = result?.name || '';
+    clearPendingImport();
+    setLoadMapStatus(name ? `Imported: ${name}` : 'Import map thành công', '#4ade80');
+    ensureMapOption(name);
+    refreshMapList({ silent: true });
+  } catch (err) {
+    console.error('Import map failed:', err);
+    // Thiếu file còn lại → giữ pending, hướng dẫn chọn tiếp.
+    if (!pendingImport.yaml || !pendingImport.image) {
+      setLoadMapStatus(pendingStatusText(), '#facc15');
+      return;
+    }
+    setLoadMapStatus(err.message || 'Import map thất bại', '#f87171');
+  } finally {
+    if (btnImport) btnImport.removeAttribute('aria-disabled');
+  }
+}
+
+function ingestImportFiles(fileList) {
+  const selected = Array.from(fileList || []);
+  if (!selected.length) return;
+
+  let added = 0;
+  selected.forEach((file) => {
+    if (isYamlFile(file)) {
+      pendingImport.yaml = file;
+      added += 1;
+    } else if (isImageFile(file)) {
+      pendingImport.image = file;
+      added += 1;
+    }
+  });
+
+  if (!added) {
+    setLoadMapStatus(
+      `Bỏ qua: ${selected.map((f) => f.name).join(', ')} — cần .yaml/.yml hoặc .pgm/.png`,
+      '#f87171'
+    );
+    return;
+  }
+
+  setLoadMapStatus(pendingStatusText(), '#facc15');
+  uploadPendingImport();
+}
+
+importFiles?.addEventListener('change', () => {
+  const copy = importFiles.files ? Array.from(importFiles.files) : [];
+  importFiles.value = '';
+  ingestImportFiles(copy);
+});
 
 window.addEventListener('amr-ros-connected', () => {
   const ros = window.AmrRos.getRos();
   if (!ros) return;
   listMapsClient = new ROSLIB.Service({ ros, name: '/list_maps', serviceType: 'std_srvs/srv/Trigger' });
   loadMapClient  = new ROSLIB.Service({ ros, name: '/map_server/load_map', serviceType: 'nav2_msgs/srv/LoadMap' });
-  refreshMapList();
+  refreshMapList({ silent: true });
   setTimeout(refreshActiveMapStatus, 800);
 });
 

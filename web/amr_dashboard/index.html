@@ -7,18 +7,28 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=19" />
+  <link rel="stylesheet" href="css/style.css?v=38" />
+  <link rel="preload" as="image" href="assets/login-warehouse.jpg" />
+  <style>
+    /* Ẩn dashboard ngay từ frame đầu — tránh flash trước khi CSS/auth.js load */
+    body.auth-locked .app-header,
+    body.auth-locked .role-nav,
+    body.auth-locked .layout,
+    body.auth-locked .modal-overlay { display: none !important; }
+    body.auth-locked { margin: 0; min-height: 100vh; background: #0b1220; }
+    .auth-gate { position: fixed; inset: 0; z-index: 10000; }
+  </style>
   <script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
   <script>
     (function () {
       try {
-        var t = localStorage.getItem('amr-theme');
-        if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.removeItem('amr-theme');
+        document.documentElement.removeAttribute('data-theme');
       } catch (e) {}
     })();
   </script>
 </head>
-<body>
+<body class="auth-locked">
   <header class="app-header">
     <div class="brand">
       <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Logo_Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_H%E1%BB%8Dc_C%C3%B4ng_ngh%E1%BB%87_K%E1%BB%B9_Thu%E1%BA%ADt_TP_H%E1%BB%93_Ch%C3%AD_Minh.png" alt="HCM-UTE" class="header-logo" />
@@ -29,27 +39,16 @@
     </div>
     <div class="header-actions">
       <div id="auth-user-box" class="auth-user-box hidden" aria-label="Tài khoản đang đăng nhập">
-        <span id="auth-user-label"></span>
-        <button type="button" id="btn-auth-logout" class="auth-logout">Đăng xuất</button>
-      </div>
-      <div class="header-conn" aria-label="Trạng thái kết nối">
-        <span id="conn-status" class="conn-pill disconnected">ROS: disconnected</span>
-        <span id="stm32-status" class="conn-pill disconnected">STM32: disconnected</span>
+        <span id="auth-user-label" class="auth-user-name"></span>
+        <button type="button" id="btn-auth-logout" class="auth-logout" title="Đăng xuất" aria-label="Đăng xuất">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </button>
       </div>
       <input id="ros-host" type="hidden" value="" />
-      <button type="button" id="btn-theme-toggle" class="theme-toggle" aria-label="Chế độ sáng" title="Chế độ sáng / tối">
-        <span class="theme-track" aria-hidden="true">
-          <span class="theme-knob">
-            <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="4"/>
-              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
-            </svg>
-            <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 0 0 11.5 11.5z"/>
-            </svg>
-          </span>
-        </span>
-      </button>
     </div>
   </header>
 
@@ -72,24 +71,30 @@
       </span>
       <span class="role-tab-label">Setter</span>
     </button>
+    <div class="role-nav-trailing">
+      <div class="header-conn" aria-label="Trạng thái kết nối">
+        <span id="conn-status" class="conn-pill disconnected">System: disconnected</span>
+        <span id="stm32-status" class="conn-pill disconnected">STM32: disconnected</span>
+      </div>
+    </div>
   </nav>
 
   <main class="layout">
     <aside class="panel">
 
       <section class="panel-section" data-role="operator setup">
-        <h2 class="section-title">Teleop control</h2>
+        <h2 class="section-title">Manual Mode</h2>
         <div class="section-body">
           <p class="speed-row">
             <span class="speed-label-row">
-              <span>Velocity</span>
+              <span>Linear Velocity</span>
               <span class="speed-value"><span id="speed-label">0.20</span> m/s</span>
             </span>
             <input id="speed-slider" type="range" min="0.05" max="0.8" step="0.05" value="0.2" />
           </p>
           <p class="speed-row">
             <span class="speed-label-row">
-              <span>Tốc độ xoay</span>
+              <span>Angular Velocity</span>
               <span class="speed-value"><span id="angular-label">0.40</span> rad/s</span>
             </span>
             <input id="angular-slider" type="range" min="0.1" max="1.2" step="0.05" value="0.4" />
@@ -105,19 +110,19 @@
       </section>
 
       <section class="panel-section" data-role="operator setup">
-        <h2 class="section-title">Station control</h2>
+        <h2 class="section-title">Auto Mode</h2>
         <div class="section-body">
           <div class="station-picker-row">
-            <select id="station-setpoint-select" aria-label="Chọn setpoint">
-              <option value="">-- Chưa có setpoint --</option>
+            <select id="station-setpoint-select" aria-label="Chọn station">
+              <option value="">-- Chưa có station --</option>
             </select>
-            <button type="button" id="btn-edit-setpoint" class="btn-action btn-secondary station-edit-btn" disabled>Edit</button>
+            <button type="button" id="btn-edit-setpoint" class="btn-action btn-secondary station-edit-btn setup-only" disabled>Edit</button>
           </div>
           <div class="station-btn-grid">
-            <button type="button" id="btn-setpoint" class="btn-action btn-secondary">Setpoint</button>
+            <button type="button" id="btn-setpoint" class="btn-action btn-secondary setup-only">Setpoint</button>
             <button type="button" id="btn-auto-route" class="btn-action btn-secondary">Auto Mission</button>
             <button type="button" id="btn-go-station" class="btn-action">Go to Station</button>
-            <button type="button" id="btn-station-reset" class="btn-action btn-danger">Reset</button>
+            <button type="button" id="btn-station-reset" class="btn-action btn-danger station-emergency-btn">Reset</button>
             <button type="button" id="btn-nav-cancel" class="btn-action btn-danger station-emergency-btn">EMERGENCY</button>
           </div>
           <p id="nav-status" class="hint">No goal</p>
@@ -144,52 +149,57 @@
       </section>
 
       <section class="panel-section" data-role="setup">
-        <h2 class="section-title">Bản đồ (SLAM)</h2>
+        <h2 class="section-title section-title-mixed">MAP and SLAM</h2>
         <div class="section-body">
+          <p class="map-panel-label">SLAM</p>
+          <button id="btn-slam-scan" type="button" class="btn-action btn-secondary">
+            SLAM: OFF
+          </button>
+          <p id="slam-status" class="hint">SLAM: OFF · Nav2 sẵn sàng</p>
           <label>
-            Tên map khi lưu:
+            Map name:
             <input id="map-name-input" type="text" placeholder="obs_4_map_save" />
           </label>
-          <button id="btn-save-map" type="button" class="btn-action">Lưu map</button>
+          <button id="btn-save-map" type="button" class="btn-action">Save map</button>
           <p id="save-map-status" class="hint"></p>
-        </div>
-      </section>
 
-      <section class="panel-section" data-role="setup">
-        <h2 class="section-title">Localization</h2>
-        <div class="section-body">
-          <label>
-            Chọn map:
-            <select id="map-select">
-              <option value="">-- bấm Làm mới danh sách --</option>
-            </select>
-          </label>
-          <button id="btn-refresh-maps" type="button" class="btn-action btn-secondary">Làm mới danh sách</button>
+          <div class="map-panel-heading">
+            <p class="map-panel-label">Select Map</p>
+            <label for="import-map-files" id="btn-import-map" class="btn-action btn-secondary map-import-btn">Import map</label>
+          </div>
+          <input
+            id="import-map-files"
+            type="file"
+            class="map-import-input"
+            multiple
+            accept=".yaml,.yml,.pgm,.png,.jpg,.jpeg,image/*,text/*,application/octet-stream"
+          />
+          <select id="map-select" aria-label="Select map">
+            <option value="">-- chọn map --</option>
+          </select>
           <button id="btn-load-map" type="button" class="btn-action">Nạp map đã chọn</button>
           <p id="load-map-status" class="hint"></p>
-          <button id="btn-pose-mode" type="button" class="btn-action btn-secondary">
-            Load vị trí ban đầu
-          </button>
           <button id="btn-nav-mode" type="button" class="btn-action btn-secondary">
-            Nav2: OFF
+            Chọn điểm đến: TẮT
           </button>
-          <p class="hint">Nav2 ON: kéo trên map để đi tới điểm bất kỳ</p>
         </div>
       </section>
 
       <section class="panel-section" data-role="setup">
-        <h2 class="section-title">Vùng cấm (Keepout)</h2>
+        <h2 class="section-title">No-Go Zone</h2>
         <div class="section-body">
-          <p class="hint keepout-help">Dừng robot, click các đỉnh polygon trên map rồi lưu để Nav2 né vùng.</p>
           <div class="keepout-actions">
-            <button id="btn-keepout-draw" type="button" class="btn-action btn-secondary">Vẽ vùng cấm</button>
-            <button id="btn-keepout-finish" type="button" class="btn-action">Hoàn tất</button>
-            <button id="btn-keepout-undo" type="button" class="btn-action btn-secondary">Hoàn tác điểm</button>
-            <button id="btn-keepout-delete" type="button" class="btn-action btn-secondary">Xóa vùng cuối</button>
-            <button id="btn-keepout-clear" type="button" class="btn-action btn-danger">Xóa tất cả</button>
-            <button id="btn-keepout-save" type="button" class="btn-action keepout-save">Lưu &amp; áp dụng</button>
+            <button id="btn-keepout-draw" type="button" class="btn-action btn-secondary">Draw Zone</button>
+            <button id="btn-keepout-finish" type="button" class="btn-action">Finish</button>
+            <button id="btn-keepout-delete" type="button" class="btn-action btn-secondary">Delete Zone</button>
+            <button id="btn-keepout-save" type="button" class="btn-action keepout-save">Save</button>
           </div>
-          <p id="keepout-status" class="hint">Nạp map để tải vùng cấm</p>
+          <label class="keepout-name-field">
+            Zone Name
+            <input id="keepout-name" type="text" placeholder="NO-GO ZONE 1" autocomplete="off" />
+          </label>
+          <ul id="keepout-zone-list" class="keepout-zone-list" aria-label="No-Go Zone list"></ul>
+          <p id="keepout-status" class="hint">Load map to load No-Go Zones</p>
         </div>
       </section>
 
@@ -199,10 +209,10 @@
       <section class="map-area map-area-compact">
         <div class="map-area-header">
           <h2 class="map-area-title" id="map-area-title">MAP: —</h2>
-          <p class="map-header-conveyor" aria-label="Trạng thái băng tải">
-            <span class="conveyor-inline">Băng tải 1: <span id="conveyor-1-status" class="status-badge status-free">Free</span></span>
+          <p class="map-header-conveyor" aria-label="Conveyor status">
+            <span class="conveyor-inline">Conveyor 1: <span id="conveyor-1-status" class="status-badge status-free">Free</span></span>
             <span class="conveyor-sep" aria-hidden="true">·</span>
-            <span class="conveyor-inline">Băng tải 2: <span id="conveyor-2-status" class="status-badge status-free">Free</span></span>
+            <span class="conveyor-inline">Conveyor 2: <span id="conveyor-2-status" class="status-badge status-free">Free</span></span>
           </p>
           <p id="map-status" class="hint hidden" aria-hidden="true"></p>
         </div>
@@ -236,7 +246,7 @@
       </section>
 
       <section class="panel-section setpoints-card" data-role="operator setup">
-        <h2 class="section-title">Setpoint list</h2>
+        <h2 class="section-title">Station List</h2>
         <div class="section-body setpoints-body">
           <div class="setpoints-table-wrap">
             <table class="setpoints-table">
@@ -256,15 +266,15 @@
                   <th class="col-name">Name</th>
                   <th class="col-type">Type</th>
                   <th class="col-position">Position</th>
-                  <th class="col-cmd-belt">Băng tải 1</th>
-                  <th class="col-cmd-belt">Băng tải 2</th>
+                  <th class="col-cmd-belt">Conveyor 1</th>
+                  <th class="col-cmd-belt">Conveyor 2</th>
                   <th class="col-status">Status</th>
                   <th class="col-action"></th>
                 </tr>
               </thead>
               <tbody id="setpoints-list"></tbody>
             </table>
-            <p id="setpoints-empty" class="hint setpoints-empty-msg">Chưa có setpoint — bấm Setpoint để thêm</p>
+            <p id="setpoints-empty" class="hint setpoints-empty-msg">Chưa có station</p>
           </div>
         </div>
       </section>
@@ -284,7 +294,7 @@
           Loại điểm:
           <select id="setpoint-point-type" class="modal-select">
             <option value="normal">Normal</option>
-            <option value="approach">Approach Pose</option>
+            <option value="approach">Approach Station</option>
             <option value="home">Home</option>
           </select>
         </label>
@@ -305,10 +315,10 @@
           </div>
         </fieldset>
         <fieldset class="modal-fieldset">
-          <legend>Lệnh băng tải</legend>
+          <legend>Conveyor command</legend>
           <div class="belt-cmd-row">
             <label>
-              Lệnh băng tải 1
+              Conveyor 1
               <select id="setpoint-belt1-cmd" class="modal-select">
                 <option value="none">None</option>
                 <option value="load">Load</option>
@@ -316,7 +326,7 @@
               </select>
             </label>
             <label>
-              Lệnh băng tải 2
+              Conveyor 2
               <select id="setpoint-belt2-cmd" class="modal-select">
                 <option value="none">None</option>
                 <option value="load">Load</option>
@@ -386,43 +396,63 @@
     </div>
   </div>
 
-  <!-- Đăng nhập API; chỉ hiện khi dashboard được phục vụ bởi backend mới. -->
-  <div id="auth-modal" class="modal-overlay auth-modal hidden" aria-hidden="true">
-    <form id="auth-login-form" class="modal-card modal-card-sm auth-card">
-      <p class="brand-org">AMR Control</p>
-      <h2 class="modal-title">Đăng nhập</h2>
-      <div class="modal-body auth-fields">
+  <!-- Xác nhận bật/tắt SLAM -->
+  <div id="slam-confirm-modal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal-card modal-card-sm" role="alertdialog" aria-labelledby="slam-confirm-title">
+      <h2 id="slam-confirm-title" class="modal-title">Confirm SLAM</h2>
+      <div class="modal-body">
+        <p id="slam-confirm-msg" class="delete-confirm-msg"></p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="btn-slam-confirm-cancel" class="btn-action btn-secondary">Cancel</button>
+        <button type="button" id="btn-slam-confirm-ok" class="btn-action">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Màn hình đăng nhập riêng (ẩn dashboard phía sau) -->
+  <div id="auth-modal" class="auth-gate" aria-hidden="false">
+    <div class="auth-gate-backdrop" aria-hidden="true"></div>
+    <form id="auth-login-form" class="auth-card" autocomplete="on">
+      <div class="auth-card-brand">
+        <img
+          class="auth-card-logo"
+          src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Logo_Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_H%E1%BB%8Dc_C%C3%B4ng_ngh%E1%BB%87_K%E1%BB%B9_Thu%E1%BA%ADt_TP_H%E1%BB%93_Ch%C3%AD_Minh.png"
+          alt="HCM-UTE"
+        />
+        <p class="auth-eyebrow">HCMUTE Robotics</p>
+        <h2 class="auth-title">Đăng nhập</h2>
+        <p class="auth-subtitle">AMR Control Dashboard</p>
+      </div>
+      <div class="auth-fields">
         <label>
           Tài khoản
-          <input id="auth-username" name="username" type="text" autocomplete="username" required />
+          <input id="auth-username" name="username" type="text" autocomplete="username" required placeholder="Nhập tài khoản" />
         </label>
         <label>
           Mật khẩu
-          <input id="auth-password" name="password" type="password" autocomplete="current-password" required />
+          <input id="auth-password" name="password" type="password" autocomplete="current-password" required placeholder="Nhập mật khẩu" />
         </label>
         <p id="auth-error" class="auth-error" role="alert"></p>
       </div>
-      <div class="modal-actions">
-        <button id="btn-auth-login" type="submit" class="btn-action">Đăng nhập</button>
-      </div>
+      <button id="btn-auth-login" type="submit" class="auth-submit">Đăng nhập</button>
     </form>
   </div>
 
-  <script src="js/role-tabs.js"></script>
-  <script src="js/theme.js"></script>
-  <script src="js/auth.js?v=1"></script>
-  <script src="js/ros.js?v=4"></script>
+  <script src="js/role-tabs.js?v=2"></script>
+  <script src="js/auth.js?v=5"></script>
+  <script src="js/ros.js?v=6"></script>
   <script src="js/status.js?v=4"></script>
-  <script src="js/teleop.js?v=2"></script>
-  <script src="js/map.js?v=21"></script>
-  <script src="js/slam.js?v=2"></script>
-  <script src="js/localization.js?v=9"></script>
-  <script src="js/navigation.js?v=12"></script>
+  <script src="js/teleop.js?v=3"></script>
+  <script src="js/map.js?v=25"></script>
+  <script src="js/slam.js?v=10"></script>
+  <script src="js/localization.js?v=15"></script>
+  <script src="js/navigation.js?v=15"></script>
   <script src="js/stm32.js?v=5"></script>
-  <script src="js/line-follow.js?v=5"></script>
+  <script src="js/line-follow.js?v=6"></script>
   <script src="js/map-data.js?v=4"></script>
-  <script src="js/keepout.js?v=1"></script>
-  <script src="js/stations.js?v=15"></script>
-  <script src="js/process.js?v=12"></script>
+  <script src="js/keepout.js?v=4"></script>
+  <script src="js/stations.js?v=19"></script>
+  <script src="js/process.js?v=14"></script>
 </body>
 </html>
