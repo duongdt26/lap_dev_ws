@@ -11,7 +11,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools', 'minimalmodbus', 'pyserial'],
     zip_safe=True,
     maintainer='duo',
     maintainer_email='duongdoan261003@gmail.com',
@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             'imu_uart_node = amr_imu_driver.imu_uart_node:main',
             'imu_uart_test_node = amr_imu_driver.imu_uart_test_node:main',
+            'pzem_battery_node = amr_imu_driver.pzem_battery_node:main',
         ],
     },
 )

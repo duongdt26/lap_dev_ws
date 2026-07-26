@@ -131,7 +131,8 @@ async def telemetry_socket(websocket: WebSocket):
         while True:
             version, value = get_ros_gateway().telemetry.snapshot()
             now = time.monotonic()
-            if version != last_version or now - last_send >= 5.0:
+            # Đẩy telemetry (gồm pin) tối thiểu mỗi 1 s; sớm hơn nếu có thay đổi.
+            if version != last_version or now - last_send >= 1.0:
                 await websocket.send_json(value)
                 last_version = version
                 last_send = now
@@ -162,6 +163,21 @@ async def control_socket(websocket: WebSocket):
             elif command_type == "stop":
                 _publish_stop()
                 await websocket.send_json({"ok": True, "type": "stop"})
+            elif command_type == "nav_pause":
+                paused = bool(payload.get("paused", True))
+                try:
+                    result = get_ros_gateway().set_nav_paused(paused)
+                    await websocket.send_json({
+                        "ok": True,
+                        "type": "nav_pause",
+                        "paused": result,
+                    })
+                except RuntimeError as exc:
+                    await websocket.send_json({
+                        "ok": False,
+                        "type": "nav_pause",
+                        "error": str(exc),
+                    })
             else:
                 await websocket.send_json({"ok": False, "error": "Lệnh không hỗ trợ"})
     except WebSocketDisconnect:

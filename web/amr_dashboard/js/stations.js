@@ -742,7 +742,21 @@
       updateStationStatus('Auto Route đang chạy — nhấn Cancel trước khi Reset');
       return;
     }
-    updateStationStatus('Đã reset quy trình — Auto Route sẽ chạy lại từ bước 1');
+
+    const stm32Promise = window.AmrStm32?.resetEstop?.()
+      ?.then((res) => {
+        console.info('[STM32] RESET_ESTOP ACK:', res?.message || 'ok');
+        updateStationStatus(`Đã reset quy trình + STM32 RESET_ESTOP (${res?.stm32_state || 'ok'})`);
+        return res;
+      })
+      .catch((err) => {
+        console.error('[STM32] RESET_ESTOP failed:', err?.message || err);
+        updateStationStatus(`Đã reset quy trình — STM32 RESET_ESTOP lỗi: ${err?.message || err}`);
+      });
+
+    if (!stm32Promise) {
+      updateStationStatus('Đã reset quy trình — Auto Route sẽ chạy lại từ bước 1');
+    }
     setWorkflowStep('setpoint', 'Đã reset quy trình chạy — sẵn sàng chạy lại từ đầu');
   }
 

@@ -1545,6 +1545,30 @@ html[data-theme="light"] .speed-row input[type="range"] {
   background: #b91c1c;
 }
 
+.teleop-btn.teleop-start {
+  width: 58px;
+  height: 58px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: #16a34a;
+  border: 2px solid #bbf7d0;
+  border-radius: 16px;
+  color: #fff;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.35), 0 3px 10px rgba(22, 163, 74, 0.45);
+}
+
+.teleop-btn.teleop-start:hover {
+  background: #15803d;
+  filter: brightness(1.08);
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.5), 0 4px 14px rgba(22, 163, 74, 0.55);
+}
+
+.teleop-btn.teleop-start:active {
+  background: #166534;
+}
+
 .station-emergency-btn {
   grid-column: 1 / -1;
 }
@@ -1716,6 +1740,18 @@ html[data-theme="light"] .map-area-title {
   font-weight: 650;
   font-size: 0.88rem;
   color: var(--accent-soft);
+}
+
+.map-hud-v.bat-ok {
+  color: #3dd68c;
+}
+
+.map-hud-v.bat-warn {
+  color: #f0c14b;
+}
+
+.map-hud-v.bat-crit {
+  color: #ff6b6b;
 }
 
 .map-hud-item small {

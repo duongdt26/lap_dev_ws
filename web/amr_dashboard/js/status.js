@@ -7,6 +7,10 @@
 
 let statusReady = false;
 let telemetrySocket = null;
+let lastBatteryUiMs = 0;
+let pendingBatteryMsg = null;
+let batteryUiTimer = null;
+const BATTERY_UI_PERIOD_MS = 3000; // web cập nhật pin mỗi 3 s (ROS vẫn đọc 1 Hz)
 
 function fmtNum(value, decimals) {
   const n = Number(value);
@@ -23,10 +27,11 @@ function updatePosePanel(pose) {
   document.getElementById('val-yaw').textContent = Number(pose.yawDeg).toFixed(1);
 }
 
-function updateBatteryPanel(msg) {
+function renderBatteryPanel(msg) {
   const el = document.getElementById('val-battery');
   if (!el) return;
   let pct = Number(msg?.percentage);
+  el.classList.remove('bat-ok', 'bat-warn', 'bat-crit');
   if (!Number.isFinite(pct)) {
     el.textContent = 'N/A';
     return;
@@ -35,6 +40,28 @@ function updateBatteryPanel(msg) {
   if (pct <= 1.0) pct *= 100;
   pct = Math.max(0, Math.min(100, pct));
   el.textContent = `${Math.round(pct)}%`;
+  if (pct < 20) el.classList.add('bat-crit');
+  else if (pct < 40) el.classList.add('bat-warn');
+  else el.classList.add('bat-ok');
+}
+
+/** Nhận mỗi mẫu ~1 s; chỉ vẽ HUD mỗi 3 s (giữ mẫu mới nhất). */
+function updateBatteryPanel(msg) {
+  pendingBatteryMsg = msg;
+  const now = Date.now();
+  const due = now - lastBatteryUiMs >= BATTERY_UI_PERIOD_MS;
+  if (due || lastBatteryUiMs === 0) {
+    lastBatteryUiMs = now;
+    renderBatteryPanel(msg);
+    return;
+  }
+  if (!batteryUiTimer) {
+    batteryUiTimer = setTimeout(() => {
+      batteryUiTimer = null;
+      lastBatteryUiMs = Date.now();
+      if (pendingBatteryMsg) renderBatteryPanel(pendingBatteryMsg);
+    }, BATTERY_UI_PERIOD_MS - (now - lastBatteryUiMs));
+  }
 }
 
 window.addEventListener('amr-pose', (e) => {
@@ -53,6 +80,12 @@ window.addEventListener('amr-ros-disconnected', () => {
   statusReady = false;
   telemetrySocket?.close();
   telemetrySocket = null;
+  if (batteryUiTimer) {
+    clearTimeout(batteryUiTimer);
+    batteryUiTimer = null;
+  }
+  lastBatteryUiMs = 0;
+  pendingBatteryMsg = null;
   const bat = document.getElementById('val-battery');
   if (bat) bat.textContent = 'N/A';
 });

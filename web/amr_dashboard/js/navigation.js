@@ -236,6 +236,15 @@ function renderNavStatusEvent(event) {
 
 window.addEventListener('amr-nav-status', renderNavStatusEvent);
 
+window.addEventListener('amr-nav-pause', (event) => {
+  const paused = !!event.detail?.paused;
+  if (paused) {
+    updateNavStatus('Paused — xe đứng yên (Nav2 giữ goal). Bấm Start để đi tiếp', '#facc15');
+  } else {
+    updateNavStatus('Resumed — Nav2 tiếp tục', '#4ade80');
+  }
+});
+
 function updateNavStatus(msg, color = '#888') {
   navStatus.textContent = msg;
   navStatus.style.color = color;
@@ -469,11 +478,23 @@ function cancelNavigation() {
 
 function triggerEmergency() {
   updateNavStatus('EMERGENCY — đang dừng...', '#f87171');
+  window.AmrTeleop?.setNavPaused?.(false);
   window.AmrTeleop?.stop?.();
   window.AmrProcess?.stopAutoRoute?.();
-  cancelNavigationAsync()
-    .then(() => updateNavStatus('EMERGENCY — đã dừng', '#f87171'))
-    .catch(() => updateNavStatus('EMERGENCY — đã gửi lệnh dừng', '#f87171'));
+
+  const stm32Promise = window.AmrStm32?.triggerEstop?.()
+    ?.then((res) => {
+      console.info('[STM32] ESTOP ACK:', res?.message || 'ok');
+      return res;
+    })
+    .catch((err) => {
+      console.error('[STM32] ESTOP failed:', err?.message || err);
+    });
+
+  Promise.allSettled([
+    cancelNavigationAsync().catch((err) => console.error(err)),
+    stm32Promise,
+  ]).then(() => updateNavStatus('EMERGENCY — đã dừng', '#f87171'));
 }
 
 if (btnNavMode) {

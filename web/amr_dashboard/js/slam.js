@@ -19,12 +19,9 @@
 
   const btnScan = document.getElementById('btn-slam-scan');
   const btnNavMode = document.getElementById('btn-nav-mode');
-  const slamStatusEl = document.getElementById('slam-status');
 
-  function setSlamStatus(msg, color = '') {
-    if (!slamStatusEl) return;
-    slamStatusEl.textContent = msg || '';
-    slamStatusEl.style.color = color || '';
+  function setSlamStatus(_msg, _color = '') {
+    // Status hint đã bỏ khỏi UI.
   }
 
   function callNavLifecycle(command) {

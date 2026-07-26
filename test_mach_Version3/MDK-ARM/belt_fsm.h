@@ -7,6 +7,7 @@
 #define ESTOP_SRC_EMER     10U
 #define ESTOP_SRC_BUMPER1  11U
 #define ESTOP_SRC_BUMPER2  12U
+#define ESTOP_SRC_ROS2     13U
 #define LOAD_ARMED_TIMEOUT_MS   300000U
 #define LOAD_MOVING_TIMEOUT_MS   15000U
 #define UNLOAD_MOVING_TIMEOUT_MS 30000U
@@ -52,6 +53,7 @@ BeltCmdResult_t Belt_CmdUnload(uint8_t belt_id, BeltSide_t side);
 void Belt_TriggerEstop(uint8_t source_code);
 void Belt_OnStopButton(void);
 void Belt_OnStartButton(void);   /* Nut RUN vat ly: auto lien tuc ca 2 bang tai: belt1 S1<->S3, belt2 S2<->S4 den khi STOP */
+/* Reset dong thoi ESTOP va STOP_LOCK; chi thanh cong khi nut Emergency vat ly da nha. */
 uint8_t Belt_TryResetEstop(void);
 
 /* App lay event de gui UART ACK */

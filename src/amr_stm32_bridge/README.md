@@ -76,7 +76,8 @@ ros2 topic echo /stm32/health
 |-----|------|
 | `/stm32/hello` | Service |
 | `/run_belt_command` | Service |
-| `/stm32/reset_estop` | Service |
+| `/stm32/estop` | Service — `$CMD,ESTOP` / `$ACK,CMD,ESTOP` |
+| `/stm32/reset_estop` | Service — `$CMD,RESET_ESTOP` / `$ACK,CMD,RESET_ESTOP` |
 | `/belt_load_unload` | Action |
 | `/stm32/health` | Topic |
 | `/conveyor/belt1/status` | Topic |

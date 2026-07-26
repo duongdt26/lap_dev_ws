@@ -10,7 +10,7 @@ Quy ước:
 ROS2 → STM32:
   $HELLO
   $PING,<seq>
-  $CMD,<seq>,READY | ENABLE | RESET | RESET_ESTOP | START,<belt> | STOP,<belt>,LEFT|RIGHT | UNLOAD,<belt>,LEFT|RIGHT
+  $CMD,<seq>,READY | ENABLE | RESET | RESET_ESTOP | ESTOP | START,<belt> | STOP,<belt>,LEFT|RIGHT | UNLOAD,<belt>,LEFT|RIGHT
   $BUZZER,START,<belt> | $BUZZER,STOP,<belt>
 
 STM32 → ROS2:
@@ -48,6 +48,7 @@ CMD_READY = 'READY'
 CMD_ENABLE = 'ENABLE'
 CMD_RESET = 'RESET'
 CMD_RESET_ESTOP = 'RESET_ESTOP'
+CMD_ESTOP = 'ESTOP'
 
 SIDE_LEFT = 'LEFT'
 SIDE_RIGHT = 'RIGHT'
@@ -110,6 +111,10 @@ def cmd_reset_estop(seq: int) -> str:
     return frame(MSG_CMD, str(seq), CMD_RESET_ESTOP)
 
 
+def cmd_estop(seq: int) -> str:
+    return frame(MSG_CMD, str(seq), CMD_ESTOP)
+
+
 def cmd_start_load(seq: int, belt_id: int) -> str:
     return frame(MSG_CMD, str(seq), CMD_START, str(belt_id))
 
@@ -131,6 +136,11 @@ def cmd_unload_belt_legacy(belt_id: int, side: str) -> str:
 
 def cmd_reset_estop_legacy() -> str:
     return frame(MSG_CMD, CMD_RESET_ESTOP)
+
+
+def cmd_estop_legacy() -> str:
+    """Protocol V3: $CMD,ESTOP (không có seq)."""
+    return frame(MSG_CMD, CMD_ESTOP)
 
 
 def cmd_reset_legacy() -> str:
@@ -315,9 +325,9 @@ def parse_ack(parsed: ParsedFrame) -> Optional[AckFrame]:
         # ACK START cua V3 co nghia lenh load da duoc nhan.
         if seq == 0 and cmd == CMD_START:
             status = ACCEPTED
-    elif cmd in (CMD_RESET, CMD_RESET_ESTOP) and len(parsed.fields) > cmd_index + 1:
+    elif cmd in (CMD_RESET, CMD_RESET_ESTOP, CMD_ESTOP) and len(parsed.fields) > cmd_index + 1:
         extra = parsed.fields[cmd_index + 1:]
-    elif cmd in (CMD_READY, CMD_ENABLE):
+    elif cmd in (CMD_READY, CMD_ENABLE, CMD_ESTOP, CMD_RESET, CMD_RESET_ESTOP):
         status = ACCEPTED
 
     return AckFrame(seq=seq, cmd=cmd, belt_id=belt_id, side=side, status=status, extra=extra)
@@ -402,4 +412,5 @@ def ack_matches_accepted(ack: AckFrame, seq: int, cmd: str, belt_id: int = 0) ->
         return False
     if belt_id and ack.belt_id != belt_id:
         return False
-    return ack.status == ACCEPTED or cmd in (CMD_READY, CMD_ENABLE, CMD_RESET, CMD_RESET_ESTOP)
+    return ack.status == ACCEPTED or cmd in (
+        CMD_READY, CMD_ENABLE, CMD_RESET, CMD_RESET_ESTOP, CMD_ESTOP)

@@ -14,6 +14,8 @@
 
   let helloClient = null;
   let beltClient = null;
+  let estopClient = null;
+  let resetEstopClient = null;
   let healthTopic = null;
   let belt1Topic = null;
   let belt2Topic = null;
@@ -82,6 +84,42 @@
         (res) => {
           if (res.success) resolve(res);
           else reject(new Error(res.message || 'Belt command thất bại'));
+        },
+        (err) => reject(err)
+      );
+    });
+  }
+
+  /** $CMD,ESTOP → chờ $ACK,CMD,ESTOP */
+  function triggerEstop() {
+    return new Promise((resolve, reject) => {
+      if (!estopClient) {
+        reject(new Error('disconnected — STM32 ESTOP service unavailable'));
+        return;
+      }
+      estopClient.callService(
+        new ROSLIB.ServiceRequest({}),
+        (res) => {
+          if (res.success) resolve(res);
+          else reject(new Error(res.message || 'ESTOP thất bại'));
+        },
+        (err) => reject(err)
+      );
+    });
+  }
+
+  /** $CMD,RESET_ESTOP → chờ $ACK,CMD,RESET_ESTOP */
+  function resetEstop() {
+    return new Promise((resolve, reject) => {
+      if (!resetEstopClient) {
+        reject(new Error('disconnected — STM32 RESET_ESTOP service unavailable'));
+        return;
+      }
+      resetEstopClient.callService(
+        new ROSLIB.ServiceRequest({}),
+        (res) => {
+          if (res.success) resolve(res);
+          else reject(new Error(res.message || 'RESET_ESTOP thất bại'));
         },
         (err) => reject(err)
       );
@@ -164,6 +202,18 @@
       serviceType: 'amr_stm32_interfaces/srv/RunBeltCommand',
     });
 
+    estopClient = new ROSLIB.Service({
+      ros,
+      name: '/stm32/estop',
+      serviceType: 'amr_stm32_interfaces/srv/ResetEstop',
+    });
+
+    resetEstopClient = new ROSLIB.Service({
+      ros,
+      name: '/stm32/reset_estop',
+      serviceType: 'amr_stm32_interfaces/srv/ResetEstop',
+    });
+
     healthTopic = new ROSLIB.Topic({
       ros,
       name: '/stm32/health',
@@ -203,6 +253,8 @@
     if (belt2Topic) belt2Topic.unsubscribe();
     helloClient = null;
     beltClient = null;
+    estopClient = null;
+    resetEstopClient = null;
     stm32Alive = false;
     workflowBeltLock = false;
     setStm32Ui(false, '', '');
@@ -219,6 +271,8 @@
     runBeltForSetpoint,
     setpointNeedsBelt,
     isBeltAvailable,
+    triggerEstop,
+    resetEstop,
     UNLOAD_SIDE,
   };
 })();

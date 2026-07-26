@@ -1,9 +1,10 @@
 /**
  * teleop.js — Điều khiển thủ công qua /cmd_vel_web
+ * + Stop/Start: đè /cmd_vel_pause = 0 (không hủy Nav2)
  *
  * Luồng:
- *   Web publish /cmd_vel_web
- *     → twist_mux (priority 80)
+ *   Web publish /cmd_vel_web  → twist_mux priority 80
+ *   Pause publish /cmd_vel_pause → twist_mux priority 90 (> nav)
  *     → diff_cont/cmd_vel_unstamped
  *
  * Init khi rosbridge connected (auto-connect hoặc bấm Kết nối).
@@ -44,12 +45,14 @@ function initTeleop() {
   }
 
   let cmdVelPub = null;
+  let pauseVelPub = null;
   let controlSocket = null;
   if (useApi) {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     controlSocket = new WebSocket(`${protocol}//${window.location.host}/api/ws/control`);
     controlSocket.addEventListener('close', () => {
-      if (publishTimer) stop();
+      if (publishTimer) stopMotion();
+      clearNavPauseLocal();
       teleopReady = false;
     });
   } else {
@@ -58,12 +61,18 @@ function initTeleop() {
       name: '/cmd_vel_web',
       messageType: 'geometry_msgs/msg/Twist',
     });
+    pauseVelPub = new ROSLIB.Topic({
+      ros,
+      name: '/cmd_vel_pause',
+      messageType: 'geometry_msgs/msg/Twist',
+    });
   }
 
   const slider = document.getElementById('speed-slider');
   const speedLabel = document.getElementById('speed-label');
   const angularSlider = document.getElementById('angular-slider');
   const angularLabel = document.getElementById('angular-label');
+  const btnStop = document.getElementById('btn-stop');
 
   function syncSpeedUi() {
     speedLabel.textContent = parseFloat(slider.value).toFixed(2);
@@ -81,6 +90,8 @@ function initTeleop() {
 
   const PUBLISH_HZ = 10;
   let publishTimer = null;
+  let pauseTimer = null;
+  let navPaused = false;
   let activePointerId = null;
 
   function publishVel(linearX, angularZ) {
@@ -100,12 +111,87 @@ function initTeleop() {
     }));
   }
 
-  function stop() {
+  function publishPauseZero() {
+    if (controlSocket) {
+      // Server giữ timer 10 Hz khi paused=true
+      return;
+    }
+    if (!pauseVelPub) return;
+    pauseVelPub.publish(new ROSLIB.Message({
+      linear:  { x: 0, y: 0, z: 0 },
+      angular: { x: 0, y: 0, z: 0 },
+    }));
+  }
+
+  function updateStopButtonUi() {
+    if (!btnStop) return;
+    if (navPaused) {
+      btnStop.textContent = 'Start';
+      btnStop.setAttribute('aria-label', 'Tiếp tục Nav2');
+      btnStop.classList.add('teleop-start');
+      btnStop.classList.remove('teleop-stop');
+    } else {
+      btnStop.textContent = 'Stop';
+      btnStop.setAttribute('aria-label', 'Dừng đứng yên (giữ Nav2)');
+      btnStop.classList.add('teleop-stop');
+      btnStop.classList.remove('teleop-start');
+    }
+  }
+
+  function clearNavPauseLocal() {
+    if (pauseTimer) {
+      clearInterval(pauseTimer);
+      pauseTimer = null;
+    }
+    navPaused = false;
+    updateStopButtonUi();
+  }
+
+  function setNavPaused(paused) {
+    if (paused === navPaused) return navPaused;
+
+    if (paused) {
+      // Dừng lệnh teleop đang hold, bắt đầu đè 0 lên mux.
+      stopMotion();
+      if (controlSocket) {
+        if (controlSocket.readyState === WebSocket.OPEN) {
+          controlSocket.send(JSON.stringify({ type: 'nav_pause', paused: true }));
+        }
+      } else {
+        publishPauseZero();
+        if (!pauseTimer) {
+          pauseTimer = setInterval(publishPauseZero, 1000 / PUBLISH_HZ);
+        }
+      }
+      navPaused = true;
+      updateStopButtonUi();
+      window.dispatchEvent(new CustomEvent('amr-nav-pause', { detail: { paused: true } }));
+      return true;
+    }
+
+    if (controlSocket) {
+      if (controlSocket.readyState === WebSocket.OPEN) {
+        controlSocket.send(JSON.stringify({ type: 'nav_pause', paused: false }));
+      }
+    } else if (pauseTimer) {
+      clearInterval(pauseTimer);
+      pauseTimer = null;
+    }
+    navPaused = false;
+    updateStopButtonUi();
+    window.dispatchEvent(new CustomEvent('amr-nav-pause', { detail: { paused: false } }));
+    return false;
+  }
+
+  function toggleNavPause() {
+    return setNavPaused(!navPaused);
+  }
+
+  function stopMotion() {
     if (publishTimer) {
       clearInterval(publishTimer);
       publishTimer = null;
     }
-    // Luôn gửi vận tốc 0 xuống xe khi bấm Stop.
     if (controlSocket) {
       if (controlSocket.readyState === WebSocket.OPEN) {
         controlSocket.send(JSON.stringify({ type: 'teleop', linearX: 0, angularZ: 0 }));
@@ -123,8 +209,16 @@ function initTeleop() {
     }
   }
 
+  /** Dừng teleop + bỏ pause (dùng cho EMERGENCY). */
+  function stop() {
+    setNavPaused(false);
+    stopMotion();
+  }
+
   function startHold(getLinear, getAngular) {
-    stop();
+    // Teleop tay: nhả pause để điều khiển ưu tiên web.
+    if (navPaused) setNavPaused(false);
+    stopMotion();
     const tick = () => {
       const lx = typeof getLinear === 'function' ? getLinear() : getLinear;
       const az = typeof getAngular === 'function' ? getAngular() : getAngular;
@@ -159,7 +253,7 @@ function initTeleop() {
         }
       }
       activePointerId = null;
-      stop();
+      stopMotion();
     };
 
     btn.addEventListener('pointerdown', onStart);
@@ -174,21 +268,30 @@ function initTeleop() {
   bindDirectional('btn-left',  0,  () => angularSpeed());
   bindDirectional('btn-right', 0, () => -angularSpeed());
 
-  document.getElementById('btn-stop').addEventListener('click', stop);
+  if (btnStop) {
+    btnStop.addEventListener('click', () => toggleNavPause());
+    updateStopButtonUi();
+  }
 
-  window.AmrTeleop = { stop };
+  window.AmrTeleop = {
+    stop,
+    stopMotion,
+    setNavPaused,
+    toggleNavPause,
+    isNavPaused: () => navPaused,
+  };
 
   window.addEventListener('pointerup', () => {
     activePointerId = null;
-    if (publishTimer) stop();
+    if (publishTimer) stopMotion();
   });
   window.addEventListener('pointercancel', () => {
     activePointerId = null;
-    if (publishTimer) stop();
+    if (publishTimer) stopMotion();
   });
   window.addEventListener('blur', () => {
     activePointerId = null;
-    if (publishTimer) stop();
+    if (publishTimer) stopMotion();
   });
 }
 

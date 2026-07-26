@@ -72,6 +72,15 @@ def generate_launch_description():
         parameters=[hardware_ports, line_config, sim_time_param],
     )
 
+    # PZEM-017: đọc pin 24V mỗi 1 s → /battery_state (sim + real đều cần)
+    pzem_battery_node = Node(
+        package='amr_imu_driver',
+        executable='pzem_battery_node',
+        name='pzem_battery_node',
+        output='screen',
+        parameters=[hardware_ports, {'poll_period': 1.0}],
+    )
+
     rosbridge = IncludeLaunchDescription(
         FrontendLaunchDescriptionSource([
             os.path.join(
@@ -103,5 +112,6 @@ def generate_launch_description():
         mission_client_node,
         stm32_bridge_node,
         magnetic_line_node,
+        pzem_battery_node,
         rosbridge,
     ])

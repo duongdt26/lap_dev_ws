@@ -37,6 +37,9 @@ class RosGateway:
         self.thread: threading.Thread | None = None
         self._rclpy = None
         self._cmd_vel_pub = None
+        self._cmd_vel_pause_pub = None
+        self._nav_pause_timer = None
+        self._nav_paused = False
         self._send_nav_client = None
         self._cancel_nav_client = None
 
@@ -87,6 +90,7 @@ class RosGateway:
             self.executor = MultiThreadedExecutor(num_threads=2)
             self.executor.add_node(self.node)
             self._cmd_vel_pub = self.node.create_publisher(Twist, "/cmd_vel_web", 10)
+            self._cmd_vel_pause_pub = self.node.create_publisher(Twist, "/cmd_vel_pause", 10)
             self._send_nav_client = self.node.create_client(SendNavGoal, "/send_nav_goal")
             self._cancel_nav_client = self.node.create_client(Trigger, "/cancel_nav")
 
@@ -117,12 +121,15 @@ class RosGateway:
                 )
 
             def battery_callback(message) -> None:
+                def _finite_or_none(value: float):
+                    return float(value) if math.isfinite(value) else None
+
                 self.telemetry.update(
                     "battery",
                     {
-                        "percentage": message.percentage,
-                        "voltage": message.voltage,
-                        "current": message.current,
+                        "percentage": _finite_or_none(message.percentage),
+                        "voltage": _finite_or_none(message.voltage),
+                        "current": _finite_or_none(message.current),
                     },
                 )
 
@@ -168,6 +175,36 @@ class RosGateway:
         message.angular.z = float(angular_z)
         self._cmd_vel_pub.publish(message)
 
+    def _publish_pause_zero(self) -> None:
+        if self._cmd_vel_pause_pub is None:
+            return
+        from geometry_msgs.msg import Twist
+
+        self._cmd_vel_pause_pub.publish(Twist())
+
+    def set_nav_paused(self, paused: bool) -> bool:
+        """Đè Twist(0) lên /cmd_vel_pause để đứng yên, không hủy Nav2."""
+        if self.node is None or self._cmd_vel_pause_pub is None:
+            raise RuntimeError("ROS gateway chưa sẵn sàng")
+
+        if paused:
+            if self._nav_pause_timer is None:
+                self._publish_pause_zero()
+                self._nav_pause_timer = self.node.create_timer(0.1, self._publish_pause_zero)
+            self._nav_paused = True
+        else:
+            if self._nav_pause_timer is not None:
+                self._nav_pause_timer.cancel()
+                self.node.destroy_timer(self._nav_pause_timer)
+                self._nav_pause_timer = None
+            self._nav_paused = False
+        self.telemetry.update("navPause", {"paused": self._nav_paused})
+        return self._nav_paused
+
+    @property
+    def nav_paused(self) -> bool:
+        return self._nav_paused
+
     def _call_service(self, client, request, timeout_sec: float = 5.0):
         if client is None or not client.wait_for_service(timeout_sec=timeout_sec):
             raise RuntimeError("ROS service chưa sẵn sàng")
@@ -194,6 +231,11 @@ class RosGateway:
         return self._call_service(self._cancel_nav_client, Trigger.Request(), 5.0)
 
     def stop(self) -> None:
+        try:
+            if self._nav_paused:
+                self.set_nav_paused(False)
+        except Exception:
+            pass
         if self.executor is not None:
             self.executor.shutdown(timeout_sec=2.0)
         if self.thread is not None and self.thread.is_alive():
@@ -203,6 +245,9 @@ class RosGateway:
         self.executor = None
         self.node = None
         self._cmd_vel_pub = None
+        self._cmd_vel_pause_pub = None
+        self._nav_pause_timer = None
+        self._nav_paused = False
         self._send_nav_client = None
         self._cancel_nav_client = None
         self.thread = None

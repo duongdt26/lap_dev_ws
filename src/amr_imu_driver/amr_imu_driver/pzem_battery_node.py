@@ -23,8 +23,8 @@ class PzemBatteryNode(Node):
         self.declare_parameter('baudrate', 9600)
         self.declare_parameter('timeout', 0.6)
         self.declare_parameter('poll_period', 1.0)
-        self.declare_parameter('empty_voltage', 20.0)
-        self.declare_parameter('full_voltage', 29.2)
+        self.declare_parameter('empty_voltage', 21.0)
+        self.declare_parameter('full_voltage', 30.0)
         self.declare_parameter('profile_name', '24V LiFePO4')
         self.declare_parameter('current_multiplier', -1.0)
 
@@ -49,11 +49,15 @@ class PzemBatteryNode(Node):
             BatteryState, '/battery_state', 10)
         self._instrument: Optional[minimalmodbus.Instrument] = None
         self._failure_reported = False
+        # Gọi Modbus xuống PZEM đúng 1 lần / chu kỳ (mặc định 1.0 s).
         self._timer = self.create_timer(self._poll_period, self._poll)
 
         self.get_logger().info(
             f'PZEM-017: port={self._port}, slave={self._slave_address}, '
-            f'chu kỳ={self._poll_period:.1f}s, profile={self._profile_name}')
+            f'chu kỳ đọc={self._poll_period:.1f}s (1 lần/chu kỳ), '
+            f'profile={self._profile_name}')
+        # Đọc ngay lần đầu, không đợi hết chu kỳ timer.
+        self._poll()
 
     def _connect(self) -> minimalmodbus.Instrument:
         instrument = minimalmodbus.Instrument(
@@ -145,10 +149,10 @@ class PzemBatteryNode(Node):
                 self.get_logger().info('Đã kết nối lại với PZEM-017')
                 self._failure_reported = False
 
-            self.get_logger().debug(
+            self.get_logger().info(
                 f"Pin: {msg.percentage * 100.0:.1f}% | "
-                f"{data['voltage']:.2f} V | {data['current']:.2f} A | "
-                f"{data['power']:.1f} W | {data['energy_wh']} Wh")
+                f"{data['voltage']:.2f} V | "
+                f"{msg.current:.2f} A | {data['power']:.1f} W")
         except Exception as exc:  # serial/Modbus có nhiều kiểu lỗi khác nhau
             if self._instrument is not None:
                 try:
