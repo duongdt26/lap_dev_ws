@@ -13,6 +13,11 @@ twist_mux:
         topic   : cmd_vel_web
         timeout : 1.0
         priority: 80
+      # Stop/Start: đè 0 lên nav (không cancel Nav2). Priority > navigation.
+      pause:
+        topic   : cmd_vel_pause
+        timeout : 0.3
+        priority: 90
       keyboard:
         topic   : cmd_vel_key
         # topic   : diff_cont/cmd_vel_unstamped

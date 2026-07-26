@@ -31,6 +31,10 @@
   const conveyor1El = document.getElementById('conveyor-1-status');
   const conveyor2El = document.getElementById('conveyor-2-status');
 
+  function writeStationStatus(text) {
+    if (stationStatus) stationStatus.textContent = text;
+  }
+
   const conveyorState = { belt1: 'Free', belt2: 'Free' };
 
   const BELT_CMD_OPTIONS = [
@@ -41,7 +45,7 @@
 
   const POINT_TYPE_OPTIONS = [
     { value: 'normal', label: 'Normal' },
-    { value: 'approach', label: 'Approach Pose' },
+    { value: 'approach', label: 'Approach Station' },
     { value: 'home', label: 'Home' },
   ];
 
@@ -287,7 +291,7 @@
       window.dispatchEvent(new CustomEvent('amr-setpoints-changed'));
     } catch (err) {
       console.warn('load setpoints:', err);
-      stationStatus.textContent = `Lỗi tải setpoint: ${err.message}`;
+      writeStationStatus(`Lỗi tải setpoint: ${err.message}`);
     }
   }
 
@@ -297,16 +301,16 @@
     window.dispatchEvent(new CustomEvent('amr-setpoints-changed'));
     setWorkflowStep('setpoint', setpoints.length
       ? `Đã lưu ${setpoints.length} setpoint`
-      : 'Chưa có setpoint — bấm Setpoint để thêm');
+      : 'Chưa có station');
 
     if (!window.AmrMapData?.saveSetpoints) return;
     const mapName = window.AmrMapData.getCurrentMapName();
     if (!mapName) {
-      stationStatus.textContent = 'Nạp map trước khi lưu setpoint';
+      writeStationStatus('Nạp map trước khi lưu setpoint');
       return;
     }
     window.AmrMapData.saveSetpoints(setpoints, mapName).catch((err) => {
-      stationStatus.textContent = `Lỗi lưu setpoint: ${err.message}`;
+      writeStationStatus(`Lỗi lưu setpoint: ${err.message}`);
     });
   }
 
@@ -370,7 +374,7 @@
 
     stationSelect.innerHTML = '';
     if (!setpoints.length) {
-      stationSelect.innerHTML = '<option value="">-- Chưa có setpoint --</option>';
+      stationSelect.innerHTML = '<option value="">-- Chưa có station --</option>';
       stationSelect.disabled = true;
       if (btnEditSetpoint) btnEditSetpoint.disabled = true;
       return;
@@ -398,6 +402,7 @@
     renderSetpointsList();
     renderStationPicker();
     updateStationStatus();
+    window.dispatchEvent(new CustomEvent('amr-setpoints-changed'));
   }
 
   function renderSetpointsList() {
@@ -467,19 +472,19 @@
 
   function updateStationStatus(msg) {
     if (msg) {
-      stationStatus.textContent = msg;
+      writeStationStatus(msg);
       return;
     }
     if (!selectedId) {
-      stationStatus.textContent = setpoints.length
+      writeStationStatus(setpoints.length
         ? 'Chọn setpoint trong dropdown hoặc danh sách bên phải'
-        : 'Chưa có setpoint — bấm Setpoint để thêm';
+        : 'Chưa có station');
       return;
     }
     const pt = setpoints.find((p) => p.id === selectedId);
-    stationStatus.textContent = pt
+    writeStationStatus(pt
       ? `Đã chọn: ${pt.name} (${formatPose(pt)}) | BT1: ${beltCmdLabel(pt.belt1Cmd)} | BT2: ${beltCmdLabel(pt.belt2Cmd)}`
-      : 'Chưa có station nào được chọn';
+      : 'Chưa có station nào được chọn');
   }
 
   function setWorkflowStep(_step, detail) {
@@ -524,12 +529,12 @@
 
   function openEditSetpointModal() {
     if (!selectedId) {
-      stationStatus.textContent = 'Chọn setpoint trước khi sửa';
+      writeStationStatus('Chọn setpoint trước khi sửa');
       return;
     }
     const pt = setpoints.find((p) => p.id === selectedId);
     if (!pt) {
-      stationStatus.textContent = 'Setpoint không tồn tại';
+      writeStationStatus('Setpoint không tồn tại');
       return;
     }
 
@@ -577,7 +582,7 @@
   function useCurrentPosition() {
     const p = getRobotPose();
     if (p.x == null) {
-      stationStatus.textContent = 'Chưa có vị trí robot — cần AMCL/SLAM';
+      writeStationStatus('Chưa có vị trí robot — cần AMCL/SLAM');
       return;
     }
     document.getElementById('setpoint-x').value = Number(p.x).toFixed(2);
@@ -595,23 +600,23 @@
     const belt2Cmd = normalizeBeltCmd(document.getElementById('setpoint-belt2-cmd').value);
 
     if (pointType === 'approach' && belt1Cmd === 'none' && belt2Cmd === 'none') {
-      stationStatus.textContent = 'Approach Pose phải chọn ít nhất một băng tải';
+      writeStationStatus('Approach Station phải chọn ít nhất một băng tải');
       return;
     }
 
     if (!name) {
-      stationStatus.textContent = 'Nhập tên vị trí trước khi lưu';
+      writeStationStatus('Nhập tên vị trí trước khi lưu');
       return;
     }
     if ([x, y, yawDeg].some((v) => Number.isNaN(v))) {
-      stationStatus.textContent = 'Nhập đủ X, Y, Yaw hoặc bấm Sử dụng vị trí hiện tại';
+      writeStationStatus('Nhập đủ X, Y, Yaw hoặc bấm Sử dụng vị trí hiện tại');
       return;
     }
 
     if (editingId) {
       const pt = setpoints.find((p) => p.id === editingId);
       if (!pt) {
-        stationStatus.textContent = 'Setpoint không tồn tại';
+        writeStationStatus('Setpoint không tồn tại');
         return;
       }
       pt.name = name;
@@ -654,7 +659,7 @@
     const { message, name } = e.detail || {};
     if (!message) return;
     setWorkflowStep('goto', message);
-    if (stationStatus) stationStatus.textContent = message;
+    writeStationStatus(message);
   }
 
   async function runArrivalBeltCommands(pt) {
@@ -668,22 +673,22 @@
     const bt1 = pt.belt1Cmd || 'none';
     const bt2 = pt.belt2Cmd || 'none';
     setWorkflowStep('belt', `Đã đến ${pt.name} — chạy băng tải (BT1:${bt1}, BT2:${bt2})`);
-    stationStatus.textContent = `Băng tải: ${pt.name} — chờ ACK STM32`;
+    writeStationStatus(`Băng tải: ${pt.name} — chờ ACK STM32`);
 
     await window.AmrStm32.runSetpointBelts(pt);
 
     setWorkflowStep('belt', `Băng tải xong tại ${pt.name}`);
-    stationStatus.textContent = `Băng tải xong: ${pt.name}`;
+    writeStationStatus(`Băng tải xong: ${pt.name}`);
   }
 
   async function goToSelectedStation() {
     const pt = setpoints.find((p) => p.id === selectedId);
     if (!pt) {
-      stationStatus.textContent = 'Chọn setpoint trong danh sách trước';
+      writeStationStatus('Chọn setpoint trong danh sách trước');
       return;
     }
     if (!window.AmrNavigation?.navigateAndWait) {
-      stationStatus.textContent = 'Chưa kết nối Nav2';
+      writeStationStatus('Chưa kết nối Nav2');
       return;
     }
     const yawRad = (pt.yawDeg * Math.PI) / 180;
@@ -691,7 +696,7 @@
       window.AmrMap.resetViewAfterNavGoal();
     }
     setWorkflowStep('goto', `Đang đi tới ${pt.name}...`);
-    stationStatus.textContent = `Đang đi tới: ${pt.name}`;
+    writeStationStatus(`Đang đi tới: ${pt.name}`);
 
     try {
       if (isMagneticLinePoint(pt)) {
@@ -706,9 +711,9 @@
           throw new Error('Line follower chưa sẵn sàng');
         }
         const lineMode = isHomePoint(pt) ? 'lùi theo line vào sạc' : 'bám line vào trạm';
-        stationStatus.textContent = `Đã đến ${pt.name} — ${lineMode}`;
+        writeStationStatus(`Đã đến ${pt.name} — ${lineMode}`);
         await window.AmrMagneticLine.start(pt);
-        stationStatus.textContent = `Đã vào trạm ${pt.name} ✓`;
+        writeStationStatus(`Đã vào trạm ${pt.name} ✓`);
       } else {
         await window.AmrNavigation.navigateAndWait(pt.x, pt.y, yawRad, {
           destinationName: pt.name,
@@ -717,7 +722,7 @@
       }
     } catch (err) {
       const msg = err?.message || 'Workflow thất bại';
-      stationStatus.textContent = `Thất bại tại ${pt.name}: ${msg}`;
+      writeStationStatus(`Thất bại tại ${pt.name}: ${msg}`);
       setWorkflowStep('goto', `Thất bại: ${pt.name}`);
     }
   }
@@ -727,7 +732,7 @@
       window.AmrProcess.runAutoRoute();
       return;
     }
-    stationStatus.textContent = 'Chưa có quy trình — thêm bước trong panel Quy trình';
+    writeStationStatus('Chưa có quy trình — thêm bước trong panel Quy trình');
   }
 
   function resetStation() {
@@ -737,11 +742,25 @@
       updateStationStatus('Auto Route đang chạy — nhấn Cancel trước khi Reset');
       return;
     }
-    updateStationStatus('Đã reset quy trình — Auto Route sẽ chạy lại từ bước 1');
+
+    const stm32Promise = window.AmrStm32?.resetEstop?.()
+      ?.then((res) => {
+        console.info('[STM32] RESET_ESTOP ACK:', res?.message || 'ok');
+        updateStationStatus(`Đã reset quy trình + STM32 RESET_ESTOP (${res?.stm32_state || 'ok'})`);
+        return res;
+      })
+      .catch((err) => {
+        console.error('[STM32] RESET_ESTOP failed:', err?.message || err);
+        updateStationStatus(`Đã reset quy trình — STM32 RESET_ESTOP lỗi: ${err?.message || err}`);
+      });
+
+    if (!stm32Promise) {
+      updateStationStatus('Đã reset quy trình — Auto Route sẽ chạy lại từ bước 1');
+    }
     setWorkflowStep('setpoint', 'Đã reset quy trình chạy — sẵn sàng chạy lại từ đầu');
   }
 
-  document.getElementById('btn-setpoint').addEventListener('click', openSetpointModal);
+  document.getElementById('btn-setpoint')?.addEventListener('click', openSetpointModal);
   document.getElementById('btn-auto-route').addEventListener('click', autoRoute);
   document.getElementById('btn-go-station').addEventListener('click', goToSelectedStation);
   document.getElementById('btn-station-reset').addEventListener('click', resetStation);
@@ -750,9 +769,7 @@
       selectSetpoint(stationSelect.value || null);
     });
   }
-  if (btnEditSetpoint) {
-    btnEditSetpoint.addEventListener('click', openEditSetpointModal);
-  }
+  btnEditSetpoint?.addEventListener('click', openEditSetpointModal);
   document.getElementById('btn-use-current').addEventListener('click', useCurrentPosition);
   document.getElementById('btn-save-point').addEventListener('click', savePoint);
   document.getElementById('btn-cancel-setpoint').addEventListener('click', closeSetpointModal);
@@ -869,7 +886,7 @@
   });
 
   window.addEventListener('amr-ros-disconnected', () => {
-    setWorkflowStep('connect', 'disconnected — press Connect in Config');
+    setWorkflowStep('connect', 'disconnected — chờ kết nối lại');
   });
 
   window.addEventListener('amr-map-ready', () => {
@@ -886,10 +903,11 @@
   renderSetpointsList();
   renderStationPicker();
   updateStationStatus();
-  setWorkflowStep('connect', 'disconnected — press Connect in Config');
+  setWorkflowStep('connect', 'đang kết nối…');
 
   window.AmrStations = {
     getSetpoints: () => [...setpoints],
+    getSelectedId: () => selectedId,
     reloadFromServer: reloadSetpointsFromServer,
     setWorkflowStep,
     isApproachPoint,

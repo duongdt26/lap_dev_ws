@@ -254,11 +254,19 @@ static void handle_line(char *line)
     return;
   }
 
+  /* ROS2 kich hoat Emergency: $CMD,ESTOP */
+  if (str_eq_nocase(fields[1], "ESTOP")) {
+    Belt_TriggerEstop(ESTOP_SRC_ROS2);
+    UART_SendAckEstop();
+    return;
+  }
+
+  /* Reset dong thoi Emergency va STOP_LOCK: $CMD,RESET_ESTOP */
   if (str_eq_nocase(fields[1], "RESET_ESTOP")) {
     if (Belt_TryResetEstop()) {
       UART_SendAckResetEstop();
     } else {
-      UART_SendNack("RESET_ESTOP", 0U, "NOT_ESTOP");
+      UART_SendNack("RESET_ESTOP", 0U, "RESET_BLOCKED");
     }
     return;
   }
@@ -350,6 +358,11 @@ void UART_SendAckStop(uint8_t cmd_id)
 void UART_SendAckStopSide(uint8_t cmd_id, BeltSide_t side)
 {
   uart_send_frame("$ACK,CMD,STOP,%u,%s\r\n", cmd_id, side_to_str(side));
+}
+
+void UART_SendAckEstop(void)
+{
+  uart_send_frame("$ACK,CMD,ESTOP\r\n");
 }
 
 void UART_SendAckResetEstop(void)

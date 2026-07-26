@@ -16,6 +16,7 @@ void UART_SendPong(uint32_t seq);
 void UART_SendAckStart(uint8_t cmd_id);
 void UART_SendAckStop(uint8_t cmd_id);
 void UART_SendAckStopSide(uint8_t cmd_id, BeltSide_t side);
+void UART_SendAckEstop(void);
 void UART_SendAckResetEstop(void);
 void UART_SendNack(const char *cmd, uint8_t cmd_id, const char *reason);
 

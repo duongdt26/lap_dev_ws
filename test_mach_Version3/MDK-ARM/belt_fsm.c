@@ -18,8 +18,8 @@
    - Nut STOP vat ly tao STOP_LOCK:
      + Dung toan bo relay.
      + ROS2 khong duoc chay tiep khi dang STOP_LOCK.
-     + Nut START/RUN vat ly hoac lenh $CMD,START,<belt> moi mo khoa.
-     + RESET chi dung de reset ESTOP, khong lien quan STOP_LOCK.
+     + Nut START/RUN vat ly hoac lenh $CMD,START,<belt> co the mo khoa de chay lai.
+     + $CMD,RESET_ESTOP va nut RESET mo dong thoi STOP_LOCK va ESTOP.
 */
 
 typedef enum {
@@ -315,11 +315,20 @@ uint8_t Belt_TryResetEstop(void)
 {
   uint8_t i;
 
-  if (s_state != SYS_ESTOP) {
+  /*
+     RESET_ESTOP tu nut vat ly hoac ROS2 se mo dong thoi:
+     - Trang thai Emergency (SYS_ESTOP).
+     - Khoa STOP vat ly (s_stop_locked).
+
+     Van giu nguyen nguyen tac an toan: khong cho reset khi nut Emergency
+     vat ly con dang bi nhan.
+  */
+  if (HAL_GPIO_ReadPin(BTN_EMER_PORT, BTN_EMER_PIN) == BTN_EMER_ACTIVE) {
     return 0U;
   }
 
-  if (HAL_GPIO_ReadPin(BTN_EMER_PORT, BTN_EMER_PIN) == BTN_EMER_ACTIVE) {
+  /* Khong co ESTOP va cung khong bi STOP_LOCK thi khong co gi de reset. */
+  if (s_state != SYS_ESTOP && s_stop_locked == 0U) {
     return 0U;
   }
 

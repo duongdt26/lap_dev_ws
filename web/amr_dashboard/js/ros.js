@@ -3,7 +3,7 @@
  *
  * LAN   : ws://IP:9090
  * ngrok : wss://domain/rosbridge (1 tunnel — proxy qua amr_web_server.py)
- * Mở trang: tự điền IP/host, "Chưa kết nối" — user bấm Kết nối.
+ * Mở trang: tự resolve host và tự kết nối.
  */
 
 window.AmrRos = (function () {
@@ -12,7 +12,6 @@ window.AmrRos = (function () {
 
   const statusEl   = document.getElementById('conn-status');
   const hostInput  = document.getElementById('ros-host');
-  const btnConnect = document.getElementById('btn-connect');
 
   function isRemoteHost(hostname) {
     if (!hostname) return false;
@@ -77,20 +76,22 @@ window.AmrRos = (function () {
   }
 
   function setStatus(state) {
+    if (!statusEl) return;
     if (state === 'connected') {
-      statusEl.textContent = 'connected';
-      statusEl.className = 'connected';
+      statusEl.textContent = 'System: connected';
+      statusEl.className = 'conn-pill connected';
     } else if (state === 'connecting') {
-      statusEl.textContent = 'connecting...';
-      statusEl.className = 'connecting';
+      statusEl.textContent = 'System: connecting…';
+      statusEl.className = 'conn-pill connecting';
     } else {
-      statusEl.textContent = 'disconnected';
-      statusEl.className = 'disconnected';
+      statusEl.textContent = 'System: disconnected';
+      statusEl.className = 'conn-pill disconnected';
     }
   }
 
-  function connect() {
-    const host = hostInput.value.trim() || 'localhost';
+  function connect(hostOverride) {
+    const host = (hostOverride || hostInput?.value || 'localhost').trim() || 'localhost';
+    if (hostInput) hostInput.value = host;
     const url  = buildRosUrl(host);
 
     setStatus('connecting');
@@ -123,15 +124,22 @@ window.AmrRos = (function () {
 
   async function init() {
     remoteCfg = await fetchRemoteConfig();
-    hostInput.value = await resolveHost();
-    setStatus('disconnected');
+    const host = await resolveHost();
+    if (hostInput) hostInput.value = host;
+    connect(host);
   }
 
-  btnConnect.addEventListener('click', connect);
-  init();
+  // Backend mới phát sự kiện này sau khi xác thực. auth.js cũng phát sự kiện
+  // ở legacy mode để dashboard cũ và Gazebo hiện tại không bị gián đoạn.
+  window.addEventListener('amr-auth-ready', init, { once: true });
 
   return {
     getRos: () => ros,
     connect,
+    disconnect: () => {
+      if (ros) ros.close();
+      ros = null;
+      setStatus('disconnected');
+    },
   };
 })();

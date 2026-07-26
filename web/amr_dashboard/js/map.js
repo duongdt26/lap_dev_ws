@@ -18,7 +18,7 @@
     let odomPollStarted = false;
 
     window.addEventListener('amr-ros-connected', () => {
-    initMap();
+      initMap();
     });
 
     window.addEventListener('amr-ros-disconnected', () => {
@@ -30,7 +30,33 @@
       teleopMoving = false;
       mapLiveMode = true;
       mapStatusBase = '';
+      mapMsg = null;
       setZoomControlsEnabled(false);
+      updateMapStatusHint();
+    });
+
+    window.addEventListener('amr-theme-changed', () => {
+      if (mapMsg && view) {
+        rebuildMapCache();
+        scheduleRedraw();
+      }
+    });
+
+    window.addEventListener('amr-setpoints-changed', () => {
+      scheduleRedraw();
+    });
+
+    window.addEventListener('amr-map-data-sync', () => {
+      updateMapStatusHint();
+    });
+
+    window.addEventListener('amr-map-loaded', () => {
+      updateMapStatusHint();
+    });
+
+    window.addEventListener('amr-slam-scan', () => {
+      updateMapTitle();
+      updateMapStatusHint();
     });
 
   // Trạng thái dùng chung khi vẽ
@@ -45,6 +71,9 @@
   let planPath = [];        // mảng {x,y} tọa độ world từ /plan
   let navMode = false;
   let navGoalCallback = null;
+  let keepoutMode = false;
+  let keepoutZones = [];
+  let keepoutDraft = [];
 
   let mapCacheCanvas = null;   // offscreen: vẽ map 1 lần, không vẽ lại mỗi pose
   let dragCurrent = null;      // pixel hiện tại khi đang kéo (preview mũi tên)
@@ -72,6 +101,15 @@
 
   const MAP_TOPIC_QOS = {
     durability: 'volatile',
+    reliability: 'reliable',
+    history: 'keep_last',
+    depth: 1,
+  };
+
+  // /map của nav2_map_server là transient-local. Nghe trực tiếp topic này làm
+  // đường dự phòng khi map_bridge chưa sẵn sàng hoặc /web/map bị trễ.
+  const SOURCE_MAP_TOPIC_QOS = {
+    durability: 'transient_local',
     reliability: 'reliable',
     history: 'keep_last',
     depth: 1,
@@ -167,10 +205,16 @@
 
   function mapFingerprint(msg) {
     if (!msg || !msg.info) return '';
+    const stamp = msg.info.map_load_time || {};
+    const origin = msg.info.origin?.position || {};
     return [
       msg.info.width,
       msg.info.height,
       msg.info.resolution,
+      origin.x,
+      origin.y,
+      stamp.sec,
+      stamp.nanosec,
       msg.data ? msg.data.length : 0,
     ].join(',');
   }
@@ -188,17 +232,45 @@
     if (panel) panel.classList.toggle('map-controls-disabled', !enabled);
   }
 
+  function getSelectedMapName() {
+    return (window.AmrMapData?.getCurrentMapName?.() || '').trim();
+  }
+
+  function updateMapTitle() {
+    const titleEl = document.getElementById('map-area-title');
+    if (!titleEl) return;
+    const scanning = !!window.AmrSlam?.isScanOn?.();
+    const name = getSelectedMapName();
+    if (scanning) {
+      titleEl.textContent = name ? `MAP: ${name} · SCANNING` : 'MAP: SCANNING (SLAM)';
+      titleEl.classList.add('map-scanning');
+    } else {
+      titleEl.textContent = name ? `MAP: ${name}` : 'MAP: —';
+      titleEl.classList.remove('map-scanning');
+    }
+  }
+
   function updateMapStatusHint() {
     const el = document.getElementById('map-status');
     if (!el) return;
-    const base = mapMsg
-      ? (mapStatusBase ||
-        `Map: ${mapMsg.info.width}×${mapMsg.info.height} @ ${mapMsg.info.resolution}m/cell`)
-      : 'Chưa có bản đồ - chạy localization hoặc SLAM';
-    const modeHint = mapLiveMode
-      ? ' · LIVE (Nav/teleop/Vx — zoom tắt)'
-      : ' · Đóng băng — có thể zoom / đặt pose';
-    el.textContent = base + (mapMsg ? modeHint : '');
+    updateMapTitle();
+    const name = getSelectedMapName();
+    if (!mapMsg && !name) {
+      el.textContent = 'Chưa có bản đồ - chạy localization hoặc SLAM';
+      return;
+    }
+    const base = name
+      ? `Map: ${name}`
+      : (mapStatusBase ||
+        (mapMsg
+          ? `Map: ${mapMsg.info.width}×${mapMsg.info.height} @ ${mapMsg.info.resolution}m/cell`
+          : 'Map: —'));
+    const modeHint = mapMsg
+      ? (mapLiveMode
+        ? ' · LIVE (Nav/teleop/Vx — zoom tắt)'
+        : ' · Đóng băng — có thể zoom / đặt pose')
+      : '';
+    el.textContent = base + modeHint;
   }
 
   function updateMapInteractionMode() {
@@ -271,6 +343,37 @@
       if (enabled) canvas.classList.remove('pose-mode');
       updateMapInteractionMode();
     },
+    setKeepoutMode(enabled) {
+      keepoutMode = !!enabled;
+      const canvas = document.getElementById('map-canvas');
+      canvas.classList.toggle('keepout-mode', keepoutMode);
+      if (keepoutMode) {
+        poseMode = false;
+        navMode = false;
+        canvas.classList.remove('pose-mode', 'nav-mode');
+      }
+      updateMapInteractionMode();
+    },
+    setKeepoutZones(zones) {
+      keepoutZones = Array.isArray(zones) ? zones : [];
+      scheduleRedraw();
+    },
+    setKeepoutDraft(points) {
+      keepoutDraft = Array.isArray(points) ? points : [];
+      scheduleRedraw();
+    },
+    clientToWorld(clientX, clientY) {
+      const canvas = canvasRef || document.getElementById('map-canvas');
+      if (!canvas || !mapMsg || !view) return null;
+      const rect = canvas.getBoundingClientRect();
+      const px = (clientX - rect.left) * (canvas.width / rect.width);
+      const py = (clientY - rect.top) * (canvas.height / rect.height);
+      const point = canvasToWorld(px, py, mapMsg.info);
+      return { x: point.wx, y: point.wy };
+    },
+    canEditKeepout() {
+      return !!mapMsg && !!view;
+    },
     setNavGoalCallback(cb) { navGoalCallback = cb; },
 
     clearPlanPath() {
@@ -279,6 +382,10 @@
     },
     resetView() { resetMapView(); },
     resetViewAfterNavGoal() { resetMapViewAfterNavGoal(); },
+    hasMap() { return mapMsg !== null; },
+    publishInitialPose(x, y, yawRad) {
+      return publishInitialPose(Number(x) || 0, Number(y) || 0, Number(yawRad) || 0);
+    },
   };
 
   function applyViewChange() {
@@ -370,6 +477,14 @@
 
   initViewControls();
   setZoomControlsEnabled(false);
+  initCanvasResizeObserver();
+  // Fit khung sớm (trước khi có map) để Live Map đã to sẵn
+  requestAnimationFrame(() => resizeCanvasToContainer(false));
+  window.addEventListener('load', () => {
+    resizeCanvasToContainer(false);
+    updateMapStatusHint();
+  });
+  updateMapStatusHint();
 
   if (!odomPollStarted) {
     odomPollStarted = true;
@@ -380,16 +495,18 @@
 
   function initMap() {
     if (mapInitialized) return;
-    mapInitialized = true;
 
     const ros = window.AmrRos.getRos();
     if (!ros) {
-      mapInitialized = false;
       return;
     }
-  
+
     const canvas = document.getElementById('map-canvas');
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) {
+      console.warn('map init: chưa có canvas/context');
+      return;
+    }
 
 
     // ── Khởi tạo offscreen canvas ──
@@ -397,22 +514,49 @@
     canvasRef = canvas;
 
     // ── Subscribe /web/map (map_bridge đồng bộ từ /map cho nhiều client) ──
-    initMapSyncClients(ros);
+    try {
+      initMapSyncClients(ros);
 
-    const mapTopic = new ROSLIB.Topic({
-      ros,
-      name: '/web/map',
-      messageType: 'nav_msgs/msg/OccupancyGrid',
-      qos: MAP_TOPIC_QOS,
-    });
-  
-    mapTopic.subscribe((msg) => {
-      const fp = mapFingerprint(msg);
-      const mapChanged = fp && fp !== lastMapFingerprint;
-      if (!mapLiveMode && mapMsg && !mapChanged) return;
-      if (mapChanged) lastMapFingerprint = fp;
-      applyMapMessage(msg);
-    });
+      function handleMapMessage(msg) {
+        const fp = mapFingerprint(msg);
+        const mapChanged = fp && fp !== lastMapFingerprint;
+        if (!mapLiveMode && mapMsg && !mapChanged) return;
+        if (mapChanged) lastMapFingerprint = fp;
+        applyMapMessage(msg);
+      }
+
+      const webMapTopic = new ROSLIB.Topic({
+        ros,
+        name: '/web/map',
+        messageType: 'nav_msgs/msg/OccupancyGrid',
+        qos: MAP_TOPIC_QOS,
+      });
+      webMapTopic.subscribe(handleMapMessage);
+
+      const sourceMapTopic = new ROSLIB.Topic({
+        ros,
+        name: '/map',
+        messageType: 'nav_msgs/msg/OccupancyGrid',
+        qos: SOURCE_MAP_TOPIC_QOS,
+      });
+      sourceMapTopic.subscribe(handleMapMessage);
+
+      // Chỉ khóa init sau khi hai subscription map đã được gửi thành công.
+      mapInitialized = true;
+    } catch (err) {
+      mapInitialized = false;
+      console.error('map init failed:', err);
+      const status = document.getElementById('map-status');
+      if (status) status.textContent = `Lỗi khởi tạo map: ${err.message || err}`;
+      return;
+    }
+
+    // Resize chỉ là phần hiển thị; lỗi ở đây không được chặn subscription map.
+    try {
+      resizeCanvasToContainer(true);
+    } catch (err) {
+      console.warn('map canvas resize:', err);
+    }
 
     setTimeout(() => syncMapFromBridge(), 400);
 
@@ -674,6 +818,16 @@
         //     applyPoseMode();
         // });
   }
+
+  // Tránh mất sự kiện amr-ros-connected khi rosbridge kết nối trong lúc các
+  // file script khác còn đang tải. Nếu init trước đó lỗi, tự thử lại mỗi giây.
+  function ensureMapInitialized() {
+    const ros = window.AmrRos?.getRos?.();
+    if (!mapInitialized && ros?.isConnected) initMap();
+  }
+
+  setInterval(ensureMapInitialized, 1000);
+  window.addEventListener('load', ensureMapInitialized);
   
   /** Fit toàn bộ map vào canvas, giữ tỉ lệ */
   function mapSizeKey(info) {
@@ -683,7 +837,11 @@
   function computeView(msg, canvas) {
     const w = msg.info.width;
     const h = msg.info.height;
-    const scale = Math.min(canvas.width / w, canvas.height / h);
+    // Fill canvas as much as possible (tiny margin so edges aren't clipped)
+    const pad = 4;
+    const availW = Math.max(1, canvas.width - pad * 2);
+    const availH = Math.max(1, canvas.height - pad * 2);
+    const scale = Math.min(availW / w, availH / h);
     const drawW = w * scale;
     const drawH = h * scale;
     view = {
@@ -694,6 +852,54 @@
       mapH: h,
     };
     baseView = { ...view };
+  }
+
+  /** Canvas pixel size = khung Live Map → map trắng to hơn, ít viền đen */
+  function resizeCanvasToContainer(forceRefit) {
+    const wrap = document.querySelector('.map-canvas-wrap');
+    const canvas = canvasRef || document.getElementById('map-canvas');
+    if (!wrap || !canvas) return false;
+
+    const rect = wrap.getBoundingClientRect();
+    const nextW = Math.max(320, Math.floor(rect.width));
+    const nextH = Math.max(240, Math.floor(rect.height));
+    if (nextW < 40 || nextH < 40) return false;
+
+    const changed = canvas.width !== nextW || canvas.height !== nextH;
+    if (!changed && !forceRefit) return false;
+
+    if (changed) {
+      canvas.width = nextW;
+      canvas.height = nextH;
+    }
+
+    canvasRef = canvas;
+    if (mapMsg) {
+      if (!userViewLocked || forceRefit) {
+        computeView(mapMsg, canvas);
+        userViewLocked = false;
+      }
+      rebuildMapCache();
+      scheduleRedraw();
+    }
+    return changed;
+  }
+
+  let resizeObserverAttached = false;
+  function initCanvasResizeObserver() {
+    if (resizeObserverAttached) return;
+    resizeObserverAttached = true;
+    const wrap = document.querySelector('.map-canvas-wrap');
+    if (!wrap || typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', () => resizeCanvasToContainer(false));
+      return;
+    }
+    let raf = 0;
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => resizeCanvasToContainer(false));
+    });
+    ro.observe(wrap);
   }
   
   /** Tọa độ ROS map (mét) → pixel trên canvas */
@@ -727,7 +933,15 @@
     }
 
     function publishInitialPose(x, y, yawRad) {
-    if (!initialPosePub) return;
+    if (!initialPosePub) {
+      const ros = window.AmrRos?.getRos?.();
+      if (!ros) return false;
+      initialPosePub = new ROSLIB.Topic({
+        ros,
+        name: '/initialpose',
+        messageType: 'geometry_msgs/msg/PoseWithCovarianceStamped',
+      });
+    }
     const q = yawToQuaternion(yawRad);
     initialPosePub.publish(new ROSLIB.Message({
         // header: { frame_id: 'map' },
@@ -751,11 +965,43 @@
         ],
         },
     }));
-    document.getElementById('map-status').textContent =
+    const statusEl = document.getElementById('map-status');
+    if (statusEl) {
+      statusEl.textContent =
         `Initial pose: (${x.toFixed(2)}, ${y.toFixed(2)}) yaw=${(yawRad * 180 / Math.PI).toFixed(1)}°`;
     }
+    return true;
+    }
 
-    /** Vẽ map tĩnh 1 lần vào offscreen canvas */
+    /** Palette map — chỉ vẽ local, không đụng băng thông ROS */
+    function getMapPalette() {
+      const light = document.documentElement.getAttribute('data-theme') === 'light';
+      if (light) {
+        return {
+          bg: [226, 232, 240, 255],       // ngoài map
+          unknown: [186, 198, 212, 255],  // chưa quét
+          free: [248, 250, 252, 255],     // trống
+          occupied: [30, 41, 59, 255],    // tường / vật cản
+          softOcc: [100, 116, 139, 255],  // chiếm dụng thấp
+        };
+      }
+      return {
+        bg: [14, 20, 28, 255],
+        unknown: [42, 52, 66, 255],
+        free: [232, 238, 245, 255],
+        occupied: [15, 23, 36, 255],
+        softOcc: [90, 105, 125, 255],
+      };
+    }
+
+    function writeRgba(buf, i, rgba) {
+      buf[i] = rgba[0];
+      buf[i + 1] = rgba[1];
+      buf[i + 2] = rgba[2];
+      buf[i + 3] = rgba[3];
+    }
+
+    /** Vẽ map tĩnh 1 lần vào offscreen canvas (ImageData — nhanh hơn fillRect từng ô) */
     function rebuildMapCache() {
       if (!mapMsg || !view) return;
       const canvas = canvasRef || document.getElementById('map-canvas');
@@ -767,25 +1013,54 @@
       mapCacheCanvas.height = canvas.height;
       const c = mapCacheCanvas.getContext('2d');
       const info = mapMsg.info;
-      const w = info.width, h = info.height, data = mapMsg.data;
-  
-      c.fillStyle = '#222';
+      const w = info.width;
+      const h = info.height;
+      const data = mapMsg.data;
+      const pal = getMapPalette();
+
+      // Nền ngoài vùng map
+      c.fillStyle = `rgba(${pal.bg[0]},${pal.bg[1]},${pal.bg[2]},1)`;
       c.fillRect(0, 0, mapCacheCanvas.width, mapCacheCanvas.height);
+
+      // Raster map ở độ phân giải gốc → scale 1 lần (mượt + nhanh)
+      const tile = document.createElement('canvas');
+      tile.width = w;
+      tile.height = h;
+      const tctx = tile.getContext('2d');
+      const img = tctx.createImageData(w, h);
+      const px = img.data;
+
       for (let row = 0; row < h; row++) {
+        const srcRow = row * w;
+        // OccupancyGrid: row 0 = dưới → lật lên canvas
+        const dstRow = (h - 1 - row) * w;
         for (let col = 0; col < w; col++) {
-          const val = data[row * w + col];
-          if (val === -1) c.fillStyle = '#555';
-          else if (val === 0) c.fillStyle = '#eee';
-          else if (val >= 50) c.fillStyle = '#111';
-          else c.fillStyle = '#999';
-          const mx = col, my = h - 1 - row;
-          c.fillRect(
-            view.offsetX + mx * view.scale,
-            view.offsetY + my * view.scale,
-            Math.ceil(view.scale), Math.ceil(view.scale)
-          );
+          const val = data[srcRow + col];
+          const i = (dstRow + col) * 4;
+          if (val < 0) writeRgba(px, i, pal.unknown);
+          else if (val === 0) writeRgba(px, i, pal.free);
+          else if (val >= 50) writeRgba(px, i, pal.occupied);
+          else writeRgba(px, i, pal.softOcc);
         }
       }
+      tctx.putImageData(img, 0, 0);
+
+      const drawW = w * view.scale;
+      const drawH = h * view.scale;
+      c.imageSmoothingEnabled = view.scale < 1;
+      c.drawImage(tile, view.offsetX, view.offsetY, drawW, drawH);
+
+      // Viền nhẹ quanh bản đồ cho tách nền
+      c.strokeStyle = document.documentElement.getAttribute('data-theme') === 'light'
+        ? 'rgba(13, 148, 136, 0.35)'
+        : 'rgba(45, 212, 191, 0.28)';
+      c.lineWidth = 1;
+      c.strokeRect(
+        Math.floor(view.offsetX) + 0.5,
+        Math.floor(view.offsetY) + 0.5,
+        Math.ceil(drawW),
+        Math.ceil(drawH)
+      );
     }
   
     /** Gom nhiều message pose liên tiếp → chỉ vẽ 1 frame (real-time, không lag queue) */
@@ -859,29 +1134,237 @@
     }
 
     // Layer 2: trục XY tại tâm bản đồ (tham chiếu hướng)
+    drawKeepoutZones(ctx, info);
+
+    // Layer 2: trục XY tại tâm bản đồ (tham chiếu hướng)
     drawMapAxes(ctx, info);
 
-    // Layer 3: global path
+    // Layer 3: setpoint + tên điểm
+    drawSetpoints(ctx, info);
+
+    // Layer 4: global path (to, rõ)
     if (planPath.length > 1) {
-      ctx.strokeStyle = '#60a5fa';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      planPath.forEach((pt, i) => {
-        const { px, py } = worldToCanvas(pt.x, pt.y, info);
-        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-      });
-      ctx.stroke();
+      drawPlanPath(ctx, info);
     }
 
-    // Layer 4: preview mũi tên khi đang kéo (giống RViz)
+    // Layer 5: preview mũi tên khi đang kéo (giống RViz)
     if (poseDragStart && dragCurrent) {
       drawDragArrow(ctx, poseDragStart, dragCurrent, poseMode ? '#facc15' : '#f97316');
     }
 
-    // Layer 5: robot
+    // Layer 6: robot
     if (robotPose) {
       drawRobot(ctx, robotPose, info);
     }
+  }
+
+  function drawKeepoutPolygon(ctx, info, points, draft = false, label = '') {
+    if (!Array.isArray(points) || points.length === 0) return;
+    const canvasPoints = points
+      .filter((point) => Number.isFinite(Number(point.x)) && Number.isFinite(Number(point.y)))
+      .map((point) => worldToCanvas(Number(point.x), Number(point.y), info));
+    if (!canvasPoints.length) return;
+
+    ctx.save();
+    ctx.beginPath();
+    canvasPoints.forEach((point, index) => {
+      if (index === 0) ctx.moveTo(point.px, point.py);
+      else ctx.lineTo(point.px, point.py);
+    });
+    if (!draft && canvasPoints.length >= 3) ctx.closePath();
+    if (!draft && canvasPoints.length >= 3) {
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.30)';
+      ctx.fill();
+    }
+    ctx.strokeStyle = draft ? '#facc15' : '#ef4444';
+    ctx.lineWidth = draft ? 2 : 2.5;
+    ctx.setLineDash(draft ? [7, 5] : []);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    canvasPoints.forEach((point, index) => {
+      ctx.beginPath();
+      ctx.arc(point.px, point.py, draft ? 4 : 3, 0, Math.PI * 2);
+      ctx.fillStyle = draft && index === 0 ? '#22c55e' : (draft ? '#facc15' : '#ef4444');
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    const name = String(label || '').trim();
+    if (name && canvasPoints.length >= 1) {
+      const cx = canvasPoints.reduce((sum, p) => sum + p.px, 0) / canvasPoints.length;
+      const cy = canvasPoints.reduce((sum, p) => sum + p.py, 0) / canvasPoints.length;
+      ctx.font = '600 11px "DM Sans", "Segoe UI", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'rgba(17, 24, 39, 0.8)';
+      ctx.strokeText(name, cx, cy);
+      ctx.fillStyle = draft ? '#fef08a' : '#fecaca';
+      ctx.fillText(name, cx, cy);
+    }
+    ctx.restore();
+  }
+
+  function drawKeepoutZones(ctx, info) {
+    keepoutZones.forEach((zone) => {
+      if (zone?.enabled === false) return;
+      drawKeepoutPolygon(ctx, info, zone?.points || [], false, zone?.name || '');
+    });
+    drawKeepoutPolygon(ctx, info, keepoutDraft, true, '');
+  }
+
+  function setpointStyle(pt, selected) {
+    const t = String(pt?.pointType || 'normal').toLowerCase();
+    if (t === 'home') {
+      return {
+        fill: selected ? '#c084fc' : '#a855f7',
+        stroke: '#f3e8ff',
+        ring: 'rgba(168, 85, 247, 0.45)',
+        badge: 'Home',
+      };
+    }
+    if (t === 'approach') {
+      return {
+        fill: selected ? '#fb923c' : '#f97316',
+        stroke: '#fff7ed',
+        ring: 'rgba(249, 115, 22, 0.45)',
+        badge: 'Approach',
+      };
+    }
+    return {
+      fill: selected ? '#2dd4bf' : '#14b8a6',
+      stroke: '#ecfdf5',
+      ring: 'rgba(45, 212, 191, 0.45)',
+      badge: 'Station',
+    };
+  }
+
+  function roundRectPath(ctx, x, y, w, h, radius) {
+    const r = Math.min(radius, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function drawSetpoints(ctx, info) {
+    const list = window.AmrStations?.getSetpoints?.() || [];
+    if (!list.length) return;
+    const selectedId = window.AmrStations?.getSelectedId?.() || null;
+
+    list.forEach((pt) => {
+      if (pt == null || !Number.isFinite(Number(pt.x)) || !Number.isFinite(Number(pt.y))) return;
+      const { px, py } = worldToCanvas(Number(pt.x), Number(pt.y), info);
+      const selected = pt.id === selectedId;
+      const style = setpointStyle(pt, selected);
+      const r = selected ? 9 : 7;
+      const yawRad = (Number(pt.yawDeg) || 0) * Math.PI / 180;
+      const dirX = Math.cos(-yawRad);
+      const dirY = Math.sin(-yawRad);
+
+      // Halo ngoài — dễ thấy trên map
+      ctx.beginPath();
+      ctx.arc(px, py, r + (selected ? 5 : 3.5), 0, Math.PI * 2);
+      ctx.fillStyle = style.ring;
+      ctx.fill();
+
+      // Thân marker
+      ctx.beginPath();
+      ctx.arc(px, py, r, 0, Math.PI * 2);
+      ctx.fillStyle = style.fill;
+      ctx.fill();
+      ctx.lineWidth = selected ? 2.5 : 2;
+      ctx.strokeStyle = '#0f172a';
+      ctx.stroke();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = style.stroke;
+      ctx.stroke();
+
+      // Mũi tên hướng yaw
+      const tip = r + 14;
+      const tipX = px + dirX * tip;
+      const tipY = py + dirY * tip;
+      const back = r + 2;
+      const side = 5.5;
+      const bx = px + dirX * back;
+      const by = py + dirY * back;
+      const lx = bx - dirY * side;
+      const ly = by + dirX * side;
+      const rx = bx + dirY * side;
+      const ry = by - dirX * side;
+      ctx.beginPath();
+      ctx.moveTo(tipX, tipY);
+      ctx.lineTo(lx, ly);
+      ctx.lineTo(rx, ry);
+      ctx.closePath();
+      ctx.fillStyle = style.fill;
+      ctx.fill();
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Badge tên + loại điểm
+      const name = String(pt.name || '').trim() || 'Station';
+      const typeLabel = style.badge || '';
+      const title = typeLabel ? `${name} · ${typeLabel}` : name;
+      const fontSize = selected ? 12 : 11;
+      ctx.font = `600 ${fontSize}px "DM Sans", "Segoe UI", sans-serif`;
+      const textW = ctx.measureText(title).width;
+      const padX = 8;
+      const padY = 5;
+      const boxW = textW + padX * 2;
+      const boxH = fontSize + padY * 2;
+      const boxX = px + r + 10;
+      const boxY = py - boxH / 2;
+
+      ctx.save();
+      roundRectPath(ctx, boxX, boxY, boxW, boxH, 6);
+      ctx.fillStyle = selected ? 'rgba(15, 23, 42, 0.92)' : 'rgba(15, 23, 42, 0.82)';
+      ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = style.fill;
+      ctx.stroke();
+
+      ctx.fillStyle = style.fill;
+      ctx.fillRect(boxX, boxY + 3, 3, boxH - 6);
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(title, boxX + padX + 2, boxY + boxH / 2);
+      ctx.restore();
+    });
+  }
+
+  function drawPlanPath(ctx, info) {
+    const pts = planPath.map((pt) => worldToCanvas(pt.x, pt.y, info));
+    if (pts.length < 2) return;
+
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+
+    // Một đường đơn giản, đủ dày để nhìn
+    ctx.beginPath();
+    pts.forEach((p, i) => (i === 0 ? ctx.moveTo(p.px, p.py) : ctx.lineTo(p.px, p.py)));
+    ctx.strokeStyle = '#2563eb';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Điểm cuối goal
+    const end = pts[pts.length - 1];
+    ctx.beginPath();
+    ctx.arc(end.px, end.py, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#ea580c';
+    ctx.fill();
+    ctx.strokeStyle = '#111827';
+    ctx.lineWidth = 1;
+    ctx.stroke();
   }
 
   /** Trục X (đỏ) Y (xanh) tại tâm bản đồ */
@@ -929,20 +1412,23 @@
   function drawRobot(ctx, pose, info) {
     const { px, py } = worldToCanvas(pose.x, pose.y, info);
     const yawRad = (pose.yawDeg * Math.PI) / 180;
-    const size = Math.max(8, view.scale * 3);
-  
+    const size = Math.max(11, view.scale * 3.4);
+
     ctx.save();
     ctx.translate(px, py);
-    ctx.rotate(-yawRad); // canvas Y ngược ROS → dấu âm
-  
+    ctx.rotate(-yawRad);
+
     ctx.fillStyle = '#22c55e';
+    ctx.strokeStyle = '#14532d';
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(size, 0);
-    ctx.lineTo(-size * 0.6, size * 0.5);
-    ctx.lineTo(-size * 0.6, -size * 0.5);
+    ctx.lineTo(-size * 0.6, size * 0.55);
+    ctx.lineTo(-size * 0.6, -size * 0.55);
     ctx.closePath();
     ctx.fill();
-  
+    ctx.stroke();
+
     ctx.restore();
   }
   

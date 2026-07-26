@@ -52,6 +52,8 @@ from amr_stm32_bridge.uart_protocol import (
     cmd_reset_legacy,
     cmd_reset_estop,
     cmd_reset_estop_legacy,
+    cmd_estop,
+    cmd_estop_legacy,
     cmd_start_load,
     cmd_start_load_legacy,
     cmd_unload_belt,
@@ -164,6 +166,9 @@ class Stm32ConveyorBridgeNode(Node):
         self.create_service(
             Stm32Hello, '/stm32/hello', self._hello_srv_cb, callback_group=self._cb_group)
         self.create_service(
+            ResetEstop, '/stm32/estop', self._estop_srv_cb,
+            callback_group=self._cb_group)
+        self.create_service(
             ResetEstop, '/stm32/reset_estop', self._reset_estop_srv_cb,
             callback_group=self._cb_group)
         self.create_service(
@@ -216,6 +221,20 @@ class Stm32ConveyorBridgeNode(Node):
             if belt_id and pending.belt_id not in (0, belt_id):
                 continue
             return pending
+        return None
+
+    def _find_legacy_pending_cmd(self, cmd: str) -> Optional[PendingCommand]:
+        terminal = {
+            ActionPhase.LOAD_DONE,
+            ActionPhase.UNLOAD_DONE,
+            ActionPhase.FAILED,
+            ActionPhase.TIMEOUT,
+        }
+        for pending in reversed(list(self._pending.values())):
+            if pending.phase in terminal:
+                continue
+            if pending.cmd == cmd:
+                return pending
         return None
 
     def _can_run_conveyor(self) -> tuple[bool, str]:
@@ -385,7 +404,9 @@ class Stm32ConveyorBridgeNode(Node):
             f'STM32 ACK: seq={ack.seq} cmd={ack.cmd} belt={ack.belt_id} status={ack.status}')
         pending = self._pending.get(ack.seq)
         if pending is None and ack.seq == 0 and self._uses_legacy_protocol():
-            pending = self._find_legacy_pending(ack.belt_id)
+            pending = self._find_legacy_pending_cmd(ack.cmd)
+            if pending is None:
+                pending = self._find_legacy_pending(ack.belt_id)
         if pending is None:
             return
 
@@ -402,13 +423,14 @@ class Stm32ConveyorBridgeNode(Node):
                         f'side={pending.side}, nhận belt={ack.belt_id} side={ack.side}')
                     return
                 pending.phase = ActionPhase.UNLOAD_DONE
-            elif ack.cmd in ('READY', 'ENABLE', 'RESET', 'RESET_ESTOP'):
+            elif pending.cmd in ('READY', 'ENABLE', 'RESET', 'RESET_ESTOP', 'ESTOP') and (
+                    ack.cmd == pending.cmd):
                 pending.phase = ActionPhase.ACCEPTED
             return
         if ack.cmd in ('READY', 'ENABLE'):
             self._ros_ready_sent = True
             pending.phase = ActionPhase.ACCEPTED
-        elif ack.cmd in ('RESET', 'RESET_ESTOP'):
+        elif ack.cmd in ('RESET', 'RESET_ESTOP', 'ESTOP'):
             pending.phase = ActionPhase.ACCEPTED
         elif ack.status == ACCEPTED:
             pending.phase = ActionPhase.ACCEPTED
@@ -508,9 +530,13 @@ class Stm32ConveyorBridgeNode(Node):
                     '$TELEMETRY,IDLE,00000000,0,NONE',
                 ], 0.6)
 
-            elif sub in ('RESET', 'RESET_ESTOP'):
+            elif sub in ('RESET', 'RESET_ESTOP', 'ESTOP'):
                 self._handle_uart_line(f'$ACK,CMD,{sub}')
-                self._handle_uart_line('$TELEMETRY,IDLE,00000000,0,NONE')
+                if sub == 'ESTOP':
+                    self._handle_uart_line(
+                        '$TELEMETRY,ESTOP,00000000,0,NONE,1,0,IDLE,IDLE,0')
+                else:
+                    self._handle_uart_line('$TELEMETRY,IDLE,00000000,0,NONE')
 
         elif parts[0] == 'CMD' and len(parts) >= 3:
             seq = parts[1]
@@ -520,10 +546,14 @@ class Stm32ConveyorBridgeNode(Node):
                 self._handle_uart_line(f'$ACK,{seq},CMD,{sub}')
                 self._handle_uart_line('$EVENT,READY')
 
-            elif sub in ('RESET', 'RESET_ESTOP'):
+            elif sub in ('RESET', 'RESET_ESTOP', 'ESTOP'):
                 what = 'STOP_LOCK' if sub == 'RESET' else 'ESTOP'
                 self._handle_uart_line(f'$ACK,{seq},CMD,{sub},{what}')
-                self._handle_uart_line(f'$EVENT,RESET,{what}')
+                if sub == 'ESTOP':
+                    self._handle_uart_line(
+                        '$TELEMETRY,ESTOP,00000000,0,NONE,1,0,IDLE,IDLE,0')
+                else:
+                    self._handle_uart_line(f'$EVENT,RESET,{what}')
 
             elif sub == 'START' and len(parts) >= 4:
                 belt_id = parts[3]
@@ -586,6 +616,32 @@ class Stm32ConveyorBridgeNode(Node):
             time.sleep(0.05)
 
         return False, 'Timeout chờ READY'
+
+    def _send_estop(self, timeout_sec: float = 2.0) -> tuple[bool, str]:
+        seq = self._next_cmd_seq()
+        self._pending[seq] = PendingCommand(seq=seq, cmd='ESTOP')
+        frame = cmd_estop_legacy() if self._uses_legacy_protocol() else cmd_estop(seq)
+        self._send_uart(frame)
+        self.get_logger().warn(f'Gửi STM32 ESTOP: {frame}')
+
+        deadline = time.monotonic() + timeout_sec
+        while time.monotonic() < deadline:
+            pending = self._pending.get(seq)
+            if pending and pending.phase == ActionPhase.ACCEPTED:
+                self._safety_state = SafetyState.ESTOP
+                self._stm32_state = STATE_ESTOP
+                self._ros_ready_sent = False
+                self._trigger_nav_cancel('CMD ESTOP')
+                return True, 'ESTOP ok'
+            if pending and pending.phase == ActionPhase.FAILED:
+                return False, pending.error
+            time.sleep(0.05)
+
+        # Vẫn coi là đã yêu cầu dừng khẩn cấp dù timeout ACK
+        self._safety_state = SafetyState.ESTOP
+        self._stm32_state = STATE_ESTOP
+        self._trigger_nav_cancel('CMD ESTOP (timeout ACK)')
+        return False, 'Timeout chờ ACK ESTOP'
 
     def _send_reset(self, estop_only: bool = False, timeout_sec: float = 2.0) -> tuple[bool, str]:
         seq = self._next_cmd_seq()
@@ -860,6 +916,14 @@ class Stm32ConveyorBridgeNode(Node):
             time.sleep(0.05)
         response.success = False
         response.message = 'Timeout chờ HELLO_ACK'
+        response.stm32_state = self._stm32_state
+        return response
+
+    def _estop_srv_cb(self, request: ResetEstop.Request, response: ResetEstop.Response):
+        del request
+        ok, msg = self._send_estop()
+        response.success = ok
+        response.message = msg
         response.stm32_state = self._stm32_state
         return response
 

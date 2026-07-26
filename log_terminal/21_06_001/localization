@@ -1,5 +1,5 @@
 duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 localization_launch.py map:=./obs_3_map_save.yaml  use_sim_time:=false
-[INFO] [launch]: All log files can be found below /home/duo/.ros/log/2026-06-21-18-11-14-821569-duolap-36513
+[INFO] [launch]: All log files can be found below /home/laptop/.ros/log/2026-06-21-18-11-14-821569-duolap-36513
 [INFO] [launch]: Default logging verbosity is set to INFO
 [INFO] [map_server-1]: process started with pid [36514]
 [INFO] [amcl-2]: process started with pid [36516]
@@ -59,7 +59,7 @@ duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 localization_launch.py map:=./obs_3_m
 [amcl-2] [WARN] [1782040294.682999263] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
 [amcl-2] [WARN] [1782040296.688049220] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
 [map_server-1] [INFO] [1782040298.044686597] [map_server]: Handling LoadMap request
-[map_server-1] [INFO] [1782040298.044793470] [map_io]: Loading yaml file: /home/duo/maps/mks_2106_001_map_save.yaml
+[map_server-1] [INFO] [1782040298.044793470] [map_io]: Loading yaml file: /home/laptop/maps/mks_2106_001_map_save.yaml
 [map_server-1] [INFO] [1782040298.045104021] [map_io]: resolution: 0.05
 [map_server-1] [INFO] [1782040298.045120492] [map_io]: origin[0]: -5.36
 [map_server-1] [INFO] [1782040298.045130671] [map_io]: origin[1]: -15.3
@@ -68,8 +68,8 @@ duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 localization_launch.py map:=./obs_3_m
 [map_server-1] [INFO] [1782040298.045154817] [map_io]: occupied_thresh: 0.65
 [map_server-1] [INFO] [1782040298.045161811] [map_io]: mode: trinary
 [map_server-1] [INFO] [1782040298.045170026] [map_io]: negate: 0
-[map_server-1] [INFO] [1782040298.045189453] [map_io]: Loading image_file: /home/duo/maps/mks_2106_001_map_save.pgm
-[map_server-1] [INFO] [1782040298.104177869] [map_io]: Read map /home/duo/maps/mks_2106_001_map_save.pgm: 435 X 651 map @ 0.05 m/cell
+[map_server-1] [INFO] [1782040298.045189453] [map_io]: Loading image_file: /home/laptop/maps/mks_2106_001_map_save.pgm
+[map_server-1] [INFO] [1782040298.104177869] [map_io]: Read map /home/laptop/maps/mks_2106_001_map_save.pgm: 435 X 651 map @ 0.05 m/cell
 [amcl-2] [INFO] [1782040298.106915475] [amcl]: Received a 435 X 651 map @ 0.050 m/pix
 [amcl-2] [INFO] [1782040298.194306343] [amcl]: createLaserObject
 [amcl-2] [WARN] [1782040298.699453581] [amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...

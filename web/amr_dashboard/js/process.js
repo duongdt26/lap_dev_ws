@@ -67,8 +67,8 @@
   function updateProcessHeading() {
     if (!workflowHeading) return;
     workflowHeading.textContent = currentProcessName
-      ? `Process: ${currentProcessName}`
-      : 'Process';
+      ? `Mission: ${currentProcessName}`
+      : 'Mission';
   }
 
   function migrateStepNames(steps) {
@@ -440,7 +440,7 @@
         if (window.AmrStations?.isMagneticLinePoint?.(sp)) {
           const yawRad = (sp.yawDeg * Math.PI) / 180;
           const isHome = window.AmrStations?.isHomePoint?.(sp);
-          const pointLabel = isHome ? 'Home' : 'Approach Pose';
+          const pointLabel = isHome ? 'Home' : 'Approach Station';
           setDetail(`Auto Route: tới ${pointLabel} ${label}`);
           setStationStatus(`${pointLabel}: đang đi tới ${label}`);
           await window.AmrNavigation.navigateAndWait(sp.x, sp.y, yawRad, {
@@ -647,7 +647,7 @@
   function showAddBar() {
     const setpoints = getSetpoints();
     if (!setpoints.length) {
-      setDetail('Chưa có setpoint — bấm Setpoint để thêm');
+      setDetail('Chưa có station');
       return;
     }
     populateAddSelect();

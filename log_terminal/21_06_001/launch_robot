@@ -1,5 +1,5 @@
 duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 launch_robot.launch.py
-[INFO] [launch]: All log files can be found below /home/duo/.ros/log/2026-06-21-17-46-22-130555-duolap-35465
+[INFO] [launch]: All log files can be found below /home/laptop/.ros/log/2026-06-21-17-46-22-130555-duolap-35465
 [INFO] [launch]: Default logging verbosity is set to INFO
 [INFO] [robot_state_publisher-1]: process started with pid [35498]
 [INFO] [ekf_node-2]: process started with pid [35500]
@@ -24,8 +24,8 @@ duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 launch_robot.launch.py
 [robot_state_publisher-1] [INFO] [1782038783.183920427] [robot_state_publisher]: got segment laser_frame
 [robot_state_publisher-1] [INFO] [1782038783.183932239] [robot_state_publisher]: got segment left_wheel
 [robot_state_publisher-1] [INFO] [1782038783.183944823] [robot_state_publisher]: got segment right_wheel
-[map_bridge_node-6] [INFO] [1782038783.750227933] [map_bridge_node]: Service /save_map (Trigger) → /home/duo/maps
-[map_bridge_node-6] [INFO] [1782038783.754249270] [map_bridge_node]: Service /list_maps → /home/duo/maps
+[map_bridge_node-6] [INFO] [1782038783.750227933] [map_bridge_node]: Service /save_map (Trigger) → /home/laptop/maps
+[map_bridge_node-6] [INFO] [1782038783.754249270] [map_bridge_node]: Service /list_maps → /home/laptop/maps
 [laser_filter-4] [INFO] [1782038783.982785553] [laser_filter]: Laser Filter of Duo was started!!!
 [imu_uart_node-3] [INFO] [1782038784.240224326] [imu_uart_node]: Đã kết nối thành công với STM32 IMU qua cổng /dev/serial/by-path/pci-0000:05:00.3-usb-0:3:1.0-port0 (Baudrate: 256000)
 [rosbridge_websocket-8] [WARN] [1782038784.262319746] [rosbridge_websocket]: The 'default_call_service_timeout' parameter is currently set to 0.0, which means service calls will block indefinitely if no response is received. Please note that in the Jazzy and later releases, the default value for this parameter will be updated to 5.0 seconds.
@@ -107,7 +107,7 @@ duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 launch_robot.launch.py
 [rosbridge_websocket-8] [INFO] [1782039868.232912625] [rosbridge_websocket]: [Client cded2e27-7dd8-49c9-800e-c82d18a2e87f] Subscribed to /robot_pose_map
 [rosbridge_websocket-8] [INFO] [1782039868.652343803] [rosbridge_websocket]: [Client cded2e27-7dd8-49c9-800e-c82d18a2e87f] Subscribed to /odometry/filtered
 [rosbridge_websocket-8] [INFO] [1782039868.654125542] [rosbridge_websocket]: [Client cded2e27-7dd8-49c9-800e-c82d18a2e87f] Subscribed to /amcl_pose
-[map_bridge_node-6] [INFO] [1782039885.507676385] [map_bridge_node]: Lưu map: ros2 run nav2_map_server map_saver_cli -f /home/duo/maps/mks_2106_001_map_save
+[map_bridge_node-6] [INFO] [1782039885.507676385] [map_bridge_node]: Lưu map: ros2 run nav2_map_server map_saver_cli -f /home/laptop/maps/mks_2106_001_map_save
 [ekf_node-2] Failed to meet update rate! Took 0.054020624000000003195seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
 [ekf_node-2] Failed to meet update rate! Took 0.63018893099999995222seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
 [ekf_node-2] Failed to meet update rate! Took 0.80316320699999999011seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
@@ -298,9 +298,9 @@ duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 launch_robot.launch.py
 [rosbridge_websocket-8] [INFO] [1782041751.989667495] [rosbridge_websocket]: [Client 36ad7b0c-236d-46ac-a497-2034c41c3b45] Subscribed to /odometry/filtered
 [rosbridge_websocket-8] [INFO] [1782041751.991956822] [rosbridge_websocket]: [Client 36ad7b0c-236d-46ac-a497-2034c41c3b45] Subscribed to /amcl_pose
 [imu_uart_node-3] Traceback (most recent call last):
-[imu_uart_node-3]   File "/home/duo/dev_ws/install/amr_imu_driver/lib/amr_imu_driver/imu_uart_node", line 33, in <module>
+[imu_uart_node-3]   File "/home/laptop/dev_ws/install/amr_imu_driver/lib/amr_imu_driver/imu_uart_node", line 33, in <module>
 [imu_uart_node-3]     sys.exit(load_entry_point('amr-imu-driver', 'console_scripts', 'imu_uart_node')())
-[imu_uart_node-3]   File "/home/duo/dev_ws/build/amr_imu_driver/amr_imu_driver/imu_uart_node.py", line 145, in main
+[imu_uart_node-3]   File "/home/laptop/dev_ws/build/amr_imu_driver/amr_imu_driver/imu_uart_node.py", line 145, in main
 [imu_uart_node-3]     rclpy.spin(node)
 [imu_uart_node-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 229, in spin
 [imu_uart_node-3]     executor.spin_once()
@@ -316,12 +316,12 @@ duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 launch_robot.launch.py
 [imu_uart_node-3]     await await_or_execute(tmr.callback)
 [imu_uart_node-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 110, in await_or_execute
 [imu_uart_node-3]     return callback(*args)
-[imu_uart_node-3]   File "/home/duo/dev_ws/build/amr_imu_driver/amr_imu_driver/imu_uart_node.py", line 59, in read_serial_callback
+[imu_uart_node-3]   File "/home/laptop/dev_ws/build/amr_imu_driver/amr_imu_driver/imu_uart_node.py", line 59, in read_serial_callback
 [imu_uart_node-3]     if self.ser.in_waiting > 0:
 [imu_uart_node-3]   File "/usr/lib/python3/dist-packages/serial/serialposix.py", line 549, in in_waiting
 [imu_uart_node-3]     s = fcntl.ioctl(self.fd, TIOCINQ, TIOCM_zero_str)
 [imu_uart_node-3] OSError: [Errno 5] Input/output error
-[ERROR] [imu_uart_node-3]: process has died [pid 35502, exit code 1, cmd '/home/duo/dev_ws/install/amr_imu_driver/lib/amr_imu_driver/imu_uart_node --ros-args'].
+[ERROR] [imu_uart_node-3]: process has died [pid 35502, exit code 1, cmd '/home/laptop/dev_ws/install/amr_imu_driver/lib/amr_imu_driver/imu_uart_node --ros-args'].
 [ros2_control_node-10] [WARN] [1782041889.702124472] [HinsonSystemHardware]: Lỗi đọc Modbus: Connection timed out (Mã lỗi: 110)
 [ros2_control_node-10] [WARN] [1782041890.202438170] [HinsonSystemHardware]: Lỗi ghi Modbus: Connection timed out (Mã lỗi: 110)
 [rosbridge_websocket-8] [INFO] [1782041948.784621965] [rosbridge_websocket]: Client disconnected. 1 clients total.
@@ -330,9 +330,9 @@ duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 launch_robot.launch.py
 [robot_state_publisher-1] [INFO] [1782042058.708799470] [rclcpp]: signal_handler(SIGINT/SIGTERM)
 [ekf_node-2] [INFO] [1782042058.708777769] [rclcpp]: signal_handler(SIGINT/SIGTERM)
 [map_bridge_node-6] Traceback (most recent call last):
-[map_bridge_node-6]   File "/home/duo/dev_ws/install/amr_web_bridge/lib/amr_web_bridge/map_bridge_node", line 33, in <module>
+[map_bridge_node-6]   File "/home/laptop/dev_ws/install/amr_web_bridge/lib/amr_web_bridge/map_bridge_node", line 33, in <module>
 [map_bridge_node-6]     sys.exit(load_entry_point('amr-web-bridge', 'console_scripts', 'map_bridge_node')())
-[map_bridge_node-6]   File "/home/duo/dev_ws/build/amr_web_bridge/amr_web_bridge/map_bridge_node.py", line 77, in main
+[map_bridge_node-6]   File "/home/laptop/dev_ws/build/amr_web_bridge/amr_web_bridge/map_bridge_node.py", line 77, in main
 [map_bridge_node-6]     rclpy.spin(node)
 [map_bridge_node-6]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 229, in spin
 [map_bridge_node-6]     executor.spin_once()
@@ -346,9 +346,9 @@ duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 launch_robot.launch.py
 [map_bridge_node-6]     wait_set.wait(timeout_nsec)
 [map_bridge_node-6] KeyboardInterrupt
 [nav_pose_bridge_node-7] Traceback (most recent call last):
-[nav_pose_bridge_node-7]   File "/home/duo/dev_ws/install/amr_web_bridge/lib/amr_web_bridge/nav_pose_bridge_node", line 33, in <module>
+[nav_pose_bridge_node-7]   File "/home/laptop/dev_ws/install/amr_web_bridge/lib/amr_web_bridge/nav_pose_bridge_node", line 33, in <module>
 [nav_pose_bridge_node-7]     sys.exit(load_entry_point('amr-web-bridge', 'console_scripts', 'nav_pose_bridge_node')())
-[nav_pose_bridge_node-7]   File "/home/duo/dev_ws/build/amr_web_bridge/amr_web_bridge/nav_pose_bridge_node.py", line 170, in main
+[nav_pose_bridge_node-7]   File "/home/laptop/dev_ws/build/amr_web_bridge/amr_web_bridge/nav_pose_bridge_node.py", line 170, in main
 [nav_pose_bridge_node-7]     rclpy.spin(node)
 [nav_pose_bridge_node-7]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 229, in spin
 [nav_pose_bridge_node-7]     executor.spin_once()
@@ -372,9 +372,9 @@ duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 launch_robot.launch.py
 [ros2_control_node-10] [INFO] [1782042058.713540402] [resource_manager]: Successful 'shutdown' of hardware 'RealRobot'
 [ros2_control_node-10] [INFO] [1782042058.713551723] [controller_manager]: Shutting down the controller manager.
 [laser_filter-4] Traceback (most recent call last):
-[laser_filter-4]   File "/home/duo/dev_ws/install/custom_laser_filter/lib/custom_laser_filter/laser_filter", line 33, in <module>
+[laser_filter-4]   File "/home/laptop/dev_ws/install/custom_laser_filter/lib/custom_laser_filter/laser_filter", line 33, in <module>
 [laser_filter-4]     sys.exit(load_entry_point('custom-laser-filter', 'console_scripts', 'laser_filter')())
-[laser_filter-4]   File "/home/duo/dev_ws/build/custom_laser_filter/custom_laser_filter/laser_filter_node.py", line 84, in main
+[laser_filter-4]   File "/home/laptop/dev_ws/build/custom_laser_filter/custom_laser_filter/laser_filter_node.py", line 84, in main
 [laser_filter-4]     rclpy.spin(node=node)
 [laser_filter-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 229, in spin
 [laser_filter-4]     executor.spin_once()
@@ -402,11 +402,11 @@ duo@duolap:~/dev_ws$ ros2 launch amr_lan_3 launch_robot.launch.py
 [rosbridge_websocket-8]  - <class 'rosbridge_library.capabilities.send_action_goal.SendActionGoal'>
 [rosbridge_websocket-8]  - <class 'rosbridge_library.capabilities.unadvertise_action.UnadvertiseAction'>
 [rosbridge_websocket-8] Exiting due to SIGINT
-[ERROR] [map_bridge_node-6]: process has died [pid 35508, exit code -2, cmd '/home/duo/dev_ws/install/amr_web_bridge/lib/amr_web_bridge/map_bridge_node --ros-args -r __node:=map_bridge_node'].
+[ERROR] [map_bridge_node-6]: process has died [pid 35508, exit code -2, cmd '/home/laptop/dev_ws/install/amr_web_bridge/lib/amr_web_bridge/map_bridge_node --ros-args -r __node:=map_bridge_node'].
 [INFO] [twist_mux-5]: process has finished cleanly [pid 35506]
-[ERROR] [laser_filter-4]: process has died [pid 35504, exit code -2, cmd '/home/duo/dev_ws/install/custom_laser_filter/lib/custom_laser_filter/laser_filter --ros-args -r __node:=laser_filter'].
+[ERROR] [laser_filter-4]: process has died [pid 35504, exit code -2, cmd '/home/laptop/dev_ws/install/custom_laser_filter/lib/custom_laser_filter/laser_filter --ros-args -r __node:=laser_filter'].
 [INFO] [robot_state_publisher-1]: process has finished cleanly [pid 35498]
-[ERROR] [nav_pose_bridge_node-7]: process has died [pid 35510, exit code -2, cmd '/home/duo/dev_ws/install/amr_web_bridge/lib/amr_web_bridge/nav_pose_bridge_node --ros-args -r __node:=nav_pose_bridge_node'].
+[ERROR] [nav_pose_bridge_node-7]: process has died [pid 35510, exit code -2, cmd '/home/laptop/dev_ws/install/amr_web_bridge/lib/amr_web_bridge/nav_pose_bridge_node --ros-args -r __node:=nav_pose_bridge_node'].
 [INFO] [ekf_node-2]: process has finished cleanly [pid 35500]
 [INFO] [ros2_control_node-10]: process has finished cleanly [pid 35664]
 [INFO] [rosapi_node-9]: process has finished cleanly [pid 35514]

@@ -3,8 +3,8 @@
  */
 
 (function () {
-  const MAPS_DIR = '/home/duo/maps';
-  const MAP_DATA_ROOT = '/home/duo/MAP_DATA';
+  const MAPS_DIR = '/home/laptop/maps';
+  const MAP_DATA_ROOT = '/home/laptop/MAP_DATA';
 
   let ready = false;
   let clients = {};
@@ -12,6 +12,14 @@
 
   function getRos() {
     return window.AmrRos?.getRos?.() || null;
+  }
+
+  function useApi() {
+    return !!window.AmrApi?.isAvailable?.() && !!window.AmrApi?.getUser?.();
+  }
+
+  function apiPath(mapName, suffix = '') {
+    return `/api/maps/${encodeURIComponent(mapName)}${suffix}`;
   }
 
   function callService(client, request) {
@@ -66,6 +74,10 @@
     return new Promise((resolve, reject) => {
       const start = Date.now();
       function tick() {
+        if (useApi()) {
+          resolve();
+          return;
+        }
         if (ready && clients.saveProcess) {
           resolve();
           return;
@@ -125,6 +137,17 @@
       await window.AmrMapSync.setActiveMapName(name);
     }
 
+    if (useApi() && window.AmrApi.canWrite()) {
+      try {
+        await window.AmrApi.request(apiPath(name), {
+          method: 'PUT',
+          body: JSON.stringify({}),
+        });
+      } catch (error) {
+        console.warn('Không đồng bộ được map vào SQLite:', error);
+      }
+    }
+
     currentMapName = name;
     window.dispatchEvent(
       new CustomEvent('amr-map-data-sync', { detail: { name } })
@@ -135,6 +158,14 @@
   async function loadSetpoints(mapName) {
     await waitUntilReady();
     const name = await requireMapName(mapName);
+    if (useApi()) {
+      try {
+        return await window.AmrApi.request(apiPath(name, '/setpoints'));
+      } catch (error) {
+        if (error.status === 404) return [];
+        throw error;
+      }
+    }
     const res = await callService(clients.loadSetpoints, {
       map_name: name,
     });
@@ -149,6 +180,12 @@
   async function saveSetpoints(setpoints, mapName) {
     await waitUntilReady();
     const name = await requireMapName(mapName);
+    if (useApi()) {
+      return window.AmrApi.request(apiPath(name, '/setpoints'), {
+        method: 'PUT',
+        body: JSON.stringify(setpoints),
+      });
+    }
     const res = await callService(clients.saveSetpoints, {
       map_name: name,
       json_data: JSON.stringify(setpoints),
@@ -160,6 +197,14 @@
   async function listProcesses(mapName) {
     await waitUntilReady();
     const name = await requireMapName(mapName);
+    if (useApi()) {
+      try {
+        return await window.AmrApi.request(apiPath(name, '/processes'));
+      } catch (error) {
+        if (error.status === 404) return [];
+        throw error;
+      }
+    }
     const res = await callService(clients.listProcesses, {
       map_name: name,
     });
@@ -173,6 +218,11 @@
   async function loadProcess(processName, mapName) {
     await waitUntilReady();
     const name = await requireMapName(mapName);
+    if (useApi()) {
+      return window.AmrApi.request(
+        apiPath(name, `/processes/${encodeURIComponent(processName)}`)
+      );
+    }
     const res = await callService(clients.loadProcess, {
       map_name: name,
       name: processName,
@@ -188,6 +238,15 @@
   async function saveProcess(processName, data, mapName) {
     await waitUntilReady();
     const name = await requireMapName(mapName);
+    if (useApi()) {
+      return window.AmrApi.request(
+        apiPath(name, `/processes/${encodeURIComponent(processName)}`),
+        {
+          method: 'PUT',
+          body: JSON.stringify(data),
+        }
+      );
+    }
     const res = await callService(clients.saveProcess, {
       map_name: name,
       name: processName,
