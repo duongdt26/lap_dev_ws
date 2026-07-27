@@ -7,6 +7,10 @@
 
 let statusReady = false;
 let telemetrySocket = null;
+// Telemetry snapshot giữ giá trị /web_nav_status cuối cùng (vd "cancelled" từ lần
+// Emergency trước) và lặp lại mỗi mẫu. Chỉ phát khi ĐỔI, và bỏ qua trạng thái
+// kết thúc cũ ở mẫu đầu để trang mới không hiện "cancelled" ngay sau "Ready".
+let lastNavigationRaw;
 let lastBatteryUiMs = 0;
 let pendingBatteryMsg = null;
 let batteryUiTimer = null;
@@ -78,6 +82,7 @@ window.addEventListener('amr-auth-ready', () => {
 
 window.addEventListener('amr-ros-disconnected', () => {
   statusReady = false;
+  lastNavigationRaw = undefined;
   telemetrySocket?.close();
   telemetrySocket = null;
   if (batteryUiTimer) {
@@ -113,11 +118,17 @@ function startSubscriptions() {
         document.getElementById('val-vyaw').textContent = fmtNum(vyaw, 1);
         window.dispatchEvent(new CustomEvent('amr-odom', { detail: { vx, vyaw } }));
       }
-      if (snapshot.navigation) {
+      if (snapshot.navigation != null && snapshot.navigation !== lastNavigationRaw) {
+        const firstSnapshot = lastNavigationRaw === undefined;
+        lastNavigationRaw = snapshot.navigation;
         const parts = String(snapshot.navigation).split('|');
-        window.dispatchEvent(new CustomEvent('amr-nav-status', {
-          detail: { state: parts[0] || '', detail: parts.slice(1).join('|') },
-        }));
+        const state = parts[0] || '';
+        const isTerminal = ['cancelled', 'cancelling', 'arrived', 'failed'].includes(state);
+        if (!(firstSnapshot && isTerminal)) {
+          window.dispatchEvent(new CustomEvent('amr-nav-status', {
+            detail: { state, detail: parts.slice(1).join('|') },
+          }));
+        }
       }
     });
     telemetrySocket.addEventListener('close', () => { statusReady = false; });

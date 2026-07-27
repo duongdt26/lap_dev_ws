@@ -2,7 +2,7 @@
 //  * localization.js — Danh sách map + nạp map + bật initial pose
 //  */
 
-//   const MAPS_DIR = '/home/laptop/maps';
+//   const MAPS_DIR = '/home/admin-pc/maps';
 
 //   // const ros = window.AmrRos.getRos();
 //   // if (!ros) {
@@ -146,7 +146,7 @@
  * localization.js — Danh sách map + nạp map + đặt initial pose
  */
 
-// const MAPS_DIR = '/home/laptop/maps';
+// const MAPS_DIR = '/home/admin-pc/maps';
 
 // const mapSelect   = document.getElementById('map-select');
 // const loadStatus  = document.getElementById('load-map-status');
@@ -239,7 +239,7 @@
  * localization.js — Danh sách map + nạp map + đặt initial pose
  */
 
-const MAPS_DIR = '/home/laptop/maps';
+const MAPS_DIR = '/home/admin-pc/maps';
 
 function mapYamlPath(name) {
   return `${MAPS_DIR}/${name}.yaml`;

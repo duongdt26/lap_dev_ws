@@ -9,7 +9,7 @@ xong và mô phỏng Gazebo tiếp tục hoạt động.
 Khuyến nghị tạo virtual environment có thể nhìn thấy các gói ROS của hệ thống:
 
 ```bash
-cd /home/laptop/dev_ws
+cd /home/admin-pc/dev_ws
 python3 -m venv --system-site-packages .venv-api
 source .venv-api/bin/activate
 python3 -m pip install -r backend/requirements.txt
@@ -23,7 +23,7 @@ Không cần cài MySQL/PostgreSQL. SQLite được lưu trong một file.
 Không ghi mật khẩu trực tiếp vào `.env` hoặc source code:
 
 ```bash
-cd /home/laptop/dev_ws
+cd /home/admin-pc/dev_ws
 source .venv-api/bin/activate
 python3 -m backend.amr_api.cli init-db
 python3 -m backend.amr_api.cli create-user --username admin --role admin
@@ -51,7 +51,7 @@ python3 -m backend.amr_api.cli reset-password --username admin --role admin
 Terminal ROS/Gazebo chạy như trước. Terminal web chạy:
 
 ```bash
-cd /home/laptop/dev_ws
+cd /home/admin-pc/dev_ws
 source /opt/ros/humble/setup.bash
 source install/setup.bash
 source .venv-api/bin/activate
@@ -78,7 +78,7 @@ Sao chép `backend/.env.example` thành `backend/.env`, rồi chỉ sửa file
 | Cookie chỉ qua HTTPS | `AMR_COOKIE_SECURE` | `false` |
 | Chế độ Gazebo | `AMR_USE_SIM_TIME` | `false` |
 | Giữ rosbridge tạm thời | `AMR_ENABLE_ROSBRIDGE_PROXY` | `true` |
-| Địa chỉ rosbridge nội bộ | `AMR_ROSBRIDGE_URL` | `ws://127.0.0.1:9090` |
+| Địa chỉ rosbridge nội bộ | `AMR_ROSBRIDGE_URL` | `ws://127.0.0.1:9091` |
 
 Không sửa mật khẩu trực tiếp trong SQLite. Dùng CLI `reset-password` hoặc API
 quản trị. Không commit `backend/.env` hay file `.sqlite3`.
@@ -188,4 +188,4 @@ Vẫn dùng rosbridge tương thích:
 - ROS service áp dụng keepout mask ngay lập tức.
 
 Vì vậy chưa đổi `AMR_ENABLE_ROSBRIDGE_PROXY=false`. Giai đoạn tiếp theo sẽ chuyển
-từng module còn lại sang API/WebSocket rồi mới đóng port `9090` khỏi bên ngoài.
+từng module còn lại sang API/WebSocket rồi mới đóng port `9091` khỏi bên ngoài.

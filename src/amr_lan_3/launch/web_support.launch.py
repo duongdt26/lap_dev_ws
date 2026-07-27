@@ -40,7 +40,18 @@ def generate_launch_description():
         executable='nav_pose_bridge_node',
         name='nav_pose_bridge_node',
         output='screen',
-        parameters=[sim_time_param],
+        parameters=[
+            sim_time_param,
+            {
+                # Nếu gần home thì tiến thẳng ra trước rồi mới NavigateToPose
+                'home_x': 0.0,
+                'home_y': 0.0,
+                'near_home_threshold_m': 0.30,
+                'undock_distance_m': 0.50,
+                'undock_speed_mps': 0.08,
+                'undock_time_allowance_sec': 20.0,
+            },
+        ],
     )
 
     mission_client_node = Node(
@@ -90,7 +101,7 @@ def generate_launch_description():
             )
         ]),
         launch_arguments={
-            'port': '9090',
+            'port': '9091',
             'address': '0.0.0.0',
         }.items(),
     )

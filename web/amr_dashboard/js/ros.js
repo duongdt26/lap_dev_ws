@@ -1,7 +1,7 @@
 /**
  * ros.js — Quản lý kết nối WebSocket tới rosbridge
  *
- * LAN   : ws://IP:9090
+ * LAN   : ws://IP:9091
  * ngrok : wss://domain/rosbridge (1 tunnel — proxy qua amr_web_server.py)
  * Mở trang: tự resolve host và tự kết nối.
  */
@@ -28,10 +28,10 @@ window.AmrRos = (function () {
       .split(':')[0];
   }
 
-  /** LAN: ws://host:9090 | ngrok 1 tunnel: wss://host/rosbridge */
+  /** LAN: ws://host:9091 | ngrok 1 tunnel: wss://host/rosbridge */
   function buildRosUrl(hostRaw) {
     const raw = (hostRaw || 'localhost').trim();
-    if (!raw) return 'ws://localhost:9090';
+    if (!raw) return 'ws://localhost:9091';
     if (raw.startsWith('ws://') || raw.startsWith('wss://')) return raw;
 
     const host = bareHost(raw);
@@ -39,7 +39,7 @@ window.AmrRos = (function () {
       const path = remoteCfg?.rosbridgePath || '/rosbridge';
       return `wss://${host}${path}`;
     }
-    return `ws://${host}:9090`;
+    return `ws://${host}:9091`;
   }
 
   async function fetchRemoteConfig() {
@@ -129,17 +129,20 @@ window.AmrRos = (function () {
     connect(host);
   }
 
-  // Backend mới phát sự kiện này sau khi xác thực. auth.js cũng phát sự kiện
-  // ở legacy mode để dashboard cũ và Gazebo hiện tại không bị gián đoạn.
-  window.addEventListener('amr-auth-ready', init, { once: true });
+  // Mỗi lần auth sẵn sàng (lần đầu hoặc đăng nhập lại sau logout) đều reconnect.
+  // Không dùng { once: true } — nếu không, logout→login sẽ không bao giờ gọi init() lại.
+  window.addEventListener('amr-auth-ready', init);
 
   return {
     getRos: () => ros,
     connect,
     disconnect: () => {
-      if (ros) ros.close();
-      ros = null;
+      if (ros) {
+        ros.close();
+        ros = null;
+      }
       setStatus('disconnected');
+      window.dispatchEvent(new CustomEvent('amr-ros-disconnected'));
     },
   };
 })();

@@ -9,6 +9,10 @@ from typing import Any
 
 from .config import Settings
 
+# Trạng thái kết thúc trên /web_nav_status — không giữ sticky trong snapshot
+# (tránh client mới mở trang thấy "cancelled" từ lần Emergency cũ).
+_TERMINAL_NAV_STATES = frozenset({"cancelled", "cancelling", "arrived", "failed"})
+
 
 class TelemetryState:
     def __init__(self) -> None:
@@ -22,6 +26,17 @@ class TelemetryState:
         with self._lock:
             self._value[key] = value
             self._version += 1
+
+    def clear(self, key: str) -> None:
+        with self._lock:
+            if key not in self._value:
+                return
+            del self._value[key]
+            self._version += 1
+
+    def get(self, key: str, default: Any = None) -> Any:
+        with self._lock:
+            return deepcopy(self._value.get(key, default))
 
     def snapshot(self) -> tuple[int, dict[str, Any]]:
         with self._lock:
@@ -39,6 +54,7 @@ class RosGateway:
         self._cmd_vel_pub = None
         self._cmd_vel_pause_pub = None
         self._nav_pause_timer = None
+        self._nav_clear_timer = None
         self._nav_paused = False
         self._send_nav_client = None
         self._cancel_nav_client = None
@@ -136,13 +152,16 @@ class RosGateway:
             def string_callback(key: str):
                 return lambda message: self.telemetry.update(key, message.data)
 
+            def navigation_callback(message) -> None:
+                self._on_navigation_status(message.data)
+
             self.node.create_subscription(Odometry, "/odometry/filtered", odom_callback, 10)
             self.node.create_subscription(
                 PoseWithCovarianceStamped, "/robot_pose_map", pose_callback, 10
             )
             self.node.create_subscription(BatteryState, "/battery_state", battery_callback, 10)
             self.node.create_subscription(
-                String, "/web_nav_status", string_callback("navigation"), 10
+                String, "/web_nav_status", navigation_callback, 10
             )
             self.node.create_subscription(
                 String, "/mission/status", string_callback("mission"), 10
@@ -164,6 +183,37 @@ class RosGateway:
         except Exception as exc:
             self.telemetry.update("ros", {"connected": False, "error": str(exc)})
             self.stop()
+
+    def _cancel_nav_clear_timer(self) -> None:
+        if self._nav_clear_timer is None or self.node is None:
+            return
+        try:
+            self._nav_clear_timer.cancel()
+            self.node.destroy_timer(self._nav_clear_timer)
+        except Exception:
+            pass
+        self._nav_clear_timer = None
+
+    def _clear_terminal_navigation(self) -> None:
+        """One-shot: xóa sticky terminal nav khỏi snapshot sau khi client đang nối đã nhận."""
+        self._cancel_nav_clear_timer()
+        raw = self.telemetry.get("navigation")
+        if raw is None:
+            return
+        state = str(raw).split("|", 1)[0]
+        if state in _TERMINAL_NAV_STATES:
+            self.telemetry.clear("navigation")
+
+    def _on_navigation_status(self, raw: str) -> None:
+        state = str(raw or "").split("|", 1)[0]
+        self._cancel_nav_clear_timer()
+        self.telemetry.update("navigation", raw)
+        # Terminal: phát một lần cho client đang lắng nghe, rồi xóa khỏi snapshot
+        # để lần mở trang sau không còn thấy "cancelled"/"arrived" cũ.
+        if state in _TERMINAL_NAV_STATES and self.node is not None:
+            self._nav_clear_timer = self.node.create_timer(
+                1.5, self._clear_terminal_navigation
+            )
 
     def publish_teleop(self, linear_x: float, angular_z: float) -> None:
         if self.node is None or self._cmd_vel_pub is None:
@@ -236,6 +286,7 @@ class RosGateway:
                 self.set_nav_paused(False)
         except Exception:
             pass
+        self._cancel_nav_clear_timer()
         if self.executor is not None:
             self.executor.shutdown(timeout_sec=2.0)
         if self.thread is not None and self.thread.is_alive():

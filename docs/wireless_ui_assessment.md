@@ -14,7 +14,7 @@ Trang thai: Da co mot phan lon.
 
 Bang chung trong project:
 - `web/amr_dashboard/index.html`: co dashboard web voi Connect, Teleop control, Robot Status, Station control, SLAM, Localization, Process, Setpoint list.
-- `web/amr_dashboard/js/ros.js`: ket noi rosbridge qua WebSocket. Ho tro LAN `ws://IP:9090` va remote tunnel `wss://host/rosbridge`.
+- `web/amr_dashboard/js/ros.js`: ket noi rosbridge qua WebSocket. Ho tro LAN `ws://IP:9091` va remote tunnel `wss://host/rosbridge`.
 - `web/amr_dashboard/js/navigation.js`: gui goal Nav2 qua service `/send_nav_goal`, huy qua `/cancel_nav`, nhan trang thai `/web_nav_status`.
 - `web/amr_dashboard/js/stations.js`: tao setpoint, go to station, docking/load/unload workflow, publish mission.
 - `web/amr_dashboard/js/process.js`: tao, luu, mo va chay process gom nhieu setpoint.
@@ -33,9 +33,9 @@ Trang thai: Da phu hop voi cau truc hien tai.
 
 Bang chung trong project:
 - `src/amr_lan_3/launch/launch_robot.launch.py`: launch robot thuc gom controller, EKF, IMU, laser filter, web support, mission supervisor.
-- `src/amr_lan_3/launch/web_support.launch.py`: chay `twist_mux`, `map_bridge_node`, `nav_pose_bridge_node`, `mission_client_node`, `stm32_conveyor_bridge_node`, va rosbridge port `9090`.
+- `src/amr_lan_3/launch/web_support.launch.py`: chay `twist_mux`, `map_bridge_node`, `nav_pose_bridge_node`, `mission_client_node`, `stm32_conveyor_bridge_node`, va rosbridge port `9091`.
 - `scripts/amr_tabs.sh` va `scripts/amr_terminator.sh`: co tab WEB, NGROK, ROBOT, SLAM, LOC, NAV de khoi dong nhanh.
-- `scripts/amr_web_server.py`: serve dashboard static tren port `8080` va proxy `/rosbridge` ve `ws://127.0.0.1:9090`.
+- `scripts/amr_web_server.py`: serve dashboard static tren port `8080` va proxy `/rosbridge` ve `ws://127.0.0.1:9091`.
 
 Danh gia:
 - Kien truc hien tai dung mot laptop tren robot lam may chay ROS 2 va web server la hop ly.
@@ -48,8 +48,8 @@ Trang thai: Da co nen tang, can bo sung huong dan va do on dinh.
 
 Bang chung trong project:
 - `scripts/amr_web_server.py` bind mac dinh `0.0.0.0:8080`, laptop khac trong cung mang co the mo `http://ROBOT_IP:8080`.
-- `src/amr_lan_3/launch/web_support.launch.py` chay rosbridge voi `address=0.0.0.0`, port `9090`.
-- `web/amr_dashboard/js/ros.js` tu build URL LAN theo dang `ws://ROBOT_IP:9090`.
+- `src/amr_lan_3/launch/web_support.launch.py` chay rosbridge voi `address=0.0.0.0`, port `9091`.
+- `web/amr_dashboard/js/ros.js` tu build URL LAN theo dang `ws://ROBOT_IP:9091`.
 - `web/amr_dashboard/js/status.js` doc `/odometry/filtered`.
 - `src/amr_web_bridge/amr_web_bridge/nav_pose_bridge_node.py` publish `/robot_pose_map` tu TF `map -> base_footprint`.
 - `web/amr_dashboard/js/map.js` ve map va robot pose tren canvas.
@@ -64,7 +64,7 @@ Danh gia:
 ### Uu tien cao
 
 1. Tai lieu van hanh Wi-Fi noi bo
-   - Them huong dan: laptop tren robot chay lenh nao, laptop dieu khien mo URL nao, cach lay IP robot, cach test `ping`, `curl http://ROBOT_IP:8080`, va test rosbridge port `9090`.
+   - Them huong dan: laptop tren robot chay lenh nao, laptop dieu khien mo URL nao, cach lay IP robot, cach test `ping`, `curl http://ROBOT_IP:8080`, va test rosbridge port `9091`.
    - Ghi ro che do LAN khong can ngrok.
 
 2. Watchdog an toan cho teleop/mat ket noi

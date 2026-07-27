@@ -290,7 +290,7 @@ bt_navigator:
    robot_base_frame: base_footprint  # Khung goc robot
    # odom_topic: /odom
    odom_topic: /odometry/filtered # dung vi minh dung bo loc odom --- Topic publish odometry
-  #  default_nav_to_pose_bt_xml: /home/laptop/dev_ws/src/amr_lan_3/behavior_trees/navigate_to_pose_backup_30cm.xml
+  #  default_nav_to_pose_bt_xml: /home/admin-pc/dev_ws/src/amr_lan_3/behavior_trees/navigate_to_pose_backup_30cm.xml
    bt_loop_duration: 10  # Thoi gian (ms) moi vong lap thuc thi behavior tree
    default_server_timeout: 20  # Timeout mac dinh (ms) cho BT action node cho den khi server xac nhan
    wait_for_service_timeout: 1000  # Timeout mac dinh (ms) khi BT node cho service/action san sang luc khoi tao

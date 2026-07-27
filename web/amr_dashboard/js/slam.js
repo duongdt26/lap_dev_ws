@@ -19,9 +19,12 @@
 
   const btnScan = document.getElementById('btn-slam-scan');
   const btnNavMode = document.getElementById('btn-nav-mode');
+  const slamStatusEl = document.getElementById('slam-status');
 
-  function setSlamStatus(_msg, _color = '') {
-    // Status hint đã bỏ khỏi UI.
+  function setSlamStatus(msg, color = '') {
+    if (!slamStatusEl) return;
+    slamStatusEl.textContent = msg || '';
+    slamStatusEl.style.color = color || '';
   }
 
   function callNavLifecycle(command) {
@@ -69,9 +72,13 @@
     return paused;
   }
 
-  function updateScanButton() {
+  function updateScanButton(loadingLabel) {
     if (!btnScan) return;
-    btnScan.textContent = `SLAM: ${slamScanOn ? 'ON' : 'OFF'}`;
+    if (busy && loadingLabel) {
+      btnScan.textContent = loadingLabel;
+    } else {
+      btnScan.textContent = `SLAM: ${slamScanOn ? 'ON' : 'OFF'}`;
+    }
     btnScan.classList.toggle('active', slamScanOn);
     btnScan.disabled = busy;
   }
@@ -84,13 +91,18 @@
     const next = !!enabled;
     if (next === slamScanOn || busy) return;
     busy = true;
-    updateScanButton();
+    updateScanButton(next ? 'SLAM: đang bật…' : 'SLAM: đang tắt…');
 
     try {
       // API mode manager owns the real process transition. ROSLIB remains as
       // compatibility fallback while the migration is in progress.
       if (window.AmrApi?.isAvailable?.()) {
-        setSlamStatus(next ? 'Đang dừng Nav2/localization và khởi động SLAM...' : 'Đang dừng SLAM và khởi động lại localization/Nav2...', '#facc15');
+        setSlamStatus(
+          next
+            ? 'Đang khởi động SLAM'
+            : 'Đang dừng SLAM',
+          '#facc15'
+        );
         const result = await window.AmrApi.request('/api/slam/mode', {
           method: 'POST',
           body: JSON.stringify({
@@ -105,11 +117,16 @@
           if (slamScanOn) btnNavMode.title = 'Tắt SLAM trước khi bật Nav';
           else btnNavMode.removeAttribute('title');
         }
-        setSlamStatus(slamScanOn ? 'Success · SLAM ON · Nav2/localization đã dừng' : 'Success · NORMAL · localization/Nav2 đã chạy', '#4ade80');
+        setSlamStatus(
+          slamScanOn
+            ? 'Success · SLAM ON'
+            : 'Success · SLAM OFF',
+          '#4ade80'
+        );
         return;
       }
       if (next) {
-        setSlamStatus('Đang bật SLAM · tạm tắt Nav2...', '#facc15');
+        setSlamStatus('Đang load · bật SLAM · tạm tắt Nav2…', '#facc15');
         window.AmrNavigation?.setNavMode?.(false);
         window.AmrNavigation?.cancelNavigationAsync?.().catch(() => {});
         if (btnNavMode) {
@@ -117,24 +134,24 @@
           btnNavMode.title = 'Tắt SLAM trước khi bật Nav';
         }
 
-        setSlamStatus('Đang kích hoạt slam_toolbox (quét map)...', '#facc15');
+        setSlamStatus('Đang load · kích hoạt slam_toolbox (quét map)…', '#facc15');
         await setSlamPaused(false);
 
-        setSlamStatus('Đang tạm tắt Nav2...', '#facc15');
+        setSlamStatus('Đang load · tạm tắt Nav2…', '#facc15');
         await callNavLifecycle(NAV_CMD_PAUSE).catch((err) => {
           console.warn('Pause Nav2:', err);
         });
 
         slamScanOn = true;
         notifyScanChanged();
-        setSlamStatus('Success · SLAM ON · map đang được quét · Nav2 tạm tắt', '#4ade80');
+        setSlamStatus('Success · SLAM ON', '#4ade80');
       } else {
-        setSlamStatus('Đang tắt SLAM · mở lại Nav2...', '#facc15');
+        setSlamStatus('Đang load · tắt SLAM · mở lại Nav2…', '#facc15');
 
-        setSlamStatus('Đang pause slam_toolbox...', '#facc15');
+        setSlamStatus('Đang load · pause slam_toolbox…', '#facc15');
         await setSlamPaused(true);
 
-        setSlamStatus('Đang bật lại Nav2...', '#facc15');
+        setSlamStatus('Đang load · bật lại Nav2…', '#facc15');
         await callNavLifecycle(NAV_CMD_RESUME).catch((err) => {
           console.warn('Resume Nav2:', err);
         });
@@ -146,7 +163,7 @@
 
         slamScanOn = false;
         notifyScanChanged();
-        setSlamStatus('Success · SLAM OFF · Nav2 đã sẵn sàng', '#4ade80');
+        setSlamStatus('Success · SLAM OFF', '#4ade80');
       }
     } catch (err) {
       console.warn('setScanMode:', err);
@@ -222,21 +239,17 @@
       serviceType: 'slam_toolbox/srv/Pause',
     });
 
-    setSlamStatus('Đang đồng bộ SLAM OFF (pause nền)...', '#facc15');
+    setSlamStatus('');
     // Mặc định: SLAM chạy nền nhưng pause; Nav2 dùng bình thường.
+    // Không hiện gợi ý lúc mới vào — chỉ báo khi user bật/tắt SLAM.
     setSlamPaused(true)
       .then(() => {
         slamScanOn = false;
         updateScanButton();
         notifyScanChanged();
-        setSlamStatus('SLAM: OFF · Nav2 sẵn sàng', '#94a3b8');
       })
       .catch((err) => {
         console.warn('Không pause được slam_toolbox lúc khởi tạo:', err);
-        setSlamStatus(
-          'Chưa kết nối slam_toolbox — vẫn bật/tắt được trên web khi node sẵn sàng',
-          '#f87171'
-        );
       });
 
     const statusEl = document.getElementById('save-map-status');
@@ -312,7 +325,7 @@
       slamScanOn = state.mode === 'slam';
       updateScanButton();
       notifyScanChanged();
-      setSlamStatus(slamScanOn ? 'SLAM: ON · Nav2/localization đã dừng' : 'NORMAL · Nav2/localization sẵn sàng', '#94a3b8');
+      setSlamStatus('');
     } catch (err) {
       console.warn('Không đọc được trạng thái SLAM:', err);
     }

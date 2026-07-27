@@ -884,7 +884,10 @@ class MagneticLineFollowerNode(Node):
 
     def destroy_node(self):
         with self._lock:
-            self._publish_zero()
+            # Khi tat bang SIGINT, context da bi huy truoc destroy_node() nen
+            # publish se raise; bo qua de van dong duoc serial bus.
+            if self.context.ok():
+                self._publish_zero()
             self._bus.close()
         return super().destroy_node()
 
@@ -901,7 +904,8 @@ def main(args=None) -> None:
     finally:
         executor.shutdown()
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 
 if __name__ == '__main__':

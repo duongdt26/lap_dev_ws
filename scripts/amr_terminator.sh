@@ -23,6 +23,29 @@ case "$PROFILE" in
   *) echo "Dùng profile: localization hoặc mapping"; exit 1 ;;
 esac
 
+# Terminator cần X11. Shell SSH / Cursor thường thiếu DISPLAY dù desktop đang mở.
+if [[ -z "${DISPLAY:-}" ]]; then
+  if [[ -S /tmp/.X11-unix/X0 ]]; then
+    export DISPLAY=:0
+  elif [[ -S /tmp/.X11-unix/X1 ]]; then
+    export DISPLAY=:1
+  fi
+fi
+if [[ -z "${DISPLAY:-}" ]]; then
+  echo "Lỗi: không có \$DISPLAY — Terminator cần môi trường đồ họa."
+  echo "  Chạy từ Terminal trên desktop, hoặc:"
+  echo "    export DISPLAY=:0"
+  echo "    export XAUTHORITY=\$HOME/.Xauthority   # hoặc /run/user/\$UID/gdm/Xauthority"
+  exit 1
+fi
+if [[ -z "${XAUTHORITY:-}" ]]; then
+  if [[ -f "$HOME/.Xauthority" ]]; then
+    export XAUTHORITY="$HOME/.Xauthority"
+  elif [[ -f "/run/user/$(id -u)/gdm/Xauthority" ]]; then
+    export XAUTHORITY="/run/user/$(id -u)/gdm/Xauthority"
+  fi
+fi
+
 if pgrep -x terminator >/dev/null 2>&1; then
   echo "Đang đóng Terminator cũ để tab không bị tách 2 cửa sổ..."
   pkill -x terminator

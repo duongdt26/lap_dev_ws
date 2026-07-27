@@ -3,8 +3,8 @@
  */
 
 (function () {
-  const MAPS_DIR = '/home/laptop/maps';
-  const MAP_DATA_ROOT = '/home/laptop/MAP_DATA';
+  const MAPS_DIR = '/home/admin-pc/maps';
+  const MAP_DATA_ROOT = '/home/admin-pc/MAP_DATA';
 
   let ready = false;
   let clients = {};

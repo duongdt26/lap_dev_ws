@@ -1,5 +1,5 @@
 duo@duolap:~/dev_ws$ ros2 launch slam_toolbox online_async_launch.py slam_params_file:=./src/amr_lan_3/config/mapper_params_online_async.yaml use_sim_time:=false
-[INFO] [launch]: All log files can be found below /home/laptop/.ros/log/2026-06-21-17-49-05-265104-duolap-35844
+[INFO] [launch]: All log files can be found below /home/admin-pc/.ros/log/2026-06-21-17-49-05-265104-duolap-35844
 [INFO] [launch]: Default logging verbosity is set to INFO
 [INFO] [async_slam_toolbox_node-1]: process started with pid [35845]
 [async_slam_toolbox_node-1] [INFO] [1782038945.437435538] [slam_toolbox]: Node using stack size 40000000

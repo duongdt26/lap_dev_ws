@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Serve AMR dashboard (static) + proxy WebSocket /rosbridge → rosbridge :9090.
+Serve AMR dashboard (static) + proxy WebSocket /rosbridge → rosbridge :9091.
 
 Dùng cho ngrok free (chỉ 1 tunnel public):
   python3 scripts/amr_web_server.py
   ngrok http 8080   # hoặc ./scripts/start_ngrok.sh
 
-LAN vẫn có thể dùng http.server + ws://IP:9090 như cũ.
+LAN vẫn có thể dùng http.server + ws://IP:9091 như cũ.
 """
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ except ImportError:
 ROOT = Path(__file__).resolve().parent.parent
 STATIC_DIR = ROOT / 'web' / 'amr_dashboard'
 DEFAULT_PORT = 8080
-ROSBRIDGE_WS = 'ws://127.0.0.1:9090'
+ROSBRIDGE_WS = 'ws://127.0.0.1:9091'
 
 
 async def rosbridge_proxy(request: web.Request) -> web.WebSocketResponse:

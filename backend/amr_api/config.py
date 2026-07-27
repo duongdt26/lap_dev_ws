@@ -67,7 +67,7 @@ def get_settings() -> Settings:
         cookie_secure=_bool("AMR_COOKIE_SECURE", False),
         enable_rosbridge_proxy=_bool("AMR_ENABLE_ROSBRIDGE_PROXY", True),
         rosbridge_url=os.getenv(
-            "AMR_ROSBRIDGE_URL", "ws://127.0.0.1:9090"
+            "AMR_ROSBRIDGE_URL", "ws://127.0.0.1:9091"
         ),
         enable_ros_gateway=_bool("AMR_ENABLE_ROS_GATEWAY", True),
         use_sim_time=_bool("AMR_USE_SIM_TIME", False),

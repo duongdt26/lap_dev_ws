@@ -10,11 +10,14 @@ rplidar_node:
 imu_uart_node:
   ros__parameters:
     # port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:1.1:1.0-port0
-    port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:1.1:1.0-port0 # may Chuong
+    # port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:1.1:1.0-port0 # may Chuong
+    port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:3:1.0-port0 # may Phuong
+    
 
 pzem_battery_node:
   ros__parameters:
-    port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:1:1.0-port0
+    # port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:1:1.0-port0
+    port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:1.4:1.0-port0
     slave_address: 1
     baudrate: 9600
     # Đọc PZEM 1 lần mỗi giây
@@ -27,12 +30,13 @@ pzem_battery_node:
 stm32_conveyor_bridge_node:
   ros__parameters:
     # port: /dev/serial/by-path/pci-0000:05:00.3-usb-0:2.3:1.0-port0
-     port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:2:1.0-port0
-    # port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:1.2:1.0-port0 #nay Chuong
+    #  port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:2:1.0-port0
+    port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:1.2:1.0-port0 #nay Chuong
     # port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:2:1.0-port0 #nay Chuong
 
 magnetic_line_follower_node:
   ros__parameters:
     # BAT BUOC: thay bang /dev/serial/by-id/... hoac /dev/serial/by-path/...
     # cua bus cam bien tu ID83 + ID86 tren may robot.
-    port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:3:1.0-port0
+    # port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:3:1.0-port0
+    port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:4:1.0-port0
