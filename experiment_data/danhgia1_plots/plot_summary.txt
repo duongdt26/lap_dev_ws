@@ -1,0 +1,20 @@
+CSV chính: /home/laptop/dev_ws/experiment_data/danhgia1.csv
+Global path: /home/laptop/dev_ws/experiment_data/danhgia1_global_path.csv
+Số dòng: 14919
+Thời lượng: 996.043 s
+Ghi chú: Không có
+
+Đồ thị đã tạo:
+- 01_wheel_velocity.png
+- 02_left_wheel_velocity.png
+- 03_right_wheel_velocity.png
+- 04_robot_linear_velocity.png
+- 05_robot_angular_velocity.png
+- 06_pose_x.png
+- 07_pose_y.png
+- 08_yaw.png
+- 09_trajectory_xy.png
+- 10_data_age.png
+
+Đồ thị bỏ qua do thiếu dữ liệu:
+- 11_nav_status.png

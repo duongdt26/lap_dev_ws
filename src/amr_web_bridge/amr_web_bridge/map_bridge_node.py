@@ -99,6 +99,7 @@ class MapBridgeNode(Node):
         os.makedirs(self._map_data_root, exist_ok=True)
 
         self._latest_map = None
+        self._last_keepout_geometry = None
         self._map_sub = self.create_subscription(
             OccupancyGrid, '/map', self._on_map, MAP_QOS)
         self._web_map_pub = self.create_publisher(
@@ -127,8 +128,6 @@ class MapBridgeNode(Node):
             LoadKeepoutZones, '/load_keepout_zones', self.load_keepout_zones_cb)
         self.create_service(
             SaveKeepoutZones, '/save_keepout_zones', self.save_keepout_zones_cb)
-
-        self.create_timer(1.0, self._republish_timer_cb)
 
         self.get_logger().info(
             f'Maps: {self._maps_root} | Setpoint/process: {self._map_data_root}')
@@ -370,13 +369,31 @@ class MapBridgeNode(Node):
         raise FileNotFoundError(f'Không tìm thấy process: {proc_name}')
 
     def _on_map(self, msg: OccupancyGrid):
+        geometry = self._map_geometry_key(msg)
         self._latest_map = msg
         self._web_map_pub.publish(msg)
-        self._publish_keepout()
+        # Occupancy thay đổi liên tục khi SLAM, nhưng keepout mask chỉ phụ thuộc
+        # hình học của grid. Tránh cấp phát + publish thêm một full grid ở mỗi map.
+        if geometry != self._last_keepout_geometry:
+            self._publish_keepout()
+            self._last_keepout_geometry = geometry
 
-    def _republish_timer_cb(self):
-        if self._latest_map is not None:
-            self._web_map_pub.publish(self._latest_map)
+    @staticmethod
+    def _map_geometry_key(msg: OccupancyGrid):
+        info = msg.info
+        origin = info.origin
+        return (
+            info.width,
+            info.height,
+            info.resolution,
+            origin.position.x,
+            origin.position.y,
+            origin.position.z,
+            origin.orientation.x,
+            origin.orientation.y,
+            origin.orientation.z,
+            origin.orientation.w,
+        )
 
     def _publish_cached_map(self) -> bool:
         if self._latest_map is None:

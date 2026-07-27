@@ -107,7 +107,9 @@ async def rosbridge_proxy(websocket: WebSocket):
     try:
         from websockets.asyncio.client import connect
 
-        async with connect(settings.rosbridge_url) as upstream:
+        # OccupancyGrid JSON dễ vượt mặc định 1 MiB của websockets khi map lớn.
+        # Không giới hạn frame ở hop nội bộ; rosbridge vẫn là nguồn tin cậy local.
+        async with connect(settings.rosbridge_url, max_size=None) as upstream:
             async def browser_to_ros() -> None:
                 try:
                     while True:

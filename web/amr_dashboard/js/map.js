@@ -16,12 +16,16 @@
     let canvasListenersAttached = false;
     let mapInitialized = false;
     let odomPollStarted = false;
+    let webMapTopic = null;
+    let sourceMapTopic = null;
+    let sourceMapFallbackTimer = null;
 
     window.addEventListener('amr-ros-connected', () => {
       initMap();
     });
 
     window.addEventListener('amr-ros-disconnected', () => {
+      stopMapSubscriptions();
       mapInitialized = false;
       lastMapFingerprint = '';
       currentVx = 0;
@@ -33,6 +37,17 @@
       mapMsg = null;
       setZoomControlsEnabled(false);
       updateMapStatusHint();
+    });
+
+    window.addEventListener('amr-auth-user', () => {
+      if (shouldStreamMap()) {
+        mapInitialized = false;
+        ensureMapInitialized();
+      } else {
+        // Auth có thể sẵn sàng trước rosbridge; chỉ đánh dấu initialized sau
+        // khi initMap đã tạo các service client dùng cho Station/Process.
+        disableMapForOperator(false);
+      }
     });
 
     window.addEventListener('amr-theme-changed', () => {
@@ -138,6 +153,8 @@
   const MAX_SCALE = 20;
   const VX_STOP = 0.02;
   const ODOM_STALE_MS = 600;
+  const MAP_THROTTLE_MS = 1000;
+  const SOURCE_MAP_FALLBACK_MS = 3000;
 
   let currentVx = 0;
   let odomReceived = false;
@@ -160,6 +177,38 @@
     history: 'keep_last',
     depth: 1,
   };
+
+  function shouldStreamMap() {
+    return document.body.dataset.authRole !== 'operator';
+  }
+
+  function stopMapSubscriptions() {
+    if (sourceMapFallbackTimer) {
+      clearTimeout(sourceMapFallbackTimer);
+      sourceMapFallbackTimer = null;
+    }
+    for (const topic of [webMapTopic, sourceMapTopic]) {
+      if (!topic) continue;
+      try { topic.unsubscribe(); } catch (_) { /* socket có thể đã đóng */ }
+    }
+    webMapTopic = null;
+    sourceMapTopic = null;
+  }
+
+  function disableMapForOperator(initialized = false) {
+    stopMapSubscriptions();
+    mapInitialized = initialized;
+    mapMsg = null;
+    mapCacheCanvas = null;
+    view = null;
+    lastMapFingerprint = '';
+    lastMapSizeKey = null;
+    const title = document.getElementById('map-area-title');
+    if (title) title.textContent = 'OPERATOR · MAP STREAM OFF';
+    const canvas = document.getElementById('map-canvas');
+    const ctx = canvas?.getContext('2d');
+    if (canvas && ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
 
   let getMapStatusClient = null;
   let requestMapSyncClient = null;
@@ -558,6 +607,15 @@
       return;
     }
 
+    // Operator trên điện thoại chỉ cần điều khiển + telemetry. Không subscribe
+    // OccupancyGrid để tránh tải map lớn qua mạng và không render map trên máy.
+    // Vẫn tạo service client map status để Station/Process biết active map.
+    if (!shouldStreamMap()) {
+      initMapSyncClients(ros);
+      disableMapForOperator(true);
+      return;
+    }
+
     const canvas = document.getElementById('map-canvas');
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) {
@@ -577,28 +635,45 @@
       function handleMapMessage(msg) {
         const fp = mapFingerprint(msg);
         const mapChanged = fp && fp !== lastMapFingerprint;
-        // Localization đứng yên: bỏ qua bản trùng kích thước.
-        // SLAM: luôn áp dụng — ô map đổi dù width/height không đổi.
-        if (!isSlamScanning() && !mapLiveMode && mapMsg && !mapChanged) return;
+        // Cached republish giữ nguyên timestamp; bỏ qua ở cả SLAM để không
+        // raster hóa lại hàng trăm nghìn ô cho cùng một bản tin.
+        if (mapMsg && fp && !mapChanged) return;
         if (mapChanged) lastMapFingerprint = fp;
         applyMapMessage(msg);
       }
 
-      const webMapTopic = new ROSLIB.Topic({
+      webMapTopic = new ROSLIB.Topic({
         ros,
         name: '/web/map',
         messageType: 'nav_msgs/msg/OccupancyGrid',
         qos: MAP_TOPIC_QOS,
+        throttle_rate: MAP_THROTTLE_MS,
+        queue_length: 1,
       });
-      webMapTopic.subscribe(handleMapMessage);
+      webMapTopic.subscribe((msg) => {
+        // Nếu bridge xuất hiện sau fallback thì quay lại đúng một nguồn map.
+        if (sourceMapTopic) {
+          try { sourceMapTopic.unsubscribe(); } catch (_) {}
+          sourceMapTopic = null;
+        }
+        handleMapMessage(msg);
+      });
 
-      const sourceMapTopic = new ROSLIB.Topic({
-        ros,
-        name: '/map',
-        messageType: 'nav_msgs/msg/OccupancyGrid',
-        qos: SOURCE_MAP_TOPIC_QOS,
-      });
-      sourceMapTopic.subscribe(handleMapMessage);
+      // Chỉ dùng /map trực tiếp khi map_bridge thực sự không trả dữ liệu.
+      // Trước đây subscribe đồng thời cả hai topic làm băng thông tăng gấp đôi.
+      sourceMapFallbackTimer = setTimeout(() => {
+        sourceMapFallbackTimer = null;
+        if (mapMsg || !shouldStreamMap() || !ros.isConnected) return;
+        sourceMapTopic = new ROSLIB.Topic({
+          ros,
+          name: '/map',
+          messageType: 'nav_msgs/msg/OccupancyGrid',
+          qos: SOURCE_MAP_TOPIC_QOS,
+          throttle_rate: MAP_THROTTLE_MS,
+          queue_length: 1,
+        });
+        sourceMapTopic.subscribe(handleMapMessage);
+      }, SOURCE_MAP_FALLBACK_MS);
 
       // Chỉ khóa init sau khi hai subscription map đã được gửi thành công.
       mapInitialized = true;

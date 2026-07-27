@@ -30,14 +30,15 @@ ROSBRIDGE_WS = 'ws://127.0.0.1:9091'
 
 
 async def rosbridge_proxy(request: web.Request) -> web.WebSocketResponse:
-    ws_client = web.WebSocketResponse()
+    # Live OccupancyGrid có thể lớn hơn giới hạn mặc định 4 MiB sau khi map nở.
+    ws_client = web.WebSocketResponse(max_msg_size=0)
     await ws_client.prepare(request)
 
     import aiohttp
 
     session = aiohttp.ClientSession()
     try:
-        async with session.ws_connect(ROSBRIDGE_WS) as ws_server:
+        async with session.ws_connect(ROSBRIDGE_WS, max_msg_size=0) as ws_server:
 
             async def client_to_server() -> None:
                 async for msg in ws_client:

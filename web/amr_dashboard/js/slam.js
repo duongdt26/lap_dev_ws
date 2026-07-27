@@ -83,6 +83,36 @@
     btnScan.disabled = busy;
   }
 
+  function applySlamUiState(on, options = {}) {
+    const { notify = true } = options;
+    slamScanOn = !!on;
+    slamEnabling = false;
+    updateScanButton();
+    if (btnNavMode) {
+      btnNavMode.disabled = slamScanOn;
+      if (slamScanOn) btnNavMode.title = 'Tắt SLAM trước khi bật Nav';
+      else btnNavMode.removeAttribute('title');
+    }
+    if (notify) {
+      notifyScanChanged();
+    }
+  }
+
+  async function syncSlamStateFromServer() {
+    if (!window.AmrApi?.isAvailable?.() || !window.AmrApi?.getUser?.()) {
+      return;
+    }
+    try {
+      const state = await window.AmrApi.request('/api/slam/status');
+      const on = state.mode === 'slam'
+        || (!!state.slamRunning && !state.localizationRunning);
+      applySlamUiState(on);
+      setSlamStatus('');
+    } catch (err) {
+      console.warn('Không đọc được trạng thái SLAM:', err);
+    }
+  }
+
   function notifyScanChanged() {
     window.dispatchEvent(new CustomEvent('amr-slam-scan', { detail: { enabled: slamScanOn } }));
   }
@@ -274,17 +304,8 @@
     });
 
     setSlamStatus('');
-    // Mặc định: SLAM chạy nền nhưng pause; Nav2 dùng bình thường.
-    // Không hiện gợi ý lúc mới vào — chỉ báo khi user bật/tắt SLAM.
-    setSlamPaused(true)
-      .then(() => {
-        slamScanOn = false;
-        updateScanButton();
-        notifyScanChanged();
-      })
-      .catch((err) => {
-        console.warn('Không pause được slam_toolbox lúc khởi tạo:', err);
-      });
+    // Không pause slam lúc connect — trạng thái nút lấy từ API (reload giữ SLAM ON).
+    syncSlamStateFromServer();
 
     const statusEl = document.getElementById('save-map-status');
     const nameInput = document.getElementById('map-name-input');
@@ -351,22 +372,17 @@
     });
   }
 
-  window.addEventListener('amr-ros-connected', initClients);
-  window.addEventListener('amr-auth-ready', async () => {
-    if (!window.AmrApi?.isAvailable?.()) return;
-    try {
-      const state = await window.AmrApi.request('/api/slam/status');
-      slamScanOn = state.mode === 'slam';
-      updateScanButton();
-      notifyScanChanged();
-      setSlamStatus('');
-    } catch (err) {
-      console.warn('Không đọc được trạng thái SLAM:', err);
-    }
+  window.addEventListener('amr-ros-connected', () => {
+    initClients();
+    syncSlamStateFromServer();
+  });
+  window.addEventListener('amr-auth-ready', () => {
+    syncSlamStateFromServer();
   });
 
   window.AmrSlam = {
     isScanOn: () => slamScanOn || slamEnabling,
     setScanMode,
+    syncSlamStateFromServer,
   };
 })();

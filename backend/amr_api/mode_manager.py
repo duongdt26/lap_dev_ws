@@ -28,13 +28,45 @@ class RosModeManager:
 
     def status(self) -> dict:
         with self._lock:
+            self._reconcile_mode_from_graph()
+            nodes = self._ros_nodes()
+            slam_running = self._alive(self._slam) or "/slam_toolbox" in nodes
+            loc_running = (
+                self._alive(self._localization)
+                or ("/amcl" in nodes and "/map_server" in nodes)
+            )
+            nav_running = self._alive(self._navigation) or "/bt_navigator" in nodes
             return {
                 "mode": self._mode,
-                "slamRunning": self._alive(self._slam),
-                "localizationRunning": self._alive(self._localization),
-                "navigationRunning": self._alive(self._navigation),
+                "slamRunning": slam_running,
+                "localizationRunning": loc_running,
+                "navigationRunning": nav_running,
                 "busy": False,
             }
+
+    @staticmethod
+    def _ros_nodes() -> set[str]:
+        try:
+            result = subprocess.run(
+                ["ros2", "node", "list"],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=3,
+            )
+            return {line.strip() for line in result.stdout.splitlines() if line.strip()}
+        except (OSError, subprocess.TimeoutExpired):
+            return set()
+
+    def _reconcile_mode_from_graph(self) -> None:
+        """Sau reload API, process handle mất nhưng slam_toolbox vẫn chạy."""
+        nodes = self._ros_nodes()
+        has_slam = "/slam_toolbox" in nodes
+        has_loc = "/amcl" in nodes and "/map_server" in nodes
+        if has_slam and not has_loc:
+            self._mode = "slam"
+        elif has_loc and not has_slam:
+            self._mode = "normal"
 
     @staticmethod
     def _alive(process: subprocess.Popen | None) -> bool:

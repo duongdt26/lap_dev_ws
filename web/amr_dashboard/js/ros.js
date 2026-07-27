@@ -9,6 +9,10 @@
 window.AmrRos = (function () {
   let ros = null;
   let remoteCfg = null;
+  let reconnectTimer = null;
+  let reconnectAttempt = 0;
+  let desiredHost = '';
+  let manualDisconnect = false;
 
   const statusEl   = document.getElementById('conn-status');
   const hostInput  = document.getElementById('ros-host');
@@ -89,36 +93,68 @@ window.AmrRos = (function () {
     }
   }
 
+  function clearReconnectTimer() {
+    if (!reconnectTimer) return;
+    clearTimeout(reconnectTimer);
+    reconnectTimer = null;
+  }
+
+  function scheduleReconnect() {
+    if (manualDisconnect || reconnectTimer || !desiredHost) return;
+    const delay = Math.min(1000 * (2 ** reconnectAttempt), 10000);
+    reconnectAttempt += 1;
+    reconnectTimer = setTimeout(() => {
+      reconnectTimer = null;
+      connect(desiredHost);
+    }, delay);
+  }
+
   function connect(hostOverride) {
     const host = (hostOverride || hostInput?.value || 'localhost').trim() || 'localhost';
     if (hostInput) hostInput.value = host;
     const url  = buildRosUrl(host);
 
+    desiredHost = host;
+    manualDisconnect = false;
+    clearReconnectTimer();
     setStatus('connecting');
 
-    if (ros) {
-      ros.close();
+    const previous = ros;
+    ros = null;
+    if (previous) previous.close();
+
+    const currentRos = new ROSLIB.Ros({ url });
+    ros = currentRos;
+    let disconnectEventSent = false;
+
+    function handleDisconnect(err) {
+      if (ros !== currentRos) return;
+      if (err) console.error('rosbridge error:', err);
+      setStatus('disconnected');
+      if (!disconnectEventSent) {
+        disconnectEventSent = true;
+        window.dispatchEvent(new CustomEvent('amr-ros-disconnected'));
+      }
+      scheduleReconnect();
     }
 
-    ros = new ROSLIB.Ros({ url });
-
-    ros.on('connection', () => {
+    currentRos.on('connection', () => {
+      if (ros !== currentRos) return;
       console.log('rosbridge connected:', url);
+      clearReconnectTimer();
+      reconnectAttempt = 0;
+      disconnectEventSent = false;
       localStorage.setItem('ros-host', host);
       setStatus('connected');
       window.dispatchEvent(new CustomEvent('amr-ros-connected'));
     });
 
-    ros.on('error', (err) => {
-      console.error('rosbridge error:', err);
-      setStatus('disconnected');
-      window.dispatchEvent(new CustomEvent('amr-ros-disconnected'));
-    });
+    currentRos.on('error', handleDisconnect);
 
-    ros.on('close', () => {
+    currentRos.on('close', () => {
+      if (ros !== currentRos) return;
       console.log('rosbridge closed');
-      setStatus('disconnected');
-      window.dispatchEvent(new CustomEvent('amr-ros-disconnected'));
+      handleDisconnect();
     });
   }
 
@@ -137,10 +173,11 @@ window.AmrRos = (function () {
     getRos: () => ros,
     connect,
     disconnect: () => {
-      if (ros) {
-        ros.close();
-        ros = null;
-      }
+      manualDisconnect = true;
+      clearReconnectTimer();
+      const currentRos = ros;
+      ros = null;
+      if (currentRos) currentRos.close();
       setStatus('disconnected');
       window.dispatchEvent(new CustomEvent('amr-ros-disconnected'));
     },
