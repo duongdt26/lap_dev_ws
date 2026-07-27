@@ -22,7 +22,7 @@ else
   echo "[clean_sim] Không còn gzserver."
 fi
 
-WORLD="${1:-/home/admin-pc/dev_ws/src/amr_lan_3/worlds/obstacle_1.world}"
+WORLD="${1:-/home/laptop/dev_ws/src/amr_lan_3/worlds/obstacle_1.world}"
 echo "[clean_sim] Launch sim: world=${WORLD}"
-source /home/admin-pc/dev_ws/install/setup.bash
+source /home/laptop/dev_ws/install/setup.bash
 exec ros2 launch amr_lan_3 launch_sim.launch.py "world:=${WORLD}"

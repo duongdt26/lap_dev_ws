@@ -3,8 +3,18 @@
  */
 
 (function () {
-  const MAPS_DIR = '/home/admin-pc/maps';
-  const MAP_DATA_ROOT = '/home/admin-pc/MAP_DATA';
+  let MAPS_DIR = '/home/laptop/maps';
+  const MAP_DATA_ROOT = '/home/laptop/MAP_DATA';
+
+  fetch('/api/health', { credentials: 'same-origin' })
+    .then((r) => r.json())
+    .then((health) => {
+      if (health?.mapsRoot) {
+        MAPS_DIR = String(health.mapsRoot).replace(/\/$/, '');
+        window.AmrConfig = { ...(window.AmrConfig || {}), mapsRoot: MAPS_DIR };
+      }
+    })
+    .catch(() => {});
 
   let ready = false;
   let clients = {};

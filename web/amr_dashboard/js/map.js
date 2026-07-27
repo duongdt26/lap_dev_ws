@@ -54,9 +54,56 @@
       updateMapStatusHint();
     });
 
-    window.addEventListener('amr-slam-scan', () => {
+    window.addEventListener('amr-slam-scan', (e) => {
+      const enabled = !!e.detail?.enabled;
+      updateMapInteractionMode();
       updateMapTitle();
       updateMapStatusHint();
+      // SLAM ON/OFF đều cần bỏ fingerprint + sync — OFF: map_server vừa publish map tĩnh.
+      lastMapFingerprint = '';
+      lastMapSizeKey = null;
+      userViewLocked = false;
+      if (enabled) {
+        robotPose = null;
+        mapLiveMode = true;
+        const status = document.getElementById('map-status');
+        if (status) status.textContent = 'Đang chờ map từ slam_toolbox…';
+      } else {
+        mapLiveMode = false;
+        const status = document.getElementById('map-status');
+        if (status) status.textContent = 'Đang nạp map localization…';
+      }
+      const sync = () => {
+        window.AmrMapSync?.forceMapResync?.().catch(() => {});
+      };
+      sync();
+      setTimeout(sync, 800);
+      setTimeout(sync, 2500);
+      setTimeout(sync, 6000);
+      const mapName = e.detail?.mapName;
+      if (!enabled && mapName && window.AmrLocalization?.notifyMapLoaded) {
+        setTimeout(() => {
+          window.AmrLocalization.notifyMapLoaded(mapName).catch(() => {});
+        }, 1200);
+      }
+    });
+
+    // Cùng nguồn pose với HUD (telemetry /robot_pose_map) — tránh canvas đứng khi rosbridge trễ.
+    window.addEventListener('amr-pose', (e) => {
+      const d = e.detail;
+      if (!d || d.x == null || d.y == null) return;
+      const yaw = d.yawDeg != null ? d.yawDeg : d.yaw;
+      if (yaw == null) return;
+      if (
+        robotPose
+        && robotPose.x === d.x
+        && robotPose.y === d.y
+        && robotPose.yawDeg === yaw
+      ) {
+        return;
+      }
+      robotPose = { x: d.x, y: d.y, yawDeg: yaw };
+      scheduleRedraw();
     });
 
   // Trạng thái dùng chung khi vẽ
@@ -100,14 +147,13 @@
   let mapStatusBase = '';
 
   const MAP_TOPIC_QOS = {
-    durability: 'volatile',
+    durability: 'transient_local',
     reliability: 'reliable',
     history: 'keep_last',
     depth: 1,
   };
 
-  // /map của nav2_map_server là transient-local. Nghe trực tiếp topic này làm
-  // đường dự phòng khi map_bridge chưa sẵn sàng hoặc /web/map bị trễ.
+  // /map của map_server / slam_toolbox là transient-local.
   const SOURCE_MAP_TOPIC_QOS = {
     durability: 'transient_local',
     reliability: 'reliable',
@@ -206,6 +252,7 @@
   function mapFingerprint(msg) {
     if (!msg || !msg.info) return '';
     const stamp = msg.info.map_load_time || {};
+    const headerStamp = msg.header?.stamp || {};
     const origin = msg.info.origin?.position || {};
     return [
       msg.info.width,
@@ -215,11 +262,19 @@
       origin.y,
       stamp.sec,
       stamp.nanosec,
+      headerStamp.sec,
+      headerStamp.nanosec,
       msg.data ? msg.data.length : 0,
     ].join(',');
   }
 
+  function isSlamScanning() {
+    return !!window.AmrSlam?.isScanOn?.();
+  }
+
   function computeMapLiveMode() {
+    // SLAM ON: luôn live để map web cập nhật khi khung map không phình thêm.
+    if (isSlamScanning()) return true;
     if (navMode || teleopMoving) return true;
     if (!odomReceived) return false;
     const stale = Date.now() - lastOdomTime > ODOM_STALE_MS;
@@ -266,9 +321,11 @@
           ? `Map: ${mapMsg.info.width}×${mapMsg.info.height} @ ${mapMsg.info.resolution}m/cell`
           : 'Map: —'));
     const modeHint = mapMsg
-      ? (mapLiveMode
-        ? ' · LIVE (Nav/teleop/Vx — zoom tắt)'
-        : ' · Đóng băng — có thể zoom / đặt pose')
+      ? (isSlamScanning()
+        ? ' · LIVE SLAM'
+        : (mapLiveMode
+          ? ' · LIVE (Nav/teleop/Vx — zoom tắt)'
+          : ' · Đóng băng — có thể zoom / đặt pose'))
       : '';
     el.textContent = base + modeHint;
   }
@@ -520,7 +577,9 @@
       function handleMapMessage(msg) {
         const fp = mapFingerprint(msg);
         const mapChanged = fp && fp !== lastMapFingerprint;
-        if (!mapLiveMode && mapMsg && !mapChanged) return;
+        // Localization đứng yên: bỏ qua bản trùng kích thước.
+        // SLAM: luôn áp dụng — ô map đổi dù width/height không đổi.
+        if (!isSlamScanning() && !mapLiveMode && mapMsg && !mapChanged) return;
         if (mapChanged) lastMapFingerprint = fp;
         applyMapMessage(msg);
       }
@@ -649,6 +708,25 @@
     amclPoseTopic.subscribe((msg) => {
       if (msg.header.frame_id && msg.header.frame_id !== 'map') return;
       applyRobotPoseMsg(msg);
+    });
+
+    // slam_toolbox publish /pose (PoseStamped) — backup khi TF/AMCL chưa sẵn.
+    const slamPoseTopic = new ROSLIB.Topic({
+      ros,
+      name: '/pose',
+      messageType: 'geometry_msgs/msg/PoseStamped',
+    });
+    slamPoseTopic.subscribe((msg) => {
+      if (!isSlamScanning()) return;
+      if (msg.header?.frame_id && msg.header.frame_id !== 'map') return;
+      const p = msg.pose?.position;
+      const q = msg.pose?.orientation;
+      if (!p || !q) return;
+      const yawDeg = quaternionToYawDeg(q);
+      robotPose = { x: p.x, y: p.y, yawDeg };
+      window.__amrPose = { x: p.x, y: p.y, yawDeg };
+      window.dispatchEvent(new CustomEvent('amr-pose', { detail: window.__amrPose }));
+      scheduleRedraw();
     });
 
     function applyRobotPoseMsg(msg) {
@@ -1367,7 +1445,7 @@
     ctx.stroke();
   }
 
-  /** Trục X (đỏ) Y (xanh) tại tâm bản đồ */
+  /** Trục X (đỏ) Y (xanh) tại tâm bản đồ — tham chiếu map, KHÔNG phải robot */
   function drawMapAxes(ctx, info) {
     const cx = info.origin.position.x + (info.width * info.resolution) / 2;
     const cy = info.origin.position.y + (info.height * info.resolution) / 2;
@@ -1376,6 +1454,9 @@
     const cX = worldToCanvas(cx + len, cy, info);
     const cY = worldToCanvas(cx, cy + len, info);
 
+    // Mờ hơn khi SLAM để không che icon robot tại gốc (0,0).
+    ctx.save();
+    ctx.globalAlpha = isSlamScanning() ? 0.35 : 1;
     ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(c0.px, c0.py); ctx.lineTo(cX.px, cX.py);
     ctx.strokeStyle = '#ef4444'; ctx.stroke(); // +X
@@ -1384,6 +1465,7 @@
 
     ctx.fillStyle = '#94a3b8';
     ctx.beginPath(); ctx.arc(c0.px, c0.py, 3, 0, Math.PI * 2); ctx.fill(); // chấm tâm
+    ctx.restore();
   }
 
   /** Mũi tên từ điểm click → điểm kéo */
@@ -1412,19 +1494,29 @@
   function drawRobot(ctx, pose, info) {
     const { px, py } = worldToCanvas(pose.x, pose.y, info);
     const yawRad = (pose.yawDeg * Math.PI) / 180;
-    const size = Math.max(11, view.scale * 3.4);
+    // Lớn + màu cyan để phân biệt với trục map (đỏ/xanh lá) tại tâm.
+    const size = Math.max(16, view.scale * 4.5);
 
     ctx.save();
     ctx.translate(px, py);
-    ctx.rotate(-yawRad);
 
-    ctx.fillStyle = '#22c55e';
-    ctx.strokeStyle = '#14532d';
-    ctx.lineWidth = 1.5;
+    // Halo để dễ thấy trên nền scan trắng/xám
+    ctx.beginPath();
+    ctx.arc(0, 0, size * 1.15, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(14, 165, 233, 0.35)';
+    ctx.fill();
+    ctx.strokeStyle = '#038';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.rotate(-yawRad);
+    ctx.fillStyle = '#0ea5e9';
+    ctx.strokeStyle = '#f8fafc';
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(size, 0);
-    ctx.lineTo(-size * 0.6, size * 0.55);
-    ctx.lineTo(-size * 0.6, -size * 0.55);
+    ctx.lineTo(-size * 0.65, size * 0.6);
+    ctx.lineTo(-size * 0.65, -size * 0.6);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();

@@ -4,8 +4,8 @@
 Does not modify any ROS package. Run while the robot stack is up:
 
   source /opt/ros/<distro>/setup.bash
-  source /home/admin-pc/dev_ws/install/setup.bash
-  python3 /home/admin-pc/dev_ws/scripts/log_wheel_velocity_response.py
+  source /home/laptop/dev_ws/install/setup.bash
+  python3 /home/laptop/dev_ws/scripts/log_wheel_velocity_response.py
 
   # optional:
   python3 .../log_wheel_velocity_response.py --duration 60 --output /tmp/vel_response.csv

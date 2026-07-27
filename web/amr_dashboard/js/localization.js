@@ -2,7 +2,7 @@
 //  * localization.js — Danh sách map + nạp map + bật initial pose
 //  */
 
-//   const MAPS_DIR = '/home/admin-pc/maps';
+//   const MAPS_DIR = '/home/laptop/maps';
 
 //   // const ros = window.AmrRos.getRos();
 //   // if (!ros) {
@@ -146,7 +146,7 @@
  * localization.js — Danh sách map + nạp map + đặt initial pose
  */
 
-// const MAPS_DIR = '/home/admin-pc/maps';
+// const MAPS_DIR = '/home/laptop/maps';
 
 // const mapSelect   = document.getElementById('map-select');
 // const loadStatus  = document.getElementById('load-map-status');
@@ -239,10 +239,31 @@
  * localization.js — Danh sách map + nạp map + đặt initial pose
  */
 
-const MAPS_DIR = '/home/admin-pc/maps';
+// Đường dẫn YAML trên máy chạy map_server (không phải browser).
+// Trước hardcode /home/laptop/maps → fail trên /home/laptop.
+let MAPS_DIR = '';
+
+async function refreshMapsDir() {
+  try {
+    const health = await fetch('/api/health', { credentials: 'same-origin' }).then((r) => r.json());
+    if (health?.mapsRoot) {
+      MAPS_DIR = String(health.mapsRoot).replace(/\/$/, '');
+      window.AmrConfig = { ...(window.AmrConfig || {}), mapsRoot: MAPS_DIR };
+      return MAPS_DIR;
+    }
+  } catch (_) { /* ignore */ }
+  MAPS_DIR = (window.AmrConfig?.mapsRoot || `${guessHomeDir()}/maps`).replace(/\/$/, '');
+  return MAPS_DIR;
+}
+
+function guessHomeDir() {
+  // Host chạy ROS — fallback theo user phổ biến trong repo này.
+  return '/home/laptop';
+}
 
 function mapYamlPath(name) {
-  return `${MAPS_DIR}/${name}.yaml`;
+  const root = MAPS_DIR || `${guessHomeDir()}/maps`;
+  return `${root}/${name}.yaml`;
 }
 
 const mapSelect   = document.getElementById('map-select');
@@ -399,11 +420,12 @@ function refreshMapList(options = {}) {
   );
 }
 
-btnLoad?.addEventListener('click', () => {
+btnLoad?.addEventListener('click', async () => {
   const name = mapSelect.value;
   if (!name) { setLoadMapStatus('Chọn map trước', '#f87171'); return; }
   if (!loadMapClient) { setLoadMapStatus('Chưa kết nối ROS', '#f87171'); return; }
   setLoadMapStatus('Đang nạp map...', '#888');
+  await refreshMapsDir();
   loadMapClient.callService(
     new ROSLIB.ServiceRequest({ map_url: mapYamlPath(name) }),
     (result) => {
@@ -411,7 +433,7 @@ btnLoad?.addEventListener('click', () => {
         setLoadMapStatus(`Nạp map thành công: ${name}`, '#4ade80');
         notifyMapLoaded(name);
       } else {
-        setLoadMapStatus(result.error_msg || 'Nạp map thất bại', '#f87171');
+        setLoadMapStatus(result.error_msg || `Nạp map thất bại (${mapYamlPath(name)})`, '#f87171');
       }
     },
     (err) => { setLoadMapStatus('Lỗi nạp map', '#f87171'); console.error(err); }
@@ -542,6 +564,7 @@ importFiles?.addEventListener('change', () => {
 window.addEventListener('amr-ros-connected', () => {
   const ros = window.AmrRos.getRos();
   if (!ros) return;
+  refreshMapsDir().catch(() => {});
   listMapsClient = new ROSLIB.Service({ ros, name: '/list_maps', serviceType: 'std_srvs/srv/Trigger' });
   loadMapClient  = new ROSLIB.Service({ ros, name: '/map_server/load_map', serviceType: 'nav2_msgs/srv/LoadMap' });
   refreshMapList({ silent: true });
@@ -549,5 +572,8 @@ window.addEventListener('amr-ros-connected', () => {
 });
 
 window.addEventListener('amr-map-ready', refreshActiveMapStatus);
+window.addEventListener('amr-auth-ready', () => {
+  refreshMapsDir().catch(() => {});
+});
 
-window.AmrLocalization = { refreshMapList, setPoseUiOn, loadOriginPose };
+window.AmrLocalization = { refreshMapList, setPoseUiOn, loadOriginPose, notifyMapLoaded, refreshMapsDir };

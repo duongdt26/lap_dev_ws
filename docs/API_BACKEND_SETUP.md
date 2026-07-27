@@ -9,7 +9,7 @@ xong và mô phỏng Gazebo tiếp tục hoạt động.
 Khuyến nghị tạo virtual environment có thể nhìn thấy các gói ROS của hệ thống:
 
 ```bash
-cd /home/admin-pc/dev_ws
+cd /home/laptop/dev_ws
 python3 -m venv --system-site-packages .venv-api
 source .venv-api/bin/activate
 python3 -m pip install -r backend/requirements.txt
@@ -23,7 +23,7 @@ Không cần cài MySQL/PostgreSQL. SQLite được lưu trong một file.
 Không ghi mật khẩu trực tiếp vào `.env` hoặc source code:
 
 ```bash
-cd /home/admin-pc/dev_ws
+cd /home/laptop/dev_ws
 source .venv-api/bin/activate
 python3 -m backend.amr_api.cli init-db
 python3 -m backend.amr_api.cli create-user --username admin --role admin
@@ -51,7 +51,7 @@ python3 -m backend.amr_api.cli reset-password --username admin --role admin
 Terminal ROS/Gazebo chạy như trước. Terminal web chạy:
 
 ```bash
-cd /home/admin-pc/dev_ws
+cd /home/laptop/dev_ws
 source /opt/ros/humble/setup.bash
 source install/setup.bash
 source .venv-api/bin/activate

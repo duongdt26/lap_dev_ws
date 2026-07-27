@@ -74,6 +74,14 @@ class NavPoseBridgeNode(Node):
             PoseWithCovarianceStamped, '/robot_pose_map', 10)
         self._tf_buffer = Buffer(cache_time=Duration(seconds=30.0))
         self._tf_listener = TransformListener(self._tf_buffer, self)
+        self._tf_fail_logged = False
+        self._fallback_pose = None
+        self._fallback_pose_time = 0.0
+        # Fallback khi TF map→base lỗi (TF_OLD_DATA / tranh SLAM+LOC).
+        self.create_subscription(
+            PoseWithCovarianceStamped, '/amcl_pose', self._on_fallback_pose, 10)
+        self.create_subscription(
+            PoseWithCovarianceStamped, '/pose', self._on_fallback_pose, 10)
         self.create_timer(0.1, self._publish_pose)
 
         use_sim = self.get_parameter('use_sim_time').value
@@ -374,9 +382,17 @@ class NavPoseBridgeNode(Node):
         self._publish_nav_status('cancelled', '')
         return response
 
+    def _on_fallback_pose(self, msg: PoseWithCovarianceStamped) -> None:
+        """AMCL / slam_toolbox pose — dùng khi TF map→base bị TF_OLD_DATA."""
+        if msg.header.frame_id and msg.header.frame_id not in ('map', ''):
+            return
+        self._fallback_pose = msg
+        self._fallback_pose_time = self.get_clock().now().nanoseconds * 1e-9
+
     def _publish_pose(self):
-        """Pose robot trong frame map — chỉ dùng TF."""
-        for when in (self.get_clock().now(), rclpy.time.Time()):
+        """Pose robot trong frame map — TF trước, fallback /amcl_pose hoặc /pose."""
+        t = None
+        for when in (rclpy.time.Time(), self.get_clock().now()):
             try:
                 t = self._tf_buffer.lookup_transform(
                     'map',
@@ -387,17 +403,44 @@ class NavPoseBridgeNode(Node):
                 break
             except TransformException:
                 t = None
-        if t is None:
+
+        if t is not None:
+            self._tf_fail_logged = False
+            msg = PoseWithCovarianceStamped()
+            msg.header.stamp = self.get_clock().now().to_msg()
+            msg.header.frame_id = 'map'
+            msg.pose.pose.position.x = t.transform.translation.x
+            msg.pose.pose.position.y = t.transform.translation.y
+            msg.pose.pose.position.z = t.transform.translation.z
+            msg.pose.pose.orientation = t.transform.rotation
+            self._pose_pub.publish(msg)
             return
 
-        msg = PoseWithCovarianceStamped()
-        msg.header.stamp = self.get_clock().now().to_msg()
-        msg.header.frame_id = 'map'
-        msg.pose.pose.position.x = t.transform.translation.x
-        msg.pose.pose.position.y = t.transform.translation.y
-        msg.pose.pose.position.z = t.transform.translation.z
-        msg.pose.pose.orientation = t.transform.rotation
-        self._pose_pub.publish(msg)
+        # TF hỏng (thường do SLAM+LOC tranh map→odom / TF_OLD_DATA)
+        now = self.get_clock().now().nanoseconds * 1e-9
+        if (
+            self._fallback_pose is not None
+            and (now - self._fallback_pose_time) < 1.0
+        ):
+            out = PoseWithCovarianceStamped()
+            out.header.stamp = self.get_clock().now().to_msg()
+            out.header.frame_id = 'map'
+            out.pose = self._fallback_pose.pose
+            self._pose_pub.publish(out)
+            if not self._tf_fail_logged:
+                self.get_logger().warn(
+                    'TF map→base_footprint lỗi — dùng /amcl_pose hoặc /pose. '
+                    'Kiểm tra: không chạy SLAM và localization cùng lúc.'
+                )
+                self._tf_fail_logged = True
+            return
+
+        if not self._tf_fail_logged:
+            self.get_logger().warn(
+                'Không có TF map→base_footprint và không có /amcl_pose|/pose '
+                '— web sẽ đứng yên ở pose cũ. Tắt SLAM khi chạy LOC (hoặc ngược lại).'
+            )
+            self._tf_fail_logged = True
 
 
 def main():

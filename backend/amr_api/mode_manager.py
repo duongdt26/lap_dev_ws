@@ -87,6 +87,15 @@ class RosModeManager:
         if aggressive:
             self._shutdown_existing_lifecycle("/lifecycle_manager_navigation")
             self._shutdown_existing_lifecycle("/lifecycle_manager_localization")
+            # map_server còn ACTIVE sẽ tranh /map với slam_toolbox → web đứng yên.
+            for node in ("/map_server", "/amcl"):
+                subprocess.run(
+                    ["ros2", "lifecycle", "set", node, "shutdown"],
+                    check=False,
+                    timeout=8,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
         self._stop_process(self._navigation)
         self._stop_process(self._localization)
         if aggressive:
@@ -95,6 +104,7 @@ class RosModeManager:
             for pattern in (
                 "localization_launch.py",
                 "navigation_launch.py",
+                "/nav2_map_server/map_server",
                 "/nav2_amcl/amcl",
                 "/nav2_bt_navigator/bt_navigator",
                 "/nav2_lifecycle_manager/lifecycle_manager",
@@ -109,6 +119,7 @@ class RosModeManager:
                 )
             time.sleep(1.0)
             for pattern in (
+                "/nav2_map_server/map_server",
                 "/nav2_amcl/amcl",
                 "/nav2_bt_navigator/bt_navigator",
                 "/nav2_lifecycle_manager/lifecycle_manager",
@@ -123,6 +134,7 @@ class RosModeManager:
                 )
             self._wait_nodes_gone(
                 {
+                    "/map_server",
                     "/amcl",
                     "/bt_navigator",
                     "/lifecycle_manager_localization",
@@ -168,10 +180,41 @@ class RosModeManager:
         raise RuntimeError(f"Node chưa sẵn sàng: {', '.join(sorted(names))}")
 
     def _stop_slam(self) -> None:
+        """Dừng mọi slam_toolbox (kể cả launch tay / orphan từ lần SLAM ON trước)."""
         self._stop_process(self._slam)
         self._slam = None
+        for pattern in (
+            "online_async_launch.py",
+            "async_slam_toolbox_node",
+            "slam_toolbox",
+        ):
+            subprocess.run(
+                ["pkill", "-TERM", "-f", pattern],
+                check=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        time.sleep(0.8)
+        for pattern in (
+            "online_async_launch.py",
+            "async_slam_toolbox_node",
+            "slam_toolbox",
+        ):
+            subprocess.run(
+                ["pkill", "-KILL", "-f", pattern],
+                check=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        try:
+            self._wait_nodes_gone({"/slam_toolbox"}, timeout=15.0)
+        except RuntimeError:
+            # Tên node trùng / graph bẩn — vẫn tiếp tục start mới.
+            pass
 
     def _start_slam(self) -> None:
+        # Luôn dọn slam cũ trước — 2 node /slam_toolbox tranh /map → RViz có map, web trống/sai.
+        self._stop_slam()
         workspace = Path(__file__).resolve().parents[2]
         params = workspace / "src/amr_lan_3/config/mapper_params_online_async.yaml"
         sim = "true" if self.settings.use_sim_time else "false"
@@ -181,11 +224,30 @@ class RosModeManager:
         )
         self._wait_nodes_present({"/slam_toolbox"})
 
-    def _start_normal(self) -> None:
+    def _resolve_map_yaml(self, map_name: str | None) -> str:
+        """Ưu tiên ~/maps/{name}.yaml sau khi Save; fallback obs_3_map_save."""
+        workspace = Path(__file__).resolve().parents[2]
+        maps_root = Path(self.settings.maps_root).expanduser()
+        candidates: list[Path] = []
+        name = (map_name or "").strip()
+        if name:
+            safe = name.replace(".yaml", "")
+            candidates.append(maps_root / f"{safe}.yaml")
+            candidates.append(workspace / f"{safe}.yaml")
+        candidates.append(maps_root / "obs_3_map_save.yaml")
+        candidates.append(workspace / "obs_3_map_save.yaml")
+        for path in candidates:
+            if path.is_file():
+                return str(path)
+        # Launch vẫn nhận path; map_server sẽ báo nếu thiếu file.
+        return str(candidates[0] if name else maps_root / "obs_3_map_save.yaml")
+
+    def _start_normal(self, map_name: str | None = None) -> None:
         sim = "true" if self.settings.use_sim_time else "false"
+        map_yaml = self._resolve_map_yaml(map_name)
         self._localization = self._command(
             "ros2 launch amr_lan_3 localization_launch.py "
-            f"map:=./obs_3_map_save.yaml use_sim_time:={sim}"
+            f"map:='{map_yaml}' use_sim_time:={sim}"
         )
         self._navigation = self._command(
             "ros2 launch amr_lan_3 navigation_launch.py "
@@ -266,6 +328,7 @@ class RosModeManager:
         with self._lock:
             if self._mode != "slam":
                 return self.status()
+            saved_name: str | None = None
             if map_name:
                 safe = map_name.strip()
                 if not safe.replace("_", "").replace("-", "").isalnum():
@@ -275,10 +338,14 @@ class RosModeManager:
                      "amr_web_interfaces/srv/SaveMap", f"{{map_name: '{safe}'}}"],
                     check=True, timeout=30,
                 )
+                saved_name = safe
             self._stop_slam()
-            self._start_normal()
+            self._start_normal(map_name=saved_name)
             self._mode = "normal"
-            return self.status()
+            status = self.status()
+            if saved_name:
+                status["mapName"] = saved_name
+            return status
 
     def close(self) -> None:
         with self._lock:

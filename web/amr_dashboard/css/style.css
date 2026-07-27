@@ -1754,6 +1754,11 @@ html[data-theme="light"] .map-area-title {
   color: #ff6b6b;
 }
 
+.map-hud-v.pose-stale {
+  color: #f87171;
+  opacity: 0.55;
+}
+
 .map-hud-item small {
   font-size: 0.65rem;
   color: var(--text-dim);

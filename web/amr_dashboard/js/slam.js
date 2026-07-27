@@ -87,6 +87,8 @@
     window.dispatchEvent(new CustomEvent('amr-slam-scan', { detail: { enabled: slamScanOn } }));
   }
 
+  let slamEnabling = false;
+
   async function setScanMode(enabled) {
     const next = !!enabled;
     if (next === slamScanOn || busy) return;
@@ -94,6 +96,11 @@
     updateScanButton(next ? 'SLAM: đang bật…' : 'SLAM: đang tắt…');
 
     try {
+      // Báo UI sớm khi bật: map.js bỏ fingerprint skip + force sync trong lúc API chuyển mode.
+      if (next) {
+        slamEnabling = true;
+        notifyScanChanged();
+      }
       // API mode manager owns the real process transition. ROSLIB remains as
       // compatibility fallback while the migration is in progress.
       if (window.AmrApi?.isAvailable?.()) {
@@ -111,7 +118,14 @@
           }),
         });
         slamScanOn = result.mode === 'slam';
-        notifyScanChanged();
+        slamEnabling = false;
+        const mapName = result.mapName
+          || (!slamScanOn
+            ? (document.getElementById('map-name-input')?.value.trim() || null)
+            : null);
+        window.dispatchEvent(new CustomEvent('amr-slam-scan', {
+          detail: { enabled: slamScanOn, mapName },
+        }));
         if (btnNavMode) {
           btnNavMode.disabled = slamScanOn;
           if (slamScanOn) btnNavMode.title = 'Tắt SLAM trước khi bật Nav';
@@ -120,9 +134,26 @@
         setSlamStatus(
           slamScanOn
             ? 'Success · SLAM ON'
-            : 'Success · SLAM OFF',
+            : (mapName
+              ? `Success · SLAM OFF · map ${mapName}`
+              : 'Success · SLAM OFF'),
           '#4ade80'
         );
+        if (!slamScanOn) {
+          // Làm mới list map (map vừa save) + chọn tên vừa lưu.
+          window.AmrLocalization?.refreshMapList?.({ silent: true });
+          if (mapName) {
+            const sel = document.getElementById('map-select');
+            if (sel) {
+              if (![...sel.options].some((o) => o.value === mapName)) {
+                const opt = document.createElement('option');
+                opt.value = opt.textContent = mapName;
+                sel.appendChild(opt);
+              }
+              sel.value = mapName;
+            }
+          }
+        }
         return;
       }
       if (next) {
@@ -167,11 +198,14 @@
       }
     } catch (err) {
       console.warn('setScanMode:', err);
+      slamEnabling = false;
       setSlamStatus(
         `Lỗi: ${err.message || err} · kiểm tra slam_toolbox / Nav2 trên miniPC`,
         '#f87171'
       );
+      notifyScanChanged();
     } finally {
+      slamEnabling = false;
       busy = false;
       updateScanButton();
     }
@@ -332,7 +366,7 @@
   });
 
   window.AmrSlam = {
-    isScanOn: () => slamScanOn,
+    isScanOn: () => slamScanOn || slamEnabling,
     setScanMode,
   };
 })();

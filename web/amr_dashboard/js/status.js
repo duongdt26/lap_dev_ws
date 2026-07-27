@@ -14,7 +14,9 @@ let lastNavigationRaw;
 let lastBatteryUiMs = 0;
 let pendingBatteryMsg = null;
 let batteryUiTimer = null;
+let lastPoseUiMs = 0;
 const BATTERY_UI_PERIOD_MS = 3000; // web cập nhật pin mỗi 3 s (ROS vẫn đọc 1 Hz)
+const POSE_STALE_MS = 2000;
 
 function fmtNum(value, decimals) {
   const n = Number(value);
@@ -29,7 +31,23 @@ function updatePosePanel(pose) {
   document.getElementById('val-x').textContent = Number(pose.x).toFixed(2);
   document.getElementById('val-y').textContent = Number(pose.y).toFixed(2);
   document.getElementById('val-yaw').textContent = Number(pose.yawDeg).toFixed(1);
+  lastPoseUiMs = Date.now();
+  ['val-x', 'val-y', 'val-yaw'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('pose-stale');
+  });
 }
+
+function markPoseStaleIfNeeded() {
+  if (!lastPoseUiMs) return;
+  const stale = Date.now() - lastPoseUiMs > POSE_STALE_MS;
+  ['val-x', 'val-y', 'val-yaw'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('pose-stale', stale);
+  });
+}
+
+setInterval(markPoseStaleIfNeeded, 500);
 
 function renderBatteryPanel(msg) {
   const el = document.getElementById('val-battery');

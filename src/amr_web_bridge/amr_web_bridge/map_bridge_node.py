@@ -51,7 +51,8 @@ MAP_QOS = QoSProfile(
 
 WEB_MAP_QOS = QoSProfile(
     depth=1,
-    durability=DurabilityPolicy.VOLATILE,
+    # transient_local: client web/rosbridge join muộn vẫn nhận map mới nhất.
+    durability=DurabilityPolicy.TRANSIENT_LOCAL,
     reliability=ReliabilityPolicy.RELIABLE,
     history=HistoryPolicy.KEEP_LAST,
 )

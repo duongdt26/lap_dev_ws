@@ -10,8 +10,8 @@ rplidar_node:
 imu_uart_node:
   ros__parameters:
     # port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:1.1:1.0-port0
-    # port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:1.1:1.0-port0 # may Chuong
-    port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:3:1.0-port0 # may Phuong
+    port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:1.1:1.0-port0 # may Chuong
+    # port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:3:1.0-port0 # may Phuong
     
 
 pzem_battery_node:
@@ -38,5 +38,5 @@ magnetic_line_follower_node:
   ros__parameters:
     # BAT BUOC: thay bang /dev/serial/by-id/... hoac /dev/serial/by-path/...
     # cua bus cam bien tu ID83 + ID86 tren may robot.
-    # port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:3:1.0-port0
-    port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:4:1.0-port0
+    port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:3:1.0-port0
+    # port: /dev/serial/by-path/pci-0000:00:14.0-usb-0:4:1.0-port0 #mini

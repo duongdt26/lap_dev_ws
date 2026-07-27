@@ -17,7 +17,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, GroupAction, SetEnvironmentVariable
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, GroupAction, SetEnvironmentVariable
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import LoadComposableNodes
@@ -145,6 +145,26 @@ def generate_launch_description():
         'log_level', default_value='info',
         description='log level')
 
+    declare_stop_slam_cmd = DeclareLaunchArgument(
+        'stop_slam',
+        default_value='true',
+        description='Tắt slam_toolbox trước khi chạy LOC — tránh 2 nguồn /map (AMCL nhảy map)')
+
+    # SLAM và map_server không được cùng publish /map.
+    stop_slam_cmd = ExecuteProcess(
+        condition=IfCondition(LaunchConfiguration('stop_slam')),
+        cmd=[
+            'bash', '-lc',
+            'echo "[localization] Dừng slam_toolbox nếu còn chạy..."; '
+            'pkill -TERM -f "slam_toolbox" 2>/dev/null || true; '
+            'pkill -TERM -f "online_async_launch" 2>/dev/null || true; '
+            'sleep 1; '
+            'pkill -KILL -f "slam_toolbox" 2>/dev/null || true; '
+            'echo "[localization] OK — chỉ map_server sẽ publish /map"',
+        ],
+        output='screen',
+    )
+
     load_nodes = GroupAction(
         condition=IfCondition(PythonExpression(['not ', use_composition])),
         actions=[
@@ -248,6 +268,10 @@ def generate_launch_description():
     ld.add_action(declare_container_name_cmd)
     ld.add_action(declare_use_respawn_cmd)
     ld.add_action(declare_log_level_cmd)
+    ld.add_action(declare_stop_slam_cmd)
+
+    # Dọn SLAM trước — nếu không AMCL nhận xen kẽ map_server + slam_toolbox
+    ld.add_action(stop_slam_cmd)
 
     # Add the actions to launch all of the localiztion nodes
     ld.add_action(load_nodes)

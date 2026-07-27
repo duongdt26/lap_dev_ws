@@ -80,6 +80,7 @@ async def health(db: Session = Depends(get_db)):
         "adminConfigured": bool(admin_count),
         "ros": telemetry.get("ros", {}),
         "rosbridgeCompatibility": settings.enable_rosbridge_proxy,
+        "mapsRoot": str(settings.maps_root.expanduser()),
     }
 
 
