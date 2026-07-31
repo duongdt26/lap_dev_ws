@@ -179,7 +179,8 @@
   };
 
   function shouldStreamMap() {
-    return document.body.dataset.authRole !== 'operator';
+    // Operator cần theo dõi live map ở cả sim và robot thật giống Setter.
+    return true;
   }
 
   function stopMapSubscriptions() {
@@ -607,9 +608,7 @@
       return;
     }
 
-    // Operator trên điện thoại chỉ cần điều khiển + telemetry. Không subscribe
-    // OccupancyGrid để tránh tải map lớn qua mạng và không render map trên máy.
-    // Vẫn tạo service client map status để Station/Process biết active map.
+    // Giữ nhánh này để tương thích nếu sau này có chế độ tắt map theo cấu hình.
     if (!shouldStreamMap()) {
       initMapSyncClients(ros);
       disableMapForOperator(true);
@@ -1462,10 +1461,8 @@
       ctx.lineWidth = 1.2;
       ctx.stroke();
 
-      // Badge tên + loại điểm
-      const name = String(pt.name || '').trim() || 'Station';
-      const typeLabel = style.badge || '';
-      const title = typeLabel ? `${name} · ${typeLabel}` : name;
+      // Trên map chỉ hiển thị tên điểm; loại điểm đã được phân biệt bằng màu marker.
+      const title = String(pt.name || '').trim() || 'Station';
       const fontSize = selected ? 12 : 11;
       ctx.font = `600 ${fontSize}px "DM Sans", "Segoe UI", sans-serif`;
       const textW = ctx.measureText(title).width;
