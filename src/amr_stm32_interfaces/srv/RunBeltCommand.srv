@@ -1,7 +1,7 @@
 # Chạy lệnh băng tải (wrapper cho web rosbridge)
 int32 belt_id          # 1 hoặc 2
 string command         # "load" hoặc "unload"
-string side            # "LEFT" hoặc "RIGHT" — chỉ dùng khi unload; mặc định LEFT
+string side            # Chỉ dùng khi unload; chỉ chấp nhận LEFT, để trống mặc định LEFT
 float32 timeout_sec
 ---
 bool success

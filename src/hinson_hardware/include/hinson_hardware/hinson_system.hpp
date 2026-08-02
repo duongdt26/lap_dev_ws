@@ -1,6 +1,7 @@
 #ifndef HINSON_HARDWARE__HINSON_SYSTEM_HPP_
 #define HINSON_HARDWARE__HINSON_SYSTEM_HPP_
 
+#include <chrono>
 #include <memory>
 #include <string>
 #include <vector>
@@ -43,10 +44,16 @@ public:
     const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
 private:
+  bool connect_modbus();
+  void handle_modbus_failure(const char * operation);
+  void reset_motion_state();
+
   // Thông số giao tiếp
   std::string port_;
   int baudrate_;
   modbus_t * ctx_ = nullptr;
+  int consecutive_modbus_errors_ = 0;
+  std::chrono::steady_clock::time_point next_reconnect_attempt_{};
 
   // Mảng lưu dữ liệu (2 bánh: 0 là trái, 1 là phải)
   std::vector<double> hw_commands_;

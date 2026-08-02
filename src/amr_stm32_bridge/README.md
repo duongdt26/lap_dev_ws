@@ -52,6 +52,11 @@ Xem spec đầy đủ: `docs/STM32_UART_PROTOCOL_V4.1.md`
 Với line ngang thứ nhất và lệnh `load`, frame gửi xuống STM32 là
 `$CMD,START,1`.
 
+`Load` không có tham số phía: sau khi nhận `$CMD,START,<belt>`, firmware chờ
+cảm biến ở một trong hai đầu của đúng băng tải và tự chạy hàng sang đầu đối
+diện. `Unload` chỉ được phép về phía `LEFT`; yêu cầu `RIGHT` bị bridge từ chối
+và firmware trả `NACK` nếu frame được gửi trực tiếp qua UART.
+
 ## Chạy
 
 ```bash

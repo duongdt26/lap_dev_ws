@@ -109,8 +109,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOB, N1_Pin | N2_Pin | N3_Pin | N4_Pin | RF2_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOA, RUN1_Pin | RF1_Pin | RUN2_Pin, GPIO_PIN_RESET);
 
-  /* PA0-PA3 sensors - INPUT_PULLUP, active LOW */
-  GPIO_InitStruct.Pin = S1_Pin | S2_Pin | S3_Pin | S4_Pin;
+  /* PA0-PA5 sensors ? INPUT_PULLUP, active LOW (S5/S6 t? board_gpio.h) */
+  GPIO_InitStruct.Pin = S1_Pin | S2_Pin | S3_Pin | S4_Pin | S5_PIN | S6_PIN;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -135,7 +135,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /* PB6 RESET, PB7 START - INPUT_PULLUP, active LOW */
+  /* PB6/PB7 START/RESET - INPUT_PULLUP, active LOW */
   GPIO_InitStruct.Pin = Button_START_Pin | Button_RESET_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;

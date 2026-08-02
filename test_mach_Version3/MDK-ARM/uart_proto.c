@@ -10,13 +10,8 @@ static UART_HandleTypeDef *s_huart = NULL;
 static char s_line_buf[UART_LINE_MAX];
 static uint16_t s_line_len = 0;
 static uint8_t s_uart_rx_byte = 0;
-static volatile uint8_t s_rx_ring[UART_RX_BUF_SIZE];
-static volatile uint16_t s_rx_head = 0U;
-static volatile uint16_t s_rx_tail = 0U;
-static volatile uint8_t s_rx_overflow = 0U;
 
 static void handle_line(char *line);
-static void process_rx_byte(uint8_t byte);
 
 static void uart_send_str(const char *s)
 {
@@ -68,8 +63,22 @@ static const char *state_to_str(SystemState_t st)
   switch (st) {
   case SYS_RUNNING: return "RUNNING";
   case SYS_ESTOP:   return "ESTOP";
+  case SYS_BOOT:    return "BOOT";
   default:          return "IDLE";
   }
+}
+
+static const char *dir_to_str(BeltDirection_t dir)
+{
+  if (dir == BELT_DIR_LEFT) {
+    return "LEFT";
+  }
+
+  if (dir == BELT_DIR_RIGHT) {
+    return "RIGHT";
+  }
+
+  return "NONE";
 }
 
 static const char *side_to_str(BeltSide_t side)
@@ -79,13 +88,14 @@ static const char *side_to_str(BeltSide_t side)
 
 static void build_status_bits(char *out, size_t out_len)
 {
-  if (out_len < 7U) {
+  if (out_len < 9U) {
     return;
   }
 
-  snprintf(out, out_len, "%u%u%u%u%u%u",
+  snprintf(out, out_len, "%u%u%u%u%u%u%u%u",
            Belt_HasCargo(1U), Belt_HasCargo(2U),
-           Board_S1(), Board_S2(), Board_S3(), Board_S4());
+           Board_S1(), Board_S2(), Board_S3(), Board_S4(),
+           Board_S5(), Board_S6());
 }
 
 static BeltSide_t parse_side(const char *s, uint8_t *ok)
@@ -102,24 +112,6 @@ static BeltSide_t parse_side(const char *s, uint8_t *ok)
 
   *ok = 0U;
   return BELT_SIDE_LEFT;
-}
-
-static uint8_t parse_u8_decimal(const char *s, uint8_t *value)
-{
-  char *end;
-  unsigned long parsed;
-
-  if (s == NULL || s[0] == '\0' || value == NULL) {
-    return 0U;
-  }
-
-  parsed = strtoul(s, &end, 10);
-  if (*end != '\0' || parsed > 255UL) {
-    return 0U;
-  }
-
-  *value = (uint8_t)parsed;
-  return 1U;
 }
 
 static const char *cmd_result_reason(BeltCmdResult_t r)
@@ -139,13 +131,10 @@ void UART_Proto_Init(UART_HandleTypeDef *huart)
 {
   s_huart = huart;
   s_line_len = 0U;
-  s_rx_head = 0U;
-  s_rx_tail = 0U;
-  s_rx_overflow = 0U;
   memset(s_line_buf, 0, sizeof(s_line_buf));
 }
 
-static void process_rx_byte(uint8_t byte)
+void UART_Proto_RxByte(uint8_t byte)
 {
   if (byte == '\r' || byte == '\n') {
     if (s_line_len > 0U) {
@@ -170,23 +159,13 @@ static void process_rx_byte(uint8_t byte)
 
 void UART_Proto_Poll(void)
 {
-  uint8_t byte;
-
-  if (s_rx_overflow) {
-    __disable_irq();
-    s_rx_tail = s_rx_head;
-    s_rx_overflow = 0U;
-    __enable_irq();
-
-    s_line_len = 0U;
-    s_line_buf[0] = '\0';
-    UART_SendNack("UART", 0U, "RX_OVERFLOW");
+  if (s_huart == NULL) {
+    return;
   }
 
-  while (s_rx_tail != s_rx_head) {
-    byte = s_rx_ring[s_rx_tail];
-    s_rx_tail = (uint16_t)((s_rx_tail + 1U) % UART_RX_BUF_SIZE);
-    process_rx_byte(byte);
+  uint8_t byte;
+  while (HAL_UART_Receive(s_huart, &byte, 1U, 0U) == HAL_OK) {
+    UART_Proto_RxByte(byte);
   }
 }
 
@@ -210,12 +189,39 @@ static int split_fields(char *line, char *fields[], int max_fields)
   return n;
 }
 
+static void handle_simple_text(char *line)
+{
+  if (str_eq_nocase(line, "START")) {
+    BeltCmdResult_t r = Belt_CmdStartLoad(1U);
+    if (r != BELT_CMD_OK) {
+      UART_SendNack("START", 1U, cmd_result_reason(r));
+    }
+    return;
+  }
+
+  if (str_eq_nocase(line, "STOP")) {
+    Belt_OnStopButton();
+    uart_send_frame("Stop\r\n");
+    return;
+  }
+
+  if (str_eq_nocase(line, "RESET")) {
+    if (Belt_TryResetEstop()) {
+      UART_SendAckResetEstop();
+    } else {
+      UART_SendNack("RESET_ESTOP", 0U, "NOT_ESTOP");
+    }
+    return;
+  }
+}
+
 static void handle_line(char *line)
 {
   char *fields[12];
   int nf;
 
   if (line[0] != '$') {
+    handle_simple_text(line);
     return;
   }
 
@@ -234,39 +240,53 @@ static void handle_line(char *line)
     return;
   }
 
+  /*
+     Lenh loa rieng tu ROS2:
+       $BUZZER,START,1 / $BUZZER,START,2 -> phat bai 16
+       $BUZZER,STOP,1  / $BUZZER,STOP,2  -> phat bai 17
+     Khong gui ACK de log ROS2 sach, chi thuc hien phat loa.
+  */
+  if (str_eq_nocase(fields[0], "BUZZER") && nf >= 3) {
+    uint8_t belt_id = (uint8_t)strtoul(fields[2], NULL, 10);
+
+    if (belt_id == 1U || belt_id == 2U) {
+      if (str_eq_nocase(fields[1], "START")) {
+        Audio_SendHex(AUDIO_CODE_BAI_16);
+      } else if (str_eq_nocase(fields[1], "STOP")) {
+        Audio_SendHex(AUDIO_CODE_BAI_17);
+      }
+    }
+
+    return;
+  }
+
   if (!str_eq_nocase(fields[0], "CMD") || nf < 2) {
     return;
   }
 
-  /* $CMD,Buzzer,<track>: xuat ma GPIO song song trong 200 ms. */
-  if (str_eq_nocase(fields[1], "BUZZER") && nf >= 3) {
-    uint8_t track;
-
-    if (!parse_u8_decimal(fields[2], &track)) {
-      UART_SendNack("BUZZER", 0U, "BAD_TRACK");
-      return;
-    }
-
-    if (!Audio_PlayTrack(track)) {
-      UART_SendNack("BUZZER", track, "INVALID_TRACK");
-    }
-
-    return;
-  }
-
-  /* ROS2 kich hoat Emergency: $CMD,ESTOP */
+  /*
+     Emergency stop tu Web/ROS2:
+       $CMD,ESTOP
+       -> dung ngay tat ca relay
+       -> phan hoi $ACK,CMD,ESTOP
+  */
   if (str_eq_nocase(fields[1], "ESTOP")) {
-    Belt_TriggerEstop(ESTOP_SRC_ROS2);
+    Belt_TriggerEstop(ESTOP_SRC_WEB);
     UART_SendAckEstop();
     return;
   }
 
-  /* Reset dong thoi Emergency va STOP_LOCK: $CMD,RESET_ESTOP */
+  /*
+     Reset ESTOP tu Web/ROS2:
+       $CMD,RESET_ESTOP
+       -> phan hoi ACK khi reset thanh cong hoac he thong da o IDLE
+       -> van giu khoa an toan neu nut Emergency vat ly dang bi nhan
+  */
   if (str_eq_nocase(fields[1], "RESET_ESTOP")) {
-    if (Belt_TryResetEstop()) {
+    if (Belt_GetState() != SYS_ESTOP || Belt_TryResetEstop()) {
       UART_SendAckResetEstop();
     } else {
-      UART_SendNack("RESET_ESTOP", 0U, "RESET_BLOCKED");
+      UART_SendNack("RESET_ESTOP", 0U, "EMER_ACTIVE");
     }
     return;
   }
@@ -281,15 +301,8 @@ static void handle_line(char *line)
      Chi ACK khi cam bien cua dung bang tai lan dau phat hien hang sau khi da arm.
   */
   if (str_eq_nocase(fields[1], "START") && nf >= 3) {
-    uint8_t cmd_id;
-    BeltCmdResult_t r;
-
-    if (!parse_u8_decimal(fields[2], &cmd_id)) {
-      UART_SendNack("START", 0U, "BAD_ID");
-      return;
-    }
-
-    r = Belt_CmdStartLoad(cmd_id);
+    uint8_t cmd_id = (uint8_t)strtoul(fields[2], NULL, 10);
+    BeltCmdResult_t r = Belt_CmdStartLoad(cmd_id);
 
     if (r != BELT_CMD_OK) {
       UART_SendNack("START", cmd_id, cmd_result_reason(r));
@@ -307,24 +320,16 @@ static void handle_line(char *line)
      Chi ACK khi hang da ra khoi sensor cua ra.
   */
   if (str_eq_nocase(fields[1], "STOP") && nf >= 4) {
-    uint8_t cmd_id;
+    uint8_t cmd_id = (uint8_t)strtoul(fields[2], NULL, 10);
     uint8_t side_ok = 0U;
-    BeltSide_t side;
-    BeltCmdResult_t r;
-
-    if (!parse_u8_decimal(fields[2], &cmd_id)) {
-      UART_SendNack("STOP", 0U, "BAD_ID");
-      return;
-    }
-
-    side = parse_side(fields[3], &side_ok);
+    BeltSide_t side = parse_side(fields[3], &side_ok);
 
     if (!side_ok) {
       UART_SendNack("STOP", cmd_id, "BAD_SIDE");
       return;
     }
 
-    r = Belt_CmdUnload(cmd_id, side);
+    BeltCmdResult_t r = Belt_CmdUnload(cmd_id, side);
     if (r != BELT_CMD_OK) {
       UART_SendNack("STOP", cmd_id, cmd_result_reason(r));
     }
@@ -370,6 +375,11 @@ void UART_SendAckResetEstop(void)
   uart_send_frame("$ACK,CMD,RESET_ESTOP\r\n");
 }
 
+void UART_SendStopEvent(void)
+{
+  uart_send_frame("$STOP\r\n");
+}
+
 void UART_SendNack(const char *cmd, uint8_t cmd_id, const char *reason)
 {
   if (cmd_id > 0U) {
@@ -380,10 +390,12 @@ void UART_SendNack(const char *cmd, uint8_t cmd_id, const char *reason)
 }
 
 void UART_SendTelemetry(SystemState_t state, uint8_t active_belt,
-                        uint8_t estop_source)
+                        BeltDirection_t dir, uint8_t estop_source)
 {
-  char bits[8];
+  char bits[10];
   const char *ds;
+
+  (void)dir;   /* Khong hien thi huong motor noi bo len telemetry */
 
   build_status_bits(bits, sizeof(bits));
 
@@ -422,22 +434,12 @@ void UART_Proto_StartReceiveIT(void)
 
 void UART_Proto_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-  uint16_t next;
-
   if (s_huart == NULL) {
     return;
   }
 
   if (huart->Instance == s_huart->Instance) {
-    next = (uint16_t)((s_rx_head + 1U) % UART_RX_BUF_SIZE);
-
-    if (next == s_rx_tail) {
-      s_rx_overflow = 1U;
-    } else {
-      s_rx_ring[s_rx_head] = s_uart_rx_byte;
-      s_rx_head = next;
-    }
-
+    UART_Proto_RxByte(s_uart_rx_byte);
     HAL_UART_Receive_IT(s_huart, &s_uart_rx_byte, 1U);
   }
 }

@@ -15,7 +15,8 @@ amcl:
    # Tu dong dat robot tai goc map moi khi AMCL khoi dong.
    # Co the ghi de bang cac launch argument initial_pose_x/y/z/yaw.
    set_initial_pose: true
-   always_reset_initial_pose: true
+   # Khong ep AMCL quay ve pose launch khi lifecycle khoi dong lai.
+   always_reset_initial_pose: false
    initial_pose:
      x: 0.0
      y: 0.0
@@ -35,7 +36,9 @@ amcl:
    laser_max_range: 25.0
    # laser_min_range: -1.0
    laser_min_range: 0.15  # Tam quet toi thieu (m); -1 dung tam laser bao cao
-   laser_model_type: "likelihood_field"  # Mo hinh laser: beam, likelihood_field, hoac likelihood_field_prob
+   # likelihood_field_prob moi thuc su dung do_beamskip de bo qua thung hang,
+   # nguoi va cac vat the dong khong co trong static map.
+   laser_model_type: "likelihood_field_prob"
    # max_beams: 60
    max_beams: 120  # So tia laser deu nhau dung khi cap nhat bo loc
    # max_particles: 2000
@@ -47,8 +50,10 @@ amcl:
    pf_z: 0.99  # Mat do dan so hat (percentile 99%)
    # recovery_alpha_fast: 0.0
    # recovery_alpha_slow: 0.0
-   recovery_alpha_fast: 0.1  # He so suy giam nhanh trong loc trong so hat; quyet dinh khi them pose ngau nhien de phuc hoi
-   recovery_alpha_slow: 0.001  # He so suy giam cham trong loc trong so hat; quyet dinh khi them pose ngau nhien de phuc hoi
+   # Tat random-particle recovery: khi scan bi thung hang che, AMCL giu nghiem
+   # odom/pose hien tai thay vi hoi tu nham sang mot buc tuong giong nhau.
+   recovery_alpha_fast: 0.0
+   recovery_alpha_slow: 0.0
    resample_interval: 1  # So lan cap nhat bo loc truoc khi resample
    robot_model_type: "nav2_amcl::DifferentialMotionModel"  # Plugin mo hinh chuyen dong (differential hoac omni)
    save_pose_rate: 0.5  # Tan so (Hz) luu pose/covariance cuoi len parameter server; -1 de tat
@@ -520,7 +525,7 @@ controller_server:
       movement_time_allowance: 20.0
     goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.13
+      xy_goal_tolerance: 0.15
       yaw_goal_tolerance: 0.2
       stateful: false
     # DWB controller parameters
@@ -593,7 +598,7 @@ controller_server:
       # ======================
       # Goal tolerance
       # ======================
-      xy_goal_tolerance: 0.13
+      xy_goal_tolerance: 0.15
       yaw_goal_tolerance: 0.2
 
       # Quan trọng: phải nhỏ hơn vận tốc chạy thấp nhất
@@ -642,8 +647,8 @@ local_costmap:
      rolling_window: true  # true: costmap di chuyen theo robot (local); false: co dinh trong global frame
      # width: 3
      # height: 3
-     width: 6  # Chieu rong costmap (m)
-     height: 6  # Chieu cao costmap (m)
+     width: 5  # Chieu rong costmap (m)
+     height: 5  # Chieu cao costmap (m)
      resolution: 0.05  # Do phan giai moi o (m)
      # robot_radius: 0.22
      footprint: "[ [0.585, 0.3325], [0.585, -0.3325], [-0.585, -0.3325], [-0.585, 0.3325] ]"  # Da giac footprint robot (m), khep kin
@@ -716,7 +721,7 @@ global_costmap:
        transform_tolerance: 0.5
      keepout_inflation_layer:
        plugin: "nav2_costmap_2d::InflationLayer"
-       cost_scaling_factor: 6.0
+       cost_scaling_factor: 4.5
        inflation_radius: 0.78
      obstacle_layer:
        plugin: "nav2_costmap_2d::ObstacleLayer"  # Layer vat can 2D tu laser/depth

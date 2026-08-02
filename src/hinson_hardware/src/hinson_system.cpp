@@ -111,6 +111,98 @@
 namespace hinson_hardware
 {
 
+void HinsonSystemHardware::reset_motion_state()
+{
+  for (auto i = 0u; i < hw_commands_.size(); i++) {
+    hw_commands_[i] = 0.0;
+    hw_velocities_[i] = 0.0;
+  }
+}
+
+bool HinsonSystemHardware::connect_modbus()
+{
+  if (ctx_ != nullptr) {
+    modbus_close(ctx_);
+    modbus_free(ctx_);
+    ctx_ = nullptr;
+  }
+
+  RCLCPP_INFO(
+    rclcpp::get_logger("HinsonSystemHardware"),
+    "Connecting Modbus at %s, baud %d...", port_.c_str(), baudrate_);
+
+  ctx_ = modbus_new_rtu(port_.c_str(), baudrate_, 'N', 8, 1);
+  if (ctx_ == nullptr) {
+    RCLCPP_ERROR(rclcpp::get_logger("HinsonSystemHardware"), "Không tạo được libmodbus context!");
+    return false;
+  }
+
+  modbus_set_slave(ctx_, 10);
+  if (modbus_connect(ctx_) == -1) {
+    RCLCPP_ERROR(
+      rclcpp::get_logger("HinsonSystemHardware"),
+      "Modbus connection failed: %s", modbus_strerror(errno));
+    modbus_free(ctx_);
+    ctx_ = nullptr;
+    return false;
+  }
+
+  uint16_t clear_fault_1[1] = {1};
+  uint16_t clear_fault_0[1] = {0};
+  uint16_t individual_mode[1] = {1};
+  uint16_t enable_motor[2] = {1, 1};
+  uint16_t hall_regs[2];
+
+  bool configured =
+    modbus_write_registers(ctx_, 2000, 1, clear_fault_1) == 1;
+  rclcpp::sleep_for(std::chrono::milliseconds(100));
+  configured = configured &&
+    modbus_write_registers(ctx_, 2000, 1, clear_fault_0) == 1;
+  rclcpp::sleep_for(std::chrono::milliseconds(100));
+  configured = configured &&
+    modbus_write_registers(ctx_, 2001, 1, individual_mode) == 1;
+  configured = configured &&
+    modbus_write_registers(ctx_, 2002, 2, enable_motor) == 2;
+  configured = configured &&
+    modbus_read_input_registers(ctx_, 1014, 2, hall_regs) == 2;
+
+  if (!configured) {
+    RCLCPP_ERROR(
+      rclcpp::get_logger("HinsonSystemHardware"),
+      "Không cấu hình lại được driver Modbus: %s", modbus_strerror(errno));
+    modbus_close(ctx_);
+    modbus_free(ctx_);
+    ctx_ = nullptr;
+    return false;
+  }
+
+  prev_hall_counts_[0] = hall_regs[0];
+  prev_hall_counts_[1] = hall_regs[1];
+  consecutive_modbus_errors_ = 0;
+  reset_motion_state();
+  RCLCPP_INFO(rclcpp::get_logger("HinsonSystemHardware"), "Modbus connected and motor commands reset");
+  return true;
+}
+
+void HinsonSystemHardware::handle_modbus_failure(const char * operation)
+{
+  consecutive_modbus_errors_++;
+  if (consecutive_modbus_errors_ < 3) {
+    return;
+  }
+
+  RCLCPP_ERROR(
+    rclcpp::get_logger("HinsonSystemHardware"),
+    "Mất kết nối Modbus khi %s: %s; sẽ thử nối lại sau 2 giây",
+    operation, modbus_strerror(errno));
+  reset_motion_state();
+  modbus_close(ctx_);
+  modbus_free(ctx_);
+  ctx_ = nullptr;
+  consecutive_modbus_errors_ = 0;
+  next_reconnect_attempt_ = std::chrono::steady_clock::now() + std::chrono::seconds(2);
+}
+
 hardware_interface::CallbackReturn HinsonSystemHardware::on_init(
   const hardware_interface::HardwareInfo & info)
 {
@@ -169,54 +261,13 @@ std::vector<hardware_interface::CommandInterface> HinsonSystemHardware::export_c
 hardware_interface::CallbackReturn HinsonSystemHardware::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  RCLCPP_INFO(rclcpp::get_logger("HinsonSystemHardware"), "Connecting Modbus at %s, baud %d...", port_.c_str(), baudrate_);
-
-  ctx_ = modbus_new_rtu(port_.c_str(), baudrate_, 'N', 8, 1);
-  if (ctx_ == nullptr) {
-    RCLCPP_ERROR(rclcpp::get_logger("HinsonSystemHardware"), "Không tạo được libmodbus context!");
+  if (!connect_modbus()) {
     return hardware_interface::CallbackReturn::ERROR;
   }
-
-  modbus_set_slave(ctx_, 10);
-  
-  if (modbus_connect(ctx_) == -1) {
-    RCLCPP_ERROR(rclcpp::get_logger("HinsonSystemHardware"), "Modbus connection failed: %s", modbus_strerror(errno));
-    modbus_free(ctx_);
-    ctx_ = nullptr;
-    return hardware_interface::CallbackReturn::ERROR;
-  }
-
-  // --- Reset Fault và Config Driver ---
-  uint16_t clear_fault_1[1] = {1};
-  uint16_t clear_fault_0[1] = {0};
-  uint16_t individual_mode[1] = {1};
-  uint16_t enable_motor[2] = {1, 1}; 
-
-  modbus_write_registers(ctx_, 2000, 1, clear_fault_1);
-  rclcpp::sleep_for(std::chrono::milliseconds(100));
-  modbus_write_registers(ctx_, 2000, 1, clear_fault_0);
-  rclcpp::sleep_for(std::chrono::milliseconds(100));
-  
-  modbus_write_registers(ctx_, 2001, 1, individual_mode);
-  modbus_write_registers(ctx_, 2002, 2, enable_motor);
 
   // Khởi tạo biến về 0
   for (auto i = 0u; i < hw_positions_.size(); i++) {
     hw_positions_[i] = 0.0;
-    hw_velocities_[i] = 0.0;
-    hw_commands_[i] = 0.0;
-  }
-
-  // Đọc xung Hall lần đầu để làm gốc
-  uint16_t hall_regs[2];
-  // if (modbus_read_registers(ctx_, 1014, 2, hall_regs) == 2) {
-  //   prev_hall_counts_[0] = hall_regs[0];
-  //   prev_hall_counts_[1] = hall_regs[1];
-  // }
-
-  if (modbus_read_input_registers(ctx_, 1014, 2, hall_regs) == 2) {
-    prev_hall_counts_[0] = hall_regs[0];
-    prev_hall_counts_[1] = hall_regs[1];
   }
 
   RCLCPP_INFO(rclcpp::get_logger("HinsonSystemHardware"), "System Successfully Activated!");
@@ -307,7 +358,17 @@ hardware_interface::CallbackReturn HinsonSystemHardware::on_deactivate(
 hardware_interface::return_type HinsonSystemHardware::read(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & period)
 {
-  if (ctx_ == nullptr) return hardware_interface::return_type::ERROR;
+  if (ctx_ == nullptr) {
+    hw_velocities_[0] = 0.0;
+    hw_velocities_[1] = 0.0;
+    if (std::chrono::steady_clock::now() >= next_reconnect_attempt_) {
+      if (!connect_modbus()) {
+        next_reconnect_attempt_ =
+          std::chrono::steady_clock::now() + std::chrono::seconds(2);
+      }
+    }
+    return hardware_interface::return_type::OK;
+  }
 
   uint16_t hall_regs[2];
   int rc = modbus_read_input_registers(ctx_, 1014, 2, hall_regs);
@@ -337,14 +398,9 @@ hardware_interface::return_type HinsonSystemHardware::read(
     
     prev_hall_counts_[0] = hall_regs[0];
     prev_hall_counts_[1] = hall_regs[1];
+    consecutive_modbus_errors_ = 0;
   } else {
-    static int error_counter = 0;
-    if (error_counter % 30 == 0) { 
-      RCLCPP_WARN(
-        rclcpp::get_logger("HinsonSystemHardware"), 
-        "Lỗi đọc Modbus: %s (Mã lỗi: %d)", modbus_strerror(errno), errno);
-    }
-    error_counter++;
+    handle_modbus_failure("đọc encoder");
   }
 
   return hardware_interface::return_type::OK;
@@ -435,7 +491,7 @@ hardware_interface::return_type HinsonSystemHardware::read(
 hardware_interface::return_type HinsonSystemHardware::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  if (ctx_ == nullptr) return hardware_interface::return_type::ERROR;
+  if (ctx_ == nullptr) return hardware_interface::return_type::OK;
 
   // 1. Lấy lệnh từ ROS: [0] là Trái, [1] là Phải
   int rpm_left = hw_commands_[0] * 900.0 / M_PI;
@@ -450,14 +506,11 @@ hardware_interface::return_type HinsonSystemHardware::write(
 
   // 3. Một lần ghi duy nhất xuống 2004–2007
   if (modbus_write_registers(ctx_, 2004, 4, cmds) != 4) {
-    static int error_counter = 0;
-    if (error_counter++ % 30 == 0) {
-      RCLCPP_WARN(
-        rclcpp::get_logger("HinsonSystemHardware"),
-        "Lỗi ghi Modbus: %s (Mã lỗi: %d)", modbus_strerror(errno), errno);
-    }
-    return hardware_interface::return_type::ERROR;
+    handle_modbus_failure("ghi lệnh motor");
+    return hardware_interface::return_type::OK;
   }
+
+  consecutive_modbus_errors_ = 0;
 
   return hardware_interface::return_type::OK;
 }

@@ -39,6 +39,7 @@ from amr_stm32_bridge.uart_protocol import (
     STATE_READY,
     STATE_RUNNING,
     STATE_STOP_LOCK,
+    SIDE_LEFT,
     AckFrame,
     EventFrame,
     TelemetryFrame,
@@ -255,6 +256,7 @@ class Stm32ConveyorBridgeNode(Node):
         return True, ''
 
     def _update_safety_from_telemetry(self, telem: TelemetryFrame) -> None:
+        previous = self._safety_state
         if telem.is_estop:
             self._safety_state = SafetyState.ESTOP
         elif telem.is_comm_lost:
@@ -264,8 +266,17 @@ class Stm32ConveyorBridgeNode(Node):
             self._safety_state = SafetyState.FAULT
         elif telem.is_stop_lock:
             self._safety_state = SafetyState.STOP_LOCK
-        elif self._safety_state != SafetyState.ESTOP:
+        else:
+            # Telemetry is the authoritative current state.  In particular,
+            # Version3 reports only five fields, so a stable IDLE/READY/RUNNING
+            # frame is the only confirmation that a previously latched ESTOP
+            # has been cleared on the STM32.
             self._safety_state = SafetyState.NORMAL
+
+        if self._safety_state != previous:
+            self.get_logger().info(
+                f'Safety cập nhật: {previous.value} -> {self._safety_state.value} '
+                f'(STM32={telem.state})')
 
     def _trigger_nav_cancel(self, reason: str) -> None:
         self.get_logger().error(f'Safety trigger: {reason}')
@@ -402,6 +413,24 @@ class Stm32ConveyorBridgeNode(Node):
     def _on_ack(self, ack: AckFrame) -> None:
         self.get_logger().info(
             f'STM32 ACK: seq={ack.seq} cmd={ack.cmd} belt={ack.belt_id} status={ack.status}')
+
+        # Version3 cũng phát ACK khi RESET/ESTOP được thao tác trực tiếp ở
+        # tầng firmware (không nhất thiết có ROS pending command). Cập nhật
+        # safety ngay từ ACK; telemetry 1 Hz sau đó tiếp tục xác nhận nền.
+        if ack.cmd == 'RESET_ESTOP':
+            previous = self._safety_state
+            self._safety_state = SafetyState.NORMAL
+            self._stm32_state = STATE_IDLE
+            self._ros_ready_sent = False
+            if previous != self._safety_state:
+                self.get_logger().info(
+                    f'Safety cập nhật: {previous.value} -> NORMAL '
+                    '(ACK RESET_ESTOP)')
+        elif ack.cmd == 'ESTOP':
+            self._safety_state = SafetyState.ESTOP
+            self._stm32_state = STATE_ESTOP
+            self._ros_ready_sent = False
+
         pending = self._pending.get(ack.seq)
         if pending is None and ack.seq == 0 and self._uses_legacy_protocol():
             pending = self._find_legacy_pending_cmd(ack.cmd)
@@ -713,7 +742,7 @@ class Stm32ConveyorBridgeNode(Node):
             if self._uses_legacy_protocol() else None)
         self._send_uart(frame)
 
-        ack_timeout = 15.0
+        ack_timeout = 30.0
         if legacy_deadline is not None:
             ack_timeout = min(
                 ack_timeout, max(0.0, legacy_deadline - time.monotonic()))
@@ -764,6 +793,8 @@ class Stm32ConveyorBridgeNode(Node):
         self, belt_id: int, side: str, timeout_sec: float,
     ) -> tuple[bool, str]:
         side_norm = normalize_side(side)
+        if side_norm != SIDE_LEFT:
+            return False, 'Chỉ cho phép trả hàng bên LEFT'
         ready_ok, ready_msg = self._ensure_ready()
         if not ready_ok:
             return False, ready_msg
@@ -962,7 +993,12 @@ class Stm32ConveyorBridgeNode(Node):
             return GoalResponse.REJECT
         if goal_request.belt_id not in (1, 2):
             return GoalResponse.REJECT
-        if goal_request.command.lower() not in ('load', 'unload'):
+        command = goal_request.command.lower()
+        if command not in ('load', 'unload'):
+            return GoalResponse.REJECT
+        if command == 'unload' and normalize_side(
+            getattr(goal_request, 'side', '') or ''
+        ) != SIDE_LEFT:
             return GoalResponse.REJECT
         return GoalResponse.ACCEPT
 

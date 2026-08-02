@@ -22,7 +22,8 @@ Node này tiếp quản chuyển động sau khi Nav2 đã tới `Approach Pose`
 
 `Normal` luôn là `None/None` và chỉ dùng Nav2. `Approach Pose` không cho phép
 `None`; bốn tổ hợp hợp lệ là `Load/Load`, `Load/Unload`, `Unload/Load` và
-`Unload/Unload`. Unload hiện dùng phía `LEFT`, cấu hình bởi `unload_side`.
+`Unload/Unload`. `Load` nhận hàng từ đầu nào kích hoạt cảm biến trước và gửi
+`$CMD,START,<belt>` không kèm phía. `Unload` chỉ được phép trả về phía `LEFT`.
 
 Lệnh motor được xuất ở `/cmd_vel_line` và đi qua `twist_mux`. Node không mở
 cổng driver motor. Lệnh băng tải đi qua service `/run_belt_command`; node không

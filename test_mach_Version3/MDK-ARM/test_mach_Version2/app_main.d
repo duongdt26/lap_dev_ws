@@ -19,4 +19,4 @@ test_mach_version2/app_main.o: app_main.c app_main.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h audio_board.h \
-  belt_fsm.h board_gpio.h ..\Core\Inc\main.h input_filter.h uart_proto.h
+  belt_fsm.h board_gpio.h input_filter.h uart_proto.h

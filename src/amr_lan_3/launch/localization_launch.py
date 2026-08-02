@@ -122,8 +122,8 @@ def generate_launch_description():
 
     declare_always_reset_initial_pose_cmd = DeclareLaunchArgument(
         'always_reset_initial_pose',
-        default_value='true',
-        description='If true, AMCL uses launch initial pose instead of saved previous pose')
+        default_value='false',
+        description='Keep the last valid AMCL pose across lifecycle restarts')
 
     declare_autostart_cmd = DeclareLaunchArgument(
         'autostart', default_value='true',
